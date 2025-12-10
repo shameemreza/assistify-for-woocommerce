@@ -212,6 +212,7 @@ final class Assistify {
 	 */
 	private function load_abilities() {
 		require_once ASSISTIFY_PLUGIN_DIR . 'includes/abilities/class-abilities-registry.php';
+		require_once ASSISTIFY_PLUGIN_DIR . 'includes/class-intent-classifier.php';
 	}
 
 	/**

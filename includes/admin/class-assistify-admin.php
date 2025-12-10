@@ -788,118 +788,25 @@ class Assistify_Admin {
 	/**
 	 * Fetch relevant store data based on user message intent.
 	 *
+	 * Uses the Intent Classifier to intelligently route queries to abilities.
+	 *
 	 * @since 1.0.0
 	 * @param string $message User message.
 	 * @return array Store data relevant to the query.
 	 */
 	private function fetch_relevant_store_data( $message ) {
-		$message_lower = strtolower( $message );
-		$data          = array();
-		$registry      = \Assistify_For_WooCommerce\Abilities\Abilities_Registry::instance();
+		// Use the Intent Classifier for smart ability routing.
+		$classifier = new \Assistify_For_WooCommerce\Intent_Classifier();
 
-		// Detect order-related queries.
-		if ( $this->message_matches( $message_lower, array( 'order', 'orders', 'recent order', 'latest order', 'pending order', 'processing' ) ) ) {
-			// Check for specific order ID.
-			if ( preg_match( '/order\s*#?\s*(\d+)/i', $message, $matches ) ) {
-				$result = $registry->execute( 'afw/orders/get', array( 'order_id' => (int) $matches[1] ) );
-				if ( ! is_wp_error( $result ) ) {
-					$data['specific_order'] = $result;
-				}
-			} else {
-				// Get recent orders.
-				$status = 'any';
-				if ( strpos( $message_lower, 'pending' ) !== false ) {
-					$status = 'pending';
-				} elseif ( strpos( $message_lower, 'processing' ) !== false ) {
-					$status = 'processing';
-				} elseif ( strpos( $message_lower, 'completed' ) !== false ) {
-					$status = 'completed';
-				} elseif ( strpos( $message_lower, 'cancelled' ) !== false || strpos( $message_lower, 'canceled' ) !== false ) {
-					$status = 'cancelled';
-				}
+		// Execute matching abilities and get results.
+		$results = $classifier->execute_matching_abilities( $message );
 
-				$params = array( 'limit' => 10 );
-				if ( 'any' !== $status ) {
-					$params['status'] = $status;
-				}
-
-				$result = $registry->execute( 'afw/orders/list', $params );
-				if ( ! is_wp_error( $result ) ) {
-					$data['recent_orders'] = $result;
-				}
-			}
+		// If no matches, return empty array (general conversation).
+		if ( empty( $results ) ) {
+			return array();
 		}
 
-		// Detect product-related queries.
-		if ( $this->message_matches( $message_lower, array( 'product', 'products', 'inventory', 'stock', 'low stock', 'out of stock' ) ) ) {
-			// Check for low stock query.
-			if ( $this->message_matches( $message_lower, array( 'low stock', 'low inventory', 'running low', 'stock level' ) ) ) {
-				$result = $registry->execute( 'afw/products/low-stock', array( 'threshold' => 10, 'limit' => 15 ) );
-				if ( ! is_wp_error( $result ) ) {
-					$data['low_stock_products'] = $result;
-				}
-			} elseif ( preg_match( '/product\s*#?\s*(\d+)/i', $message, $matches ) ) {
-				// Specific product.
-				$result = $registry->execute( 'afw/products/get', array( 'product_id' => (int) $matches[1] ) );
-				if ( ! is_wp_error( $result ) ) {
-					$data['specific_product'] = $result;
-				}
-			} else {
-				// List products.
-				$result = $registry->execute( 'afw/products/list', array( 'limit' => 10 ) );
-				if ( ! is_wp_error( $result ) ) {
-					$data['products'] = $result;
-				}
-			}
-		}
-
-		// Detect customer-related queries.
-		if ( $this->message_matches( $message_lower, array( 'customer', 'customers', 'buyer', 'buyers', 'client' ) ) ) {
-			// Check for specific customer search.
-			if ( preg_match( '/customer\s*#?\s*(\d+)/i', $message, $matches ) ) {
-				$result = $registry->execute( 'afw/customers/get', array( 'customer_id' => (int) $matches[1] ) );
-				if ( ! is_wp_error( $result ) ) {
-					$data['specific_customer'] = $result;
-				}
-			} elseif ( $this->message_matches( $message_lower, array( 'top customer', 'best customer', 'vip', 'high value' ) ) ) {
-				$result = $registry->execute( 'afw/customers/list', array( 'orderby' => 'total_spent', 'order' => 'DESC', 'limit' => 10 ) );
-				if ( ! is_wp_error( $result ) ) {
-					$data['top_customers'] = $result;
-				}
-			} else {
-				$result = $registry->execute( 'afw/customers/list', array( 'limit' => 10 ) );
-				if ( ! is_wp_error( $result ) ) {
-					$data['customers'] = $result;
-				}
-			}
-		}
-
-		// Detect analytics/sales queries.
-		if ( $this->message_matches( $message_lower, array( 'sales', 'revenue', 'analytics', 'performance', 'how much', 'total', 'earning', 'income' ) ) ) {
-			$period = 'month';
-			if ( strpos( $message_lower, 'today' ) !== false ) {
-				$period = 'today';
-			} elseif ( strpos( $message_lower, 'week' ) !== false ) {
-				$period = 'week';
-			} elseif ( strpos( $message_lower, 'year' ) !== false ) {
-				$period = 'year';
-			}
-
-			$result = $registry->execute( 'afw/analytics/sales', array( 'period' => $period ) );
-			if ( ! is_wp_error( $result ) ) {
-				$data['sales_analytics'] = $result;
-			}
-		}
-
-		// Detect top products query.
-		if ( $this->message_matches( $message_lower, array( 'top product', 'best selling', 'bestseller', 'popular product', 'top seller' ) ) ) {
-			$result = $registry->execute( 'afw/analytics/top-products', array( 'limit' => 10 ) );
-			if ( ! is_wp_error( $result ) ) {
-				$data['top_products'] = $result;
-			}
-		}
-
-		return $data;
+		return $results;
 	}
 
 	/**
@@ -933,16 +840,40 @@ class Assistify_Admin {
 			return $base_prompt;
 		}
 
+		// Decode any HTML entities in the data for clean AI processing.
+		$store_data = $this->decode_html_entities_recursive( $store_data );
+
 		$data_context = "\n\n## LIVE STORE DATA (Use this to answer the user's question):\n";
 
 		foreach ( $store_data as $key => $value ) {
 			$data_context .= "\n### " . ucwords( str_replace( '_', ' ', $key ) ) . ":\n";
-			$data_context .= "```json\n" . wp_json_encode( $value, JSON_PRETTY_PRINT ) . "\n```\n";
+			$data_context .= "```json\n" . wp_json_encode( $value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) . "\n```\n";
 		}
 
 		$data_context .= "\n**IMPORTANT**: Use the above real store data to answer the user's question. Format the response nicely with markdown (use **bold**, lists, tables where appropriate). Do NOT say you cannot access data - you have the data above.";
 
 		return $base_prompt . $data_context;
+	}
+
+	/**
+	 * Recursively decode HTML entities in data.
+	 *
+	 * @since 1.0.0
+	 * @param mixed $data Data to decode.
+	 * @return mixed Decoded data.
+	 */
+	private function decode_html_entities_recursive( $data ) {
+		if ( is_string( $data ) ) {
+			return html_entity_decode( $data, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
+		}
+
+		if ( is_array( $data ) ) {
+			foreach ( $data as $key => $value ) {
+				$data[ $key ] = $this->decode_html_entities_recursive( $value );
+			}
+		}
+
+		return $data;
 	}
 
 	/**
@@ -954,7 +885,7 @@ class Assistify_Admin {
 	private function get_admin_system_prompt() {
 		$store_name     = get_bloginfo( 'name' );
 		$currency       = function_exists( 'get_woocommerce_currency' ) ? get_woocommerce_currency() : 'USD';
-		$currency_symbol = function_exists( 'get_woocommerce_currency_symbol' ) ? get_woocommerce_currency_symbol() : '$';
+		$currency_symbol = function_exists( 'get_woocommerce_currency_symbol' ) ? html_entity_decode( get_woocommerce_currency_symbol() ) : '$';
 		$admin_name     = wp_get_current_user()->display_name;
 
 		$prompt = sprintf(
@@ -1393,7 +1324,7 @@ Friendly, helpful, and efficient. Keep responses focused.',
 
 		// Insert message.
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-		return false !== $wpdb->insert(
+		$result = $wpdb->insert(
 			$wpdb->prefix . 'afw_messages',
 			array(
 				'session_id' => $session_id,
@@ -1404,6 +1335,83 @@ Friendly, helpful, and efficient. Keep responses focused.',
 			),
 			array( '%s', '%s', '%s', '%s', '%s' )
 		);
+
+		// Occasionally clean up old sessions (1 in 50 chance to avoid performance impact).
+		if ( wp_rand( 1, 50 ) === 1 ) {
+			$this->cleanup_old_sessions( $user_id );
+		}
+
+		return false !== $result;
+	}
+
+	/**
+	 * Clean up old sessions to maintain performance.
+	 * Keeps only the last 50 sessions per user, deletes older ones.
+	 *
+	 * @since 1.0.0
+	 * @param int $user_id User ID.
+	 * @return void
+	 */
+	private function cleanup_old_sessions( $user_id ) {
+		global $wpdb;
+
+		$max_sessions = 50;
+
+		// Get the timestamp of the 50th most recent session.
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$cutoff_time = $wpdb->get_var(
+			$wpdb->prepare(
+				'SELECT last_activity FROM ' . $wpdb->prefix . 'afw_sessions 
+				WHERE user_id = %d AND context = %s 
+				ORDER BY last_activity DESC 
+				LIMIT 1 OFFSET %d',
+				$user_id,
+				'admin',
+				$max_sessions - 1
+			)
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		// If no cutoff (less than max sessions), nothing to clean.
+		if ( empty( $cutoff_time ) ) {
+			return;
+		}
+
+		// Get session IDs to delete (older than cutoff).
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$sessions_to_delete = $wpdb->get_col(
+			$wpdb->prepare(
+				'SELECT session_id FROM ' . $wpdb->prefix . 'afw_sessions 
+				WHERE user_id = %d AND context = %s AND last_activity < %s',
+				$user_id,
+				'admin',
+				$cutoff_time
+			)
+		);
+		// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		if ( empty( $sessions_to_delete ) ) {
+			return;
+		}
+
+		// Delete messages and sessions one by one to avoid complex IN clauses.
+		foreach ( $sessions_to_delete as $session_id ) {
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			// Delete messages for this session.
+			$wpdb->delete(
+				$wpdb->prefix . 'afw_messages',
+				array( 'session_id' => $session_id ),
+				array( '%s' )
+			);
+
+			// Delete the session.
+			$wpdb->delete(
+				$wpdb->prefix . 'afw_sessions',
+				array( 'session_id' => $session_id ),
+				array( '%s' )
+			);
+			// phpcs:enable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		}
 	}
 }
 

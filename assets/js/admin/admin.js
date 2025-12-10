@@ -202,6 +202,8 @@
     sessionId: null,
     currentTab: "chat",
     sessions: [],
+    isStreaming: false,
+    streamingSpeed: 20, // milliseconds per word chunk (faster = smoother)
 
     /**
      * Initialize
@@ -220,6 +222,47 @@
       this.bindEvents();
       this.loadSessionId();
       this.loadSessions();
+
+      // Load messages for current session if it exists
+      this.loadCurrentSessionMessages();
+    },
+
+    /**
+     * Load messages for the current session on page load.
+     */
+    loadCurrentSessionMessages: function () {
+      if (!this.sessionId) {
+        return;
+      }
+
+      $.ajax({
+        url: assistifyAdmin.ajaxUrl,
+        type: "POST",
+        data: {
+          action: "assistify_get_session_messages",
+          nonce: assistifyAdmin.nonce,
+          session_id: this.sessionId,
+        },
+        success: (response) => {
+          if (
+            response.success &&
+            response.data.messages &&
+            response.data.messages.length > 0
+          ) {
+            // Clear welcome message and load session messages
+            this.$messages.empty();
+            response.data.messages.forEach((msg) => {
+              this.addMessage(msg.role, msg.content, true, false);
+            });
+            // Always scroll to bottom to show last message
+            // Use multiple scroll attempts to handle async rendering
+            this.scrollToBottom();
+            setTimeout(() => this.scrollToBottom(), 200);
+            setTimeout(() => this.scrollToBottom(), 500);
+          }
+          // If no messages, keep the welcome message that was added in createWidget
+        },
+      });
     },
 
     /**
@@ -442,6 +485,13 @@
           self.sendMessage();
         }
       });
+
+      // Copy message button
+      this.$widget.on("click", ".assistify-copy-btn", function (e) {
+        e.preventDefault();
+        const messageId = $(this).data("message-id");
+        self.copyMessage(messageId);
+      });
     },
 
     /**
@@ -464,6 +514,8 @@
       this.$container.addClass("is-open");
       this.$toggle.attr("aria-expanded", "true");
       this.$input.focus();
+      // Scroll to bottom when opening chat
+      setTimeout(() => this.scrollToBottom(), 100);
     },
 
     /**
@@ -480,7 +532,7 @@
     sendMessage: function () {
       const message = this.$input.val().trim();
 
-      if (!message) {
+      if (!message || this.isStreaming) {
         return;
       }
 
@@ -507,13 +559,14 @@
         },
         success: (response) => {
           this.hideTypingIndicator();
-          this.$input.prop("disabled", false);
-          this.$send.prop("disabled", false);
-          this.$input.focus();
 
           if (response.success) {
-            this.addMessage("assistant", response.data.message, true);
+            // Stream the response for better UX
+            this.streamResponse(response.data.message);
           } else {
+            this.$input.prop("disabled", false);
+            this.$send.prop("disabled", false);
+            this.$input.focus();
             this.addMessage(
               "assistant",
               response.data.message || assistifyAdmin.strings.error,
@@ -535,6 +588,156 @@
           );
         },
       });
+    },
+
+    /**
+     * Stream a response word by word for a smooth typing effect like ChatGPT.
+     *
+     * @param {string} content - The full response content.
+     */
+    streamResponse: function (content) {
+      this.isStreaming = true;
+
+      const time = new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      const messageId =
+        "msg_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5);
+
+      // Create message container with streaming class
+      const messageHtml = `
+        <div class="assistify-message assistify-message-assistant assistify-message-streaming" id="${messageId}" data-raw-content="">
+          <div class="assistify-message-content"></div>
+          <div class="assistify-message-footer">
+            <span class="assistify-message-time">${time}</span>
+          </div>
+        </div>
+      `;
+
+      this.$messages.append(messageHtml);
+      const $message = $("#" + messageId);
+      const $content = $message.find(".assistify-message-content");
+
+      // Tokenize content into words for natural streaming
+      const words = this.tokenizeForStreaming(content);
+      let index = 0;
+      let displayedContent = "";
+      let lastScrollTime = 0;
+
+      const self = this;
+
+      // Use requestAnimationFrame for smoother animation
+      const streamWord = (timestamp) => {
+        if (index < words.length) {
+          // Add multiple words per frame for faster streaming
+          const wordsPerFrame = Math.min(2, words.length - index);
+
+          for (let i = 0; i < wordsPerFrame; i++) {
+            displayedContent += words[index];
+            index++;
+          }
+
+          // Update display with cursor
+          $content.html(
+            this.escapeHtmlForStreaming(displayedContent) +
+              '<span class="assistify-stream-cursor"></span>'
+          );
+
+          // Throttle scrolling for performance (every 100ms)
+          if (timestamp - lastScrollTime > 100) {
+            this.scrollToBottom();
+            lastScrollTime = timestamp;
+          }
+
+          // Schedule next frame with slight delay for natural feel
+          setTimeout(() => {
+            requestAnimationFrame(streamWord);
+          }, this.streamingSpeed);
+        } else {
+          // Streaming complete - finalize the message
+          this.finalizeStreamedMessage($message, $content, content, messageId);
+        }
+      };
+
+      // Start streaming
+      requestAnimationFrame(streamWord);
+    },
+
+    /**
+     * Escape HTML for streaming display (basic escaping without full parsing).
+     *
+     * @param {string} text - Text to escape.
+     * @return {string} Escaped text with newlines preserved.
+     */
+    escapeHtmlForStreaming: function (text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\n/g, "<br>");
+    },
+
+    /**
+     * Finalize a streamed message with markdown parsing and copy button.
+     *
+     * @param {jQuery} $message - The message element.
+     * @param {jQuery} $content - The content element.
+     * @param {string} content - The full raw content.
+     * @param {string} messageId - The message ID.
+     */
+    finalizeStreamedMessage: function ($message, $content, content, messageId) {
+      // Remove cursor and parse markdown
+      $content.find(".assistify-stream-cursor").remove();
+      const parsedContent = MarkdownParser.parse(content);
+      $content.html(parsedContent);
+
+      // Update raw content for copy functionality
+      $message.attr("data-raw-content", this.encodeHtmlEntities(content));
+      $message.removeClass("assistify-message-streaming");
+
+      // Add copy button
+      const copyButton = `
+        <button type="button" class="assistify-copy-btn" data-message-id="${messageId}" title="Copy message">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+          </svg>
+        </button>
+      `;
+      $message.find(".assistify-message-footer").append(copyButton);
+
+      // Re-enable input
+      this.isStreaming = false;
+      this.$input.prop("disabled", false);
+      this.$send.prop("disabled", false);
+      this.$input.focus();
+
+      this.scrollToBottom();
+
+      // Refresh sessions list to include this session
+      this.loadSessions();
+    },
+
+    /**
+     * Tokenize content into words for natural streaming like ChatGPT.
+     *
+     * @param {string} content - The content to tokenize.
+     * @return {Array} Array of word tokens.
+     */
+    tokenizeForStreaming: function (content) {
+      // Split into words while preserving spaces and punctuation
+      // This creates natural word-by-word flow like ChatGPT
+      const tokens = [];
+      const regex = /(\S+)(\s*)/g;
+      let match;
+
+      while ((match = regex.exec(content)) !== null) {
+        // Add word + following whitespace as one token
+        tokens.push(match[1] + match[2]);
+      }
+
+      return tokens;
     },
 
     /**
@@ -564,15 +767,107 @@
       }
 
       const errorClass = isError ? " assistify-message-error" : "";
+      const messageId =
+        "msg_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5);
+
+      // Copy button for assistant messages
+      const copyButton =
+        role === "assistant" && !isError
+          ? `
+        <button type="button" class="assistify-copy-btn" data-message-id="${messageId}" title="Copy message">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+          </svg>
+        </button>
+      `
+          : "";
+
       const messageHtml = `
-        <div class="assistify-message assistify-message-${role}${errorClass}">
+        <div class="assistify-message assistify-message-${role}${errorClass}" id="${messageId}" data-raw-content="${this.encodeHtmlEntities(
+        content
+      )}">
           <div class="assistify-message-content">${displayContent}</div>
-          <div class="assistify-message-time">${time}</div>
+          <div class="assistify-message-footer">
+            <span class="assistify-message-time">${time}</span>
+            ${copyButton}
+          </div>
         </div>
       `;
 
       this.$messages.append(messageHtml);
       this.scrollToBottom();
+    },
+
+    /**
+     * Encode HTML entities for data attribute storage.
+     *
+     * @param {string} text - Text to encode.
+     * @return {string} Encoded text.
+     */
+    encodeHtmlEntities: function (text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    },
+
+    /**
+     * Decode HTML entities from data attribute.
+     *
+     * @param {string} text - Text to decode.
+     * @return {string} Decoded text.
+     */
+    decodeHtmlEntities: function (text) {
+      const textarea = document.createElement("textarea");
+      textarea.innerHTML = text;
+      return textarea.value;
+    },
+
+    /**
+     * Copy message content to clipboard.
+     *
+     * @param {string} messageId - The message element ID.
+     */
+    copyMessage: function (messageId) {
+      const $message = $("#" + messageId);
+      const rawContent = this.decodeHtmlEntities($message.data("raw-content"));
+      const $copyBtn = $message.find(".assistify-copy-btn");
+
+      navigator.clipboard
+        .writeText(rawContent)
+        .then(() => {
+          // Show success feedback
+          $copyBtn.addClass("is-copied");
+          $copyBtn.html(`
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+          </svg>
+        `);
+
+          // Reset after 2 seconds
+          setTimeout(() => {
+            $copyBtn.removeClass("is-copied");
+            $copyBtn.html(`
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+              <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+            </svg>
+          `);
+          }, 2000);
+        })
+        .catch(() => {
+          // Fallback for older browsers
+          const textarea = document.createElement("textarea");
+          textarea.value = rawContent;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textarea);
+
+          $copyBtn.addClass("is-copied");
+          setTimeout(() => $copyBtn.removeClass("is-copied"), 2000);
+        });
     },
 
     /**
@@ -601,10 +896,37 @@
     },
 
     /**
-     * Scroll messages to bottom
+     * Scroll messages to bottom with retry for reliable scrolling.
+     *
+     * @param {boolean} immediate - If true, scroll immediately without delay.
      */
-    scrollToBottom: function () {
-      this.$messages.scrollTop(this.$messages[0].scrollHeight);
+    scrollToBottom: function (immediate) {
+      const doScroll = () => {
+        if (this.$messages && this.$messages[0]) {
+          const container = this.$messages[0];
+          // Force scroll to absolute bottom
+          container.scrollTop = container.scrollHeight + 10000;
+
+          // Also try scrollIntoView on last message for reliability
+          const lastMessage = container.querySelector(
+            ".assistify-message:last-child"
+          );
+          if (lastMessage) {
+            lastMessage.scrollIntoView({ block: "end", behavior: "instant" });
+          }
+        }
+      };
+
+      if (immediate) {
+        doScroll();
+      } else {
+        // Use requestAnimationFrame for smoother, more reliable scroll
+        requestAnimationFrame(() => {
+          doScroll();
+          // Double-check scroll after a brief delay for content that renders async
+          setTimeout(doScroll, 150);
+        });
+      }
     },
 
     /**
@@ -739,8 +1061,13 @@
             this.addMessage("assistant", this.getWelcomeMessage());
           }
 
-          // Switch to chat tab
+          // Switch to chat tab and scroll to bottom
           this.switchTab("chat");
+
+          // Use multiple scroll attempts to handle async rendering
+          this.scrollToBottom();
+          setTimeout(() => this.scrollToBottom(), 200);
+          setTimeout(() => this.scrollToBottom(), 500);
         },
         error: () => {
           this.$messages.empty();
