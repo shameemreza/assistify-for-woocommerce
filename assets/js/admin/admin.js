@@ -18,7 +18,8 @@
 		 * Initialize
 		 */
 		init: function () {
-			if (assistifyAdmin.settings.chatEnabled !== 'yes') {
+			// Check if assistifyAdmin exists and chat is enabled
+			if (typeof assistifyAdmin === 'undefined' || !assistifyAdmin.settings || assistifyAdmin.settings.chatEnabled !== 'yes') {
 				return;
 			}
 
@@ -233,9 +234,88 @@
 		},
 	};
 
+	/**
+	 * Assistify Settings - Model Filter
+	 * Filters the Model dropdown based on selected AI Provider.
+	 */
+	const AssistifyModelFilter = {
+		/**
+		 * Initialize
+		 */
+		init: function () {
+			// Check if we have the required data
+			if (typeof assistifyAdmin === 'undefined' || !assistifyAdmin.modelsByProvider) {
+				return;
+			}
+
+			this.$providerSelect = $('#assistify_ai_provider');
+			this.$modelSelect = $('#assistify_ai_model');
+
+			// Exit if elements don't exist (not on settings page)
+			if (!this.$providerSelect.length || !this.$modelSelect.length) {
+				return;
+			}
+
+			this.modelsByProvider = assistifyAdmin.modelsByProvider;
+			this.defaultModels = assistifyAdmin.defaultModels || {};
+
+			this.bindEvents();
+			// Initial filter on page load
+			this.updateModelOptions(this.$providerSelect.val());
+		},
+
+		/**
+		 * Bind events
+		 */
+		bindEvents: function () {
+			const self = this;
+
+			this.$providerSelect.on('change', function () {
+				self.updateModelOptions($(this).val());
+			});
+		},
+
+		/**
+		 * Update model dropdown options based on provider
+		 *
+		 * @param {string} provider - Selected provider ID
+		 */
+		updateModelOptions: function (provider) {
+			const currentModel = this.$modelSelect.val();
+			const models = this.modelsByProvider[provider] || {};
+			let hasCurrentModel = false;
+
+			// Clear and rebuild options
+			this.$modelSelect.empty();
+
+			// Add options for the selected provider
+			$.each(models, function (value, label) {
+				this.$modelSelect.append(
+					$('<option></option>').val(value).text(label)
+				);
+				if (value === currentModel) {
+					hasCurrentModel = true;
+				}
+			}.bind(this));
+
+			// Select appropriate model
+			if (hasCurrentModel) {
+				this.$modelSelect.val(currentModel);
+			} else if (this.defaultModels[provider]) {
+				this.$modelSelect.val(this.defaultModels[provider]);
+			}
+
+			// Trigger change for Select2/selectWoo to update UI
+			if ($.fn.selectWoo) {
+				this.$modelSelect.trigger('change.select2');
+			}
+		},
+	};
+
 	// Initialize on document ready
 	$(document).ready(function () {
 		AssistifyAdminChat.init();
+		AssistifyModelFilter.init();
 	});
 })(jQuery);
 

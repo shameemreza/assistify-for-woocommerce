@@ -61,23 +61,24 @@ class Assistify_Activator {
 		// Sessions table.
 		$sql[] = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}afw_sessions (
 			id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+			session_id VARCHAR(36) NOT NULL,
 			user_id BIGINT UNSIGNED DEFAULT NULL,
-			session_token VARCHAR(64) NOT NULL,
-			context_type ENUM('admin', 'customer', 'guest') NOT NULL DEFAULT 'guest',
-			started_at DATETIME NOT NULL,
-			last_activity DATETIME NOT NULL,
+			context VARCHAR(20) NOT NULL DEFAULT 'customer',
 			metadata LONGTEXT,
+			created_at DATETIME NOT NULL,
+			updated_at DATETIME NOT NULL,
+			INDEX idx_session_id (session_id),
 			INDEX idx_user (user_id),
-			INDEX idx_token (session_token),
-			INDEX idx_activity (last_activity)
+			INDEX idx_context (context)
 		) {$charset_collate};";
 
 		// Messages table.
 		$sql[] = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}afw_messages (
 			id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-			session_id BIGINT UNSIGNED NOT NULL,
-			role ENUM('user', 'assistant', 'system') NOT NULL,
+			session_id VARCHAR(36) NOT NULL,
+			role VARCHAR(20) NOT NULL,
 			content LONGTEXT NOT NULL,
+			context VARCHAR(20) NOT NULL DEFAULT 'customer',
 			tokens_used INT UNSIGNED DEFAULT 0,
 			abilities_called LONGTEXT,
 			created_at DATETIME NOT NULL,

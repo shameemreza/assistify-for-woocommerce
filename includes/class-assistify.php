@@ -62,8 +62,10 @@ final class Assistify {
 	private function __construct() {
 		$this->load_dependencies();
 		$this->set_locale();
+		$this->init_abilities();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->define_rest_api();
 		$this->run();
 	}
 
@@ -102,6 +104,9 @@ final class Assistify {
 		// The class responsible for defining internationalization functionality.
 		require_once ASSISTIFY_PLUGIN_DIR . 'includes/class-assistify-i18n.php';
 
+		// Load AI Provider classes.
+		$this->load_ai_providers();
+
 		// Load admin classes.
 		if ( is_admin() ) {
 			require_once ASSISTIFY_PLUGIN_DIR . 'includes/admin/class-assistify-admin.php';
@@ -113,6 +118,69 @@ final class Assistify {
 		}
 
 		$this->loader = new Assistify_Loader();
+	}
+
+	/**
+	 * Load AI Provider classes.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	private function load_ai_providers() {
+		$ai_providers_dir = ASSISTIFY_PLUGIN_DIR . 'includes/ai-providers/';
+
+		// Load interface first.
+		require_once $ai_providers_dir . 'interface-ai-provider.php';
+
+		// Load abstract class.
+		require_once $ai_providers_dir . 'class-ai-provider-abstract.php';
+
+		// Load provider implementations.
+		require_once $ai_providers_dir . 'class-ai-provider-openai.php';
+		require_once $ai_providers_dir . 'class-ai-provider-anthropic.php';
+		require_once $ai_providers_dir . 'class-ai-provider-google.php';
+		require_once $ai_providers_dir . 'class-ai-provider-xai.php';
+		require_once $ai_providers_dir . 'class-ai-provider-deepseek.php';
+
+		// Load factory class.
+		require_once $ai_providers_dir . 'class-ai-provider-factory.php';
+	}
+
+	/**
+	 * Load REST API classes.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	private function load_rest_api() {
+		$rest_api_dir = ASSISTIFY_PLUGIN_DIR . 'includes/rest-api/';
+
+		require_once $rest_api_dir . 'class-rest-api-controller.php';
+		require_once $rest_api_dir . 'class-rest-chat-controller.php';
+		require_once $rest_api_dir . 'class-rest-api.php';
+	}
+
+	/**
+	 * Load Abilities classes.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	private function load_abilities() {
+		require_once ASSISTIFY_PLUGIN_DIR . 'includes/abilities/class-abilities-registry.php';
+	}
+
+	/**
+	 * Initialize the Abilities Registry.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	private function init_abilities() {
+		$this->load_abilities();
+
+		// Initialize the abilities registry singleton.
+		Abilities\Abilities_Registry::instance();
 	}
 
 	/**
@@ -177,6 +245,31 @@ final class Assistify {
 
 		// Add chat widget to footer.
 		$this->loader->add_action( 'wp_footer', $plugin_frontend, 'render_chat_widget' );
+	}
+
+	/**
+	 * Initialize REST API.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	private function define_rest_api() {
+		// Load REST API classes.
+		$this->load_rest_api();
+
+		// Register REST API routes.
+		$this->loader->add_action( 'rest_api_init', $this, 'register_rest_routes' );
+	}
+
+	/**
+	 * Register REST API routes.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	public function register_rest_routes() {
+		$rest_api = new REST_API\REST_API();
+		$rest_api->register_routes();
 	}
 
 	/**

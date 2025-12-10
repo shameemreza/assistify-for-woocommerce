@@ -42,11 +42,11 @@ Assistify for WooCommerce is a powerful AI assistant that deeply integrates with
 
 = Supported AI Providers =
 
-* **OpenAI** - GPT-5, GPT-5-mini, gpt-image-1 for images.
-* **Anthropic** - Claude 4.5 Sonnet, Claude 4.5 Haiku.
-* **Google** - Gemini 3 Pro, Gemini 2.5 Flash, Imagen 4.0.
-* **xAI** - Grok-4 Fast.
-* **DeepSeek** - V3.2 Chat.
+* **OpenAI** - GPT-4o, GPT-4o-mini, GPT-4.1, o1, o3-mini, gpt-image-1 for images.
+* **Anthropic** - Claude Sonnet 4, Claude Opus 4, Claude 3.7/3.5 Sonnet, Claude 3.5 Haiku.
+* **Google** - Gemini 2.5 Pro, Gemini 2.5/2.0 Flash, Gemini 1.5 Pro/Flash.
+* **xAI** - Grok 3, Grok 3 Mini, Grok 2, Grok 2 Vision.
+* **DeepSeek** - DeepSeek-V3, DeepSeek-R1, DeepSeek Coder.
 
 = WooCommerce Extension Support =
 

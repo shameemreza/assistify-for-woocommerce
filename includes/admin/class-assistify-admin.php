@@ -67,7 +67,7 @@ class Assistify_Admin {
 		wp_enqueue_script(
 			'assistify-admin',
 			ASSISTIFY_PLUGIN_URL . 'assets/js/admin/admin.js',
-			array( 'jquery' ),
+			array( 'jquery', 'selectWoo' ),
 			ASSISTIFY_VERSION,
 			true
 		);
@@ -76,16 +76,18 @@ class Assistify_Admin {
 			'assistify-admin',
 			'assistifyAdmin',
 			array(
-				'ajaxUrl'  => admin_url( 'admin-ajax.php' ),
-				'nonce'    => wp_create_nonce( 'assistify_admin_nonce' ),
-				'strings'  => array(
+				'ajaxUrl'          => admin_url( 'admin-ajax.php' ),
+				'nonce'            => wp_create_nonce( 'assistify_admin_nonce' ),
+				'strings'          => array(
 					'error'   => esc_html__( 'An error occurred. Please try again.', 'assistify-for-woocommerce' ),
 					'loading' => esc_html__( 'Loading...', 'assistify-for-woocommerce' ),
 				),
-				'settings' => array(
+				'settings'         => array(
 					'chatEnabled' => get_option( 'assistify_admin_chat_enabled', 'yes' ),
 					'position'    => get_option( 'assistify_chat_position', 'bottom-right' ),
 				),
+				'modelsByProvider' => $this->get_models_by_provider(),
+				'defaultModels'    => $this->get_default_models(),
 			)
 		);
 	}
@@ -98,24 +100,16 @@ class Assistify_Admin {
 	 * @return bool
 	 */
 	private function should_load_assets( $hook ) {
-		// Always load if admin chat is enabled.
+		// Always load on our settings page for model filtering.
+		if ( 'woocommerce_page_wc-settings' === $hook ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Just checking tab parameter.
+			if ( isset( $_GET['tab'] ) && 'assistify' === sanitize_key( $_GET['tab'] ) ) {
+				return true;
+			}
+		}
+
+		// Load if admin chat is enabled.
 		if ( 'yes' === get_option( 'assistify_admin_chat_enabled', 'yes' ) ) {
-			return true;
-		}
-
-		// Load on WooCommerce pages.
-		$wc_pages = array(
-			'woocommerce_page_wc-settings',
-			'woocommerce_page_wc-orders',
-			'edit.php',
-		);
-
-		if ( in_array( $hook, $wc_pages, true ) ) {
-			return true;
-		}
-
-		// Load on our settings page.
-		if ( isset( $_GET['tab'] ) && 'assistify' === sanitize_key( $_GET['tab'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			return true;
 		}
 
@@ -278,6 +272,81 @@ class Assistify_Admin {
 	}
 
 	/**
+	 * Get models organized by provider for JavaScript.
+	 *
+	 * @since 1.0.0
+	 * @return array Models by provider.
+	 */
+	private function get_models_by_provider() {
+		return array(
+			'openai'    => array(
+				'gpt-4o'        => 'GPT-4o',
+				'gpt-4o-mini'   => 'GPT-4o Mini',
+				'gpt-4.1'       => 'GPT-4.1',
+				'gpt-4.1-mini'  => 'GPT-4.1 Mini',
+				'gpt-4.1-nano'  => 'GPT-4.1 Nano',
+				'o1'            => 'o1',
+				'o1-mini'       => 'o1-mini',
+				'o1-pro'        => 'o1-pro',
+				'o3-mini'       => 'o3-mini',
+				'gpt-4-turbo'   => 'GPT-4 Turbo',
+				'gpt-4'         => 'GPT-4',
+				'gpt-3.5-turbo' => 'GPT-3.5 Turbo',
+			),
+			'anthropic' => array(
+				'claude-sonnet-4-20250514'   => 'Claude Sonnet 4',
+				'claude-opus-4-20250514'     => 'Claude Opus 4',
+				'claude-3-7-sonnet-20250219' => 'Claude 3.7 Sonnet',
+				'claude-3-5-sonnet-20241022' => 'Claude 3.5 Sonnet',
+				'claude-3-5-haiku-20241022'  => 'Claude 3.5 Haiku',
+				'claude-3-opus-20240229'     => 'Claude 3 Opus',
+				'claude-3-sonnet-20240229'   => 'Claude 3 Sonnet',
+				'claude-3-haiku-20240307'    => 'Claude 3 Haiku',
+			),
+			'google'    => array(
+				'gemini-2.5-pro'            => 'Gemini 2.5 Pro',
+				'gemini-2.5-flash'          => 'Gemini 2.5 Flash',
+				'gemini-2.0-flash'          => 'Gemini 2.0 Flash',
+				'gemini-2.0-flash-lite'     => 'Gemini 2.0 Flash-Lite',
+				'gemini-2.0-flash-thinking' => 'Gemini 2.0 Flash Thinking',
+				'gemini-1.5-pro'            => 'Gemini 1.5 Pro',
+				'gemini-1.5-flash'          => 'Gemini 1.5 Flash',
+				'gemini-1.5-flash-8b'       => 'Gemini 1.5 Flash-8B',
+			),
+			'xai'       => array(
+				'grok-3'           => 'Grok 3',
+				'grok-3-fast'      => 'Grok 3 Fast',
+				'grok-3-mini'      => 'Grok 3 Mini',
+				'grok-3-mini-fast' => 'Grok 3 Mini Fast',
+				'grok-2'           => 'Grok 2',
+				'grok-2-vision'    => 'Grok 2 Vision',
+				'grok-2-mini'      => 'Grok 2 Mini',
+			),
+			'deepseek'  => array(
+				'deepseek-chat'     => 'DeepSeek-V3',
+				'deepseek-reasoner' => 'DeepSeek-R1',
+				'deepseek-coder'    => 'DeepSeek Coder',
+			),
+		);
+	}
+
+	/**
+	 * Get default model for each provider.
+	 *
+	 * @since 1.0.0
+	 * @return array Default models.
+	 */
+	private function get_default_models() {
+		return array(
+			'openai'    => 'gpt-4o-mini',
+			'anthropic' => 'claude-3-5-sonnet-20241022',
+			'google'    => 'gemini-2.0-flash',
+			'xai'       => 'grok-3-fast',
+			'deepseek'  => 'deepseek-chat',
+		);
+	}
+
+	/**
 	 * Save settings.
 	 *
 	 * @since 1.0.0
@@ -306,15 +375,25 @@ class Assistify_Admin {
 				'desc'     => esc_html__( 'Select your preferred AI provider.', 'assistify-for-woocommerce' ),
 				'id'       => 'assistify_ai_provider',
 				'type'     => 'select',
-				'class'    => 'wc-enhanced-select',
+				'class'    => 'wc-enhanced-select assistify-provider-select',
 				'default'  => 'openai',
 				'options'  => array(
-					'openai'    => esc_html__( 'OpenAI (GPT-5, GPT-5-mini)', 'assistify-for-woocommerce' ),
-					'anthropic' => esc_html__( 'Anthropic (Claude 4.5)', 'assistify-for-woocommerce' ),
-					'google'    => esc_html__( 'Google (Gemini 3 Pro)', 'assistify-for-woocommerce' ),
-					'xai'       => esc_html__( 'xAI (Grok-4)', 'assistify-for-woocommerce' ),
-					'deepseek'  => esc_html__( 'DeepSeek (V3.2)', 'assistify-for-woocommerce' ),
+					'openai'    => esc_html__( 'OpenAI', 'assistify-for-woocommerce' ),
+					'anthropic' => esc_html__( 'Anthropic', 'assistify-for-woocommerce' ),
+					'google'    => esc_html__( 'Google', 'assistify-for-woocommerce' ),
+					'xai'       => esc_html__( 'xAI', 'assistify-for-woocommerce' ),
+					'deepseek'  => esc_html__( 'DeepSeek', 'assistify-for-woocommerce' ),
 				),
+				'desc_tip' => true,
+			),
+			array(
+				'title'    => esc_html__( 'Model', 'assistify-for-woocommerce' ),
+				'desc'     => esc_html__( 'Select the AI model to use.', 'assistify-for-woocommerce' ),
+				'id'       => 'assistify_ai_model',
+				'type'     => 'select',
+				'class'    => 'wc-enhanced-select assistify-model-select',
+				'default'  => 'gpt-4o-mini',
+				'options'  => $this->get_all_models(),
 				'desc_tip' => true,
 			),
 			array(
@@ -409,6 +488,24 @@ class Assistify_Admin {
 		);
 
 		return apply_filters( 'assistify_settings', $settings );
+	}
+
+	/**
+	 * Get all available models as flat array for WooCommerce settings.
+	 * JavaScript will filter these based on selected provider.
+	 *
+	 * @since 1.0.0
+	 * @return array Models array (flat key => value).
+	 */
+	private function get_all_models() {
+		// Flatten all models from all providers.
+		$all_models = array();
+
+		foreach ( $this->get_models_by_provider() as $models ) {
+			$all_models = array_merge( $all_models, $models );
+		}
+
+		return $all_models;
 	}
 }
 
