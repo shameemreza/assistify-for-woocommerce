@@ -236,6 +236,103 @@ class Intent_Classifier {
 			'priority'  => 8,
 		);
 
+		// URL intents.
+		$this->intent_patterns['url_product'] = array(
+			'keywords'  => array( 'product url', 'product link', 'link to product', 'product page' ),
+			'patterns'  => array(
+				'/(?:url|link)\s+(?:to|for|of)\s+(?:the\s+)?product/i',
+				'/product\s+(?:url|link|page)/i',
+				'/(?:get|give|show|share)\s+(?:me\s+)?(?:the\s+)?(?:url|link)\s+(?:to|for|of)?\s*(?:the\s+)?product/i',
+			),
+			'ability'   => 'afw/urls/product',
+			'extractor' => 'extract_product_url_params',
+			'priority'  => 9,
+		);
+
+		$this->intent_patterns['url_product_edit'] = array(
+			'keywords'  => array( 'edit product url', 'edit link', 'admin link', 'edit product' ),
+			'patterns'  => array(
+				'/edit\s+(?:url|link)\s+(?:for|of)\s+product/i',
+				'/product\s+edit\s+(?:url|link)/i',
+				'/admin\s+(?:url|link)\s+(?:for|to)\s+product/i',
+			),
+			'ability'   => 'afw/urls/product-edit',
+			'extractor' => 'extract_product_url_params',
+			'priority'  => 9,
+		);
+
+		$this->intent_patterns['url_order'] = array(
+			'keywords'  => array( 'order url', 'order link', 'link to order', 'view order' ),
+			'patterns'  => array(
+				'/(?:url|link)\s+(?:to|for|of)\s+(?:the\s+)?order/i',
+				'/order\s+(?:url|link)/i',
+				'/(?:get|show)\s+(?:the\s+)?order\s+(?:url|link)/i',
+			),
+			'ability'   => 'afw/urls/order',
+			'extractor' => 'extract_order_id',
+			'priority'  => 9,
+		);
+
+		$this->intent_patterns['url_settings'] = array(
+			'keywords'  => array( 'settings url', 'settings link', 'shipping settings', 'tax settings', 'payment settings' ),
+			'patterns'  => array(
+				'/(?:url|link)\s+(?:to|for)\s+(?:woocommerce\s+)?settings?/i',
+				'/(?:shipping|tax|payment|email|account)\s+settings?\s+(?:url|link|page)/i',
+				'/where\s+(?:can\s+)?i\s+(?:find|change|configure)\s+(?:shipping|tax|payment)/i',
+			),
+			'ability'   => 'afw/urls/settings',
+			'extractor' => 'extract_settings_section',
+			'priority'  => 8,
+		);
+
+		$this->intent_patterns['url_category'] = array(
+			'keywords'  => array( 'category url', 'category link', 'link to category' ),
+			'patterns'  => array(
+				'/(?:url|link)\s+(?:to|for|of)\s+(?:the\s+)?category/i',
+				'/category\s+(?:url|link|page)/i',
+			),
+			'ability'   => 'afw/urls/category',
+			'extractor' => 'extract_category_params',
+			'priority'  => 8,
+		);
+
+		// WordPress Content intents.
+		$this->intent_patterns['content_pages'] = array(
+			'keywords'  => array( 'pages', 'list pages', 'wordpress pages', 'site pages', 'show pages' ),
+			'patterns'  => array(
+				'/(?:list|show|all|site)\s+pages?/i',
+				'/wordpress\s+pages?/i',
+				'/what\s+pages?\s+(?:do\s+)?(?:we|i)\s+have/i',
+			),
+			'ability'   => 'afw/content/pages',
+			'extractor' => 'extract_content_params',
+			'priority'  => 6,
+		);
+
+		$this->intent_patterns['content_posts'] = array(
+			'keywords'  => array( 'posts', 'blog posts', 'list posts', 'articles', 'show posts' ),
+			'patterns'  => array(
+				'/(?:list|show|all|recent)\s+(?:blog\s+)?posts?/i',
+				'/blog\s+(?:posts?|articles?)/i',
+				'/what\s+(?:blog\s+)?posts?\s+(?:do\s+)?(?:we|i)\s+have/i',
+			),
+			'ability'   => 'afw/content/posts',
+			'extractor' => 'extract_content_params',
+			'priority'  => 6,
+		);
+
+		$this->intent_patterns['content_menus'] = array(
+			'keywords'  => array( 'menus', 'navigation', 'nav menu', 'site menu' ),
+			'patterns'  => array(
+				'/(?:navigation|nav)\s+menus?/i',
+				'/(?:site|website)\s+menus?/i',
+				'/what\s+menus?\s+(?:do\s+)?(?:we|i)\s+have/i',
+			),
+			'ability'   => 'afw/content/menus',
+			'extractor' => null,
+			'priority'  => 5,
+		);
+
 		/**
 		 * Filter intent patterns to allow customization.
 		 *
@@ -809,5 +906,118 @@ class Intent_Classifier {
 		}
 
 		return array();
+	}
+
+	/**
+	 * Extract product URL parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_product_url_params( $message ) {
+		// Check for product ID.
+		if ( preg_match( '/product\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			return array( 'product_id' => (int) $matches[1] );
+		}
+
+		// Check for quoted product name.
+		if ( preg_match( '/["\']([^"\']+)["\']/', $message, $matches ) ) {
+			return array( 'product_name' => $matches[1] );
+		}
+
+		// Check for "for <product name>".
+		if ( preg_match( '/(?:for|of|to)\s+(?:the\s+)?(?:product\s+)?(.+?)(?:\s+product)?$/i', $message, $matches ) ) {
+			$name = trim( $matches[1] );
+			if ( strlen( $name ) > 2 && ! preg_match( '/^(url|link|page)$/i', $name ) ) {
+				return array( 'product_name' => $name );
+			}
+		}
+
+		return array();
+	}
+
+	/**
+	 * Extract settings section from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_settings_section( $message ) {
+		$message_lower = strtolower( $message );
+
+		$section_map = array(
+			'shipping'    => 'shipping',
+			'tax'         => 'tax',
+			'payment'     => 'payments',
+			'checkout'    => 'payments',
+			'email'       => 'emails',
+			'notification' => 'emails',
+			'account'     => 'accounts',
+			'product'     => 'products',
+			'inventory'   => 'products',
+			'advanced'    => 'advanced',
+			'integration' => 'integration',
+			'api'         => 'advanced',
+			'webhook'     => 'advanced',
+			'assistify'   => 'assistify',
+		);
+
+		foreach ( $section_map as $keyword => $section ) {
+			if ( strpos( $message_lower, $keyword ) !== false ) {
+				return array( 'section' => $section );
+			}
+		}
+
+		return array( 'section' => 'general' );
+	}
+
+	/**
+	 * Extract category parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_category_params( $message ) {
+		// Check for category ID.
+		if ( preg_match( '/category\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			return array( 'category_id' => (int) $matches[1] );
+		}
+
+		// Check for quoted category name.
+		if ( preg_match( '/["\']([^"\']+)["\']/', $message, $matches ) ) {
+			return array( 'category_name' => $matches[1] );
+		}
+
+		// Check for "for <category name>".
+		if ( preg_match( '/(?:for|of|to)\s+(?:the\s+)?(?:category\s+)?(.+?)(?:\s+category)?$/i', $message, $matches ) ) {
+			$name = trim( $matches[1] );
+			if ( strlen( $name ) > 2 && ! preg_match( '/^(url|link|page)$/i', $name ) ) {
+				return array( 'category_name' => $name );
+			}
+		}
+
+		return array();
+	}
+
+	/**
+	 * Extract content parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_content_params( $message ) {
+		$params = array( 'limit' => 20 );
+
+		// Check for search query.
+		if ( preg_match( '/(?:about|containing|with)\s+["\']?([^"\']+)["\']?/i', $message, $matches ) ) {
+			$params['search'] = trim( $matches[1] );
+		}
+
+		// Check for limit.
+		if ( preg_match( '/(?:top|first|last)\s+(\d+)/i', $message, $matches ) ) {
+			$params['limit'] = (int) $matches[1];
+		}
+
+		return $params;
 	}
 }

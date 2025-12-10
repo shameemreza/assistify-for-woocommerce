@@ -60,10 +60,25 @@
       // Ordered lists
       html = html.replace(/^\s*\d+\.\s+(.+)$/gm, "<li>$1</li>");
 
-      // Links [text](url)
+      // Links [text](url) - internal links same tab, external new tab
       html = html.replace(
         /\[([^\]]+)\]\(([^)]+)\)/g,
-        '<a href="$2" target="_blank" rel="noopener">$1</a>'
+        function (match, text, url) {
+          var isInternal =
+            url.startsWith("/") ||
+            url.startsWith("#") ||
+            url.indexOf(window.location.hostname) !== -1;
+          if (isInternal) {
+            return '<a href="' + url + '">' + text + "</a>";
+          }
+          return (
+            '<a href="' +
+            url +
+            '" target="_blank" rel="noopener">' +
+            text +
+            "</a>"
+          );
+        }
       );
 
       // Line breaks (double newline = paragraph)

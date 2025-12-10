@@ -1195,6 +1195,291 @@ class Abilities_Registry {
 				'is_destructive'   => true,
 			)
 		);
+
+		// =========================================================================
+		// WordPress Content Abilities
+		// =========================================================================
+
+		$this->register(
+			'afw/content/pages',
+			array(
+				'name'        => __( 'List Pages', 'assistify-for-woocommerce' ),
+				'description' => __( 'List WordPress pages with optional filters.', 'assistify-for-woocommerce' ),
+				'category'    => 'content',
+				'callback'    => array( $this, 'ability_content_pages' ),
+				'parameters'  => array(
+					'search' => array(
+						'type'        => 'string',
+						'description' => __( 'Search pages by title or content.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'limit'  => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of pages to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 20,
+					),
+					'status' => array(
+						'type'        => 'string',
+						'description' => __( 'Page status (publish, draft, private).', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 'publish',
+					),
+				),
+				'capability'  => 'read',
+			)
+		);
+
+		$this->register(
+			'afw/content/posts',
+			array(
+				'name'        => __( 'List Posts', 'assistify-for-woocommerce' ),
+				'description' => __( 'List WordPress blog posts with optional filters.', 'assistify-for-woocommerce' ),
+				'category'    => 'content',
+				'callback'    => array( $this, 'ability_content_posts' ),
+				'parameters'  => array(
+					'search'   => array(
+						'type'        => 'string',
+						'description' => __( 'Search posts by title or content.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'category' => array(
+						'type'        => 'string',
+						'description' => __( 'Filter by category slug or ID.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'tag'      => array(
+						'type'        => 'string',
+						'description' => __( 'Filter by tag slug.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'limit'    => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of posts to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 10,
+					),
+				),
+				'capability'  => 'read',
+			)
+		);
+
+		$this->register(
+			'afw/content/categories',
+			array(
+				'name'        => __( 'List Categories', 'assistify-for-woocommerce' ),
+				'description' => __( 'List WordPress post categories.', 'assistify-for-woocommerce' ),
+				'category'    => 'content',
+				'callback'    => array( $this, 'ability_content_categories' ),
+				'parameters'  => array(
+					'hide_empty' => array(
+						'type'        => 'boolean',
+						'description' => __( 'Hide categories with no posts.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => true,
+					),
+				),
+				'capability'  => 'read',
+			)
+		);
+
+		$this->register(
+			'afw/content/tags',
+			array(
+				'name'        => __( 'List Tags', 'assistify-for-woocommerce' ),
+				'description' => __( 'List WordPress post tags.', 'assistify-for-woocommerce' ),
+				'category'    => 'content',
+				'callback'    => array( $this, 'ability_content_tags' ),
+				'parameters'  => array(
+					'hide_empty' => array(
+						'type'        => 'boolean',
+						'description' => __( 'Hide tags with no posts.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => true,
+					),
+					'limit'      => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of tags to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 50,
+					),
+				),
+				'capability'  => 'read',
+			)
+		);
+
+		$this->register(
+			'afw/content/menus',
+			array(
+				'name'        => __( 'List Navigation Menus', 'assistify-for-woocommerce' ),
+				'description' => __( 'List WordPress navigation menus and their items.', 'assistify-for-woocommerce' ),
+				'category'    => 'content',
+				'callback'    => array( $this, 'ability_content_menus' ),
+				'parameters'  => array(
+					'menu_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'Specific menu ID to get items for.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+				),
+				'capability'  => 'read',
+			)
+		);
+
+		// =========================================================================
+		// URL Generation Abilities
+		// =========================================================================
+
+		$this->register(
+			'afw/urls/product',
+			array(
+				'name'        => __( 'Get Product URL', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get the frontend URL for a product.', 'assistify-for-woocommerce' ),
+				'category'    => 'urls',
+				'callback'    => array( $this, 'ability_urls_product' ),
+				'parameters'  => array(
+					'product_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'The product ID.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'product_name' => array(
+						'type'        => 'string',
+						'description' => __( 'Search by product name to get its URL.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+				),
+				'capability'  => 'read',
+			)
+		);
+
+		$this->register(
+			'afw/urls/product-edit',
+			array(
+				'name'        => __( 'Get Product Edit URL', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get the admin edit URL for a product.', 'assistify-for-woocommerce' ),
+				'category'    => 'urls',
+				'callback'    => array( $this, 'ability_urls_product_edit' ),
+				'parameters'  => array(
+					'product_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'The product ID.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'product_name' => array(
+						'type'        => 'string',
+						'description' => __( 'Search by product name to get its edit URL.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		$this->register(
+			'afw/urls/order',
+			array(
+				'name'        => __( 'Get Order URL', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get the admin URL for viewing/editing an order.', 'assistify-for-woocommerce' ),
+				'category'    => 'urls',
+				'callback'    => array( $this, 'ability_urls_order' ),
+				'parameters'  => array(
+					'order_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'The order ID.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		$this->register(
+			'afw/urls/customer',
+			array(
+				'name'        => __( 'Get Customer URL', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get the admin URL for viewing a customer profile.', 'assistify-for-woocommerce' ),
+				'category'    => 'urls',
+				'callback'    => array( $this, 'ability_urls_customer' ),
+				'parameters'  => array(
+					'customer_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'The customer/user ID.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		$this->register(
+			'afw/urls/category',
+			array(
+				'name'        => __( 'Get Category URL', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get the frontend URL for a product category.', 'assistify-for-woocommerce' ),
+				'category'    => 'urls',
+				'callback'    => array( $this, 'ability_urls_category' ),
+				'parameters'  => array(
+					'category_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'The category ID.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'category_name' => array(
+						'type'        => 'string',
+						'description' => __( 'Search by category name.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+				),
+				'capability'  => 'read',
+			)
+		);
+
+		$this->register(
+			'afw/urls/settings',
+			array(
+				'name'        => __( 'Get WooCommerce Settings URL', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get the admin URL for various WooCommerce settings pages.', 'assistify-for-woocommerce' ),
+				'category'    => 'urls',
+				'callback'    => array( $this, 'ability_urls_settings' ),
+				'parameters'  => array(
+					'section' => array(
+						'type'        => 'string',
+						'description' => __( 'Settings section: general, products, tax, shipping, payments, accounts, emails, integration, advanced, assistify.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		$this->register(
+			'afw/urls/page',
+			array(
+				'name'        => __( 'Get Page URL', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get the URL for a WordPress page.', 'assistify-for-woocommerce' ),
+				'category'    => 'urls',
+				'callback'    => array( $this, 'ability_urls_page' ),
+				'parameters'  => array(
+					'page_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'The page ID.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'page_title' => array(
+						'type'        => 'string',
+						'description' => __( 'Search by page title.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'page_slug' => array(
+						'type'        => 'string',
+						'description' => __( 'Search by page slug.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+				),
+				'capability'  => 'read',
+			)
+		);
 	}
 
 	/**
@@ -4106,6 +4391,523 @@ class Abilities_Registry {
 		}
 
 		return $categories;
+	}
+
+	// =========================================================================
+	// WordPress Content Ability Callbacks
+	// =========================================================================
+
+	/**
+	 * List WordPress pages.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|WP_Error Pages data.
+	 */
+	public function ability_content_pages( $params ) {
+		$args = array(
+			'post_type'      => 'page',
+			'posts_per_page' => isset( $params['limit'] ) ? absint( $params['limit'] ) : 20,
+			'post_status'    => isset( $params['status'] ) ? sanitize_text_field( $params['status'] ) : 'publish',
+			'orderby'        => 'menu_order',
+			'order'          => 'ASC',
+		);
+
+		if ( ! empty( $params['search'] ) ) {
+			$args['s'] = sanitize_text_field( $params['search'] );
+		}
+
+		$pages = get_posts( $args );
+		$data  = array();
+
+		foreach ( $pages as $page ) {
+			$data[] = array(
+				'id'        => $page->ID,
+				'title'     => $page->post_title,
+				'slug'      => $page->post_name,
+				'url'       => get_permalink( $page->ID ),
+				'status'    => $page->post_status,
+				'parent_id' => $page->post_parent,
+				'excerpt'   => wp_trim_words( $page->post_content, 30, '...' ),
+			);
+		}
+
+		return array(
+			'success' => true,
+			'pages'   => $data,
+			'count'   => count( $data ),
+		);
+	}
+
+	/**
+	 * List WordPress posts.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|WP_Error Posts data.
+	 */
+	public function ability_content_posts( $params ) {
+		$args = array(
+			'post_type'      => 'post',
+			'posts_per_page' => isset( $params['limit'] ) ? absint( $params['limit'] ) : 10,
+			'post_status'    => 'publish',
+		);
+
+		if ( ! empty( $params['search'] ) ) {
+			$args['s'] = sanitize_text_field( $params['search'] );
+		}
+
+		if ( ! empty( $params['category'] ) ) {
+			if ( is_numeric( $params['category'] ) ) {
+				$args['cat'] = absint( $params['category'] );
+			} else {
+				$args['category_name'] = sanitize_text_field( $params['category'] );
+			}
+		}
+
+		if ( ! empty( $params['tag'] ) ) {
+			$args['tag'] = sanitize_text_field( $params['tag'] );
+		}
+
+		$posts = get_posts( $args );
+		$data  = array();
+
+		foreach ( $posts as $post ) {
+			$categories = wp_get_post_categories( $post->ID, array( 'fields' => 'names' ) );
+			$tags       = wp_get_post_tags( $post->ID, array( 'fields' => 'names' ) );
+
+			$data[] = array(
+				'id'         => $post->ID,
+				'title'      => $post->post_title,
+				'slug'       => $post->post_name,
+				'url'        => get_permalink( $post->ID ),
+				'date'       => $post->post_date,
+				'excerpt'    => wp_trim_words( $post->post_content, 30, '...' ),
+				'categories' => $categories,
+				'tags'       => $tags,
+				'author'     => get_the_author_meta( 'display_name', $post->post_author ),
+			);
+		}
+
+		return array(
+			'success' => true,
+			'posts'   => $data,
+			'count'   => count( $data ),
+		);
+	}
+
+	/**
+	 * List WordPress categories.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Categories data.
+	 */
+	public function ability_content_categories( $params ) {
+		$hide_empty = isset( $params['hide_empty'] ) ? (bool) $params['hide_empty'] : true;
+
+		$categories = get_categories(
+			array(
+				'hide_empty' => $hide_empty,
+				'orderby'    => 'name',
+				'order'      => 'ASC',
+			)
+		);
+
+		$data = array();
+		foreach ( $categories as $cat ) {
+			$data[] = array(
+				'id'          => $cat->term_id,
+				'name'        => $cat->name,
+				'slug'        => $cat->slug,
+				'description' => $cat->description,
+				'count'       => $cat->count,
+				'url'         => get_category_link( $cat->term_id ),
+			);
+		}
+
+		return array(
+			'success'    => true,
+			'categories' => $data,
+			'count'      => count( $data ),
+		);
+	}
+
+	/**
+	 * List WordPress tags.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Tags data.
+	 */
+	public function ability_content_tags( $params ) {
+		$hide_empty = isset( $params['hide_empty'] ) ? (bool) $params['hide_empty'] : true;
+		$limit      = isset( $params['limit'] ) ? absint( $params['limit'] ) : 50;
+
+		$tags = get_tags(
+			array(
+				'hide_empty' => $hide_empty,
+				'number'     => $limit,
+				'orderby'    => 'count',
+				'order'      => 'DESC',
+			)
+		);
+
+		$data = array();
+		if ( ! is_wp_error( $tags ) ) {
+			foreach ( $tags as $tag ) {
+				$data[] = array(
+					'id'    => $tag->term_id,
+					'name'  => $tag->name,
+					'slug'  => $tag->slug,
+					'count' => $tag->count,
+					'url'   => get_tag_link( $tag->term_id ),
+				);
+			}
+		}
+
+		return array(
+			'success' => true,
+			'tags'    => $data,
+			'count'   => count( $data ),
+		);
+	}
+
+	/**
+	 * List navigation menus.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Menus data.
+	 */
+	public function ability_content_menus( $params ) {
+		$menus = wp_get_nav_menus();
+		$data  = array();
+
+		foreach ( $menus as $menu ) {
+			$menu_data = array(
+				'id'    => $menu->term_id,
+				'name'  => $menu->name,
+				'slug'  => $menu->slug,
+				'count' => $menu->count,
+			);
+
+			// If specific menu requested, get items.
+			if ( isset( $params['menu_id'] ) && absint( $params['menu_id'] ) === $menu->term_id ) {
+				$items              = wp_get_nav_menu_items( $menu->term_id );
+				$menu_data['items'] = array();
+
+				if ( $items ) {
+					foreach ( $items as $item ) {
+						$menu_data['items'][] = array(
+							'id'     => $item->ID,
+							'title'  => $item->title,
+							'url'    => $item->url,
+							'type'   => $item->type,
+							'parent' => $item->menu_item_parent,
+						);
+					}
+				}
+			}
+
+			$data[] = $menu_data;
+		}
+
+		return array(
+			'success' => true,
+			'menus'   => $data,
+			'count'   => count( $data ),
+		);
+	}
+
+	// =========================================================================
+	// URL Generation Ability Callbacks
+	// =========================================================================
+
+	/**
+	 * Get product URL.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|WP_Error URL data.
+	 */
+	public function ability_urls_product( $params ) {
+		$product = null;
+
+		if ( ! empty( $params['product_id'] ) ) {
+			$product = wc_get_product( absint( $params['product_id'] ) );
+		} elseif ( ! empty( $params['product_name'] ) ) {
+			// Search by name.
+			$products = wc_get_products(
+				array(
+					's'      => sanitize_text_field( $params['product_name'] ),
+					'limit'  => 1,
+					'status' => 'publish',
+				)
+			);
+			if ( ! empty( $products ) ) {
+				$product = $products[0];
+			}
+		}
+
+		if ( ! $product ) {
+			return new \WP_Error( 'not_found', __( 'Product not found.', 'assistify-for-woocommerce' ) );
+		}
+
+		return array(
+			'success'      => true,
+			'product_id'   => $product->get_id(),
+			'product_name' => $product->get_name(),
+			'url'          => $product->get_permalink(),
+			'price'        => html_entity_decode( wp_strip_all_tags( wc_price( $product->get_price() ) ) ),
+		);
+	}
+
+	/**
+	 * Get product edit URL.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|WP_Error URL data.
+	 */
+	public function ability_urls_product_edit( $params ) {
+		$product = null;
+
+		if ( ! empty( $params['product_id'] ) ) {
+			$product = wc_get_product( absint( $params['product_id'] ) );
+		} elseif ( ! empty( $params['product_name'] ) ) {
+			$products = wc_get_products(
+				array(
+					's'     => sanitize_text_field( $params['product_name'] ),
+					'limit' => 1,
+				)
+			);
+			if ( ! empty( $products ) ) {
+				$product = $products[0];
+			}
+		}
+
+		if ( ! $product ) {
+			return new \WP_Error( 'not_found', __( 'Product not found.', 'assistify-for-woocommerce' ) );
+		}
+
+		return array(
+			'success'      => true,
+			'product_id'   => $product->get_id(),
+			'product_name' => $product->get_name(),
+			'edit_url'     => admin_url( 'post.php?post=' . $product->get_id() . '&action=edit' ),
+			'view_url'     => $product->get_permalink(),
+		);
+	}
+
+	/**
+	 * Get order URL.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|WP_Error URL data.
+	 */
+	public function ability_urls_order( $params ) {
+		if ( empty( $params['order_id'] ) ) {
+			return new \WP_Error( 'missing_param', __( 'Order ID is required.', 'assistify-for-woocommerce' ) );
+		}
+
+		$order = wc_get_order( absint( $params['order_id'] ) );
+
+		if ( ! $order ) {
+			return new \WP_Error( 'not_found', __( 'Order not found.', 'assistify-for-woocommerce' ) );
+		}
+
+		return array(
+			'success'      => true,
+			'order_id'     => $order->get_id(),
+			'order_number' => $order->get_order_number(),
+			'edit_url'     => $order->get_edit_order_url(),
+			'status'       => $order->get_status(),
+		);
+	}
+
+	/**
+	 * Get customer URL.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|WP_Error URL data.
+	 */
+	public function ability_urls_customer( $params ) {
+		if ( empty( $params['customer_id'] ) ) {
+			return new \WP_Error( 'missing_param', __( 'Customer ID is required.', 'assistify-for-woocommerce' ) );
+		}
+
+		$user = get_user_by( 'id', absint( $params['customer_id'] ) );
+
+		if ( ! $user ) {
+			return new \WP_Error( 'not_found', __( 'Customer not found.', 'assistify-for-woocommerce' ) );
+		}
+
+		return array(
+			'success'       => true,
+			'customer_id'   => $user->ID,
+			'customer_name' => $user->display_name,
+			'email'         => $user->user_email,
+			'edit_url'      => admin_url( 'user-edit.php?user_id=' . $user->ID ),
+			'orders_url'    => admin_url( 'edit.php?post_type=shop_order&_customer_user=' . $user->ID ),
+		);
+	}
+
+	/**
+	 * Get category URL.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|WP_Error URL data.
+	 */
+	public function ability_urls_category( $params ) {
+		$term = null;
+
+		if ( ! empty( $params['category_id'] ) ) {
+			$term = get_term( absint( $params['category_id'] ), 'product_cat' );
+		} elseif ( ! empty( $params['category_name'] ) ) {
+			$term = get_term_by( 'name', sanitize_text_field( $params['category_name'] ), 'product_cat' );
+			if ( ! $term ) {
+				$term = get_term_by( 'slug', sanitize_title( $params['category_name'] ), 'product_cat' );
+			}
+		}
+
+		if ( ! $term || is_wp_error( $term ) ) {
+			return new \WP_Error( 'not_found', __( 'Category not found.', 'assistify-for-woocommerce' ) );
+		}
+
+		return array(
+			'success'       => true,
+			'category_id'   => $term->term_id,
+			'category_name' => $term->name,
+			'url'           => get_term_link( $term ),
+			'edit_url'      => admin_url( 'term.php?taxonomy=product_cat&tag_ID=' . $term->term_id ),
+			'product_count' => $term->count,
+		);
+	}
+
+	/**
+	 * Get WooCommerce settings URL.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|WP_Error URL data.
+	 */
+	public function ability_urls_settings( $params ) {
+		if ( empty( $params['section'] ) ) {
+			return new \WP_Error( 'missing_param', __( 'Section is required.', 'assistify-for-woocommerce' ) );
+		}
+
+		$section = sanitize_text_field( $params['section'] );
+		$url     = '';
+		$title   = '';
+
+		$settings_map = array(
+			'general'     => array(
+				'url'   => admin_url( 'admin.php?page=wc-settings&tab=general' ),
+				'title' => __( 'General Settings', 'assistify-for-woocommerce' ),
+			),
+			'products'    => array(
+				'url'   => admin_url( 'admin.php?page=wc-settings&tab=products' ),
+				'title' => __( 'Product Settings', 'assistify-for-woocommerce' ),
+			),
+			'tax'         => array(
+				'url'   => admin_url( 'admin.php?page=wc-settings&tab=tax' ),
+				'title' => __( 'Tax Settings', 'assistify-for-woocommerce' ),
+			),
+			'shipping'    => array(
+				'url'   => admin_url( 'admin.php?page=wc-settings&tab=shipping' ),
+				'title' => __( 'Shipping Settings', 'assistify-for-woocommerce' ),
+			),
+			'payments'    => array(
+				'url'   => admin_url( 'admin.php?page=wc-settings&tab=checkout' ),
+				'title' => __( 'Payment Settings', 'assistify-for-woocommerce' ),
+			),
+			'accounts'    => array(
+				'url'   => admin_url( 'admin.php?page=wc-settings&tab=account' ),
+				'title' => __( 'Account Settings', 'assistify-for-woocommerce' ),
+			),
+			'emails'      => array(
+				'url'   => admin_url( 'admin.php?page=wc-settings&tab=email' ),
+				'title' => __( 'Email Settings', 'assistify-for-woocommerce' ),
+			),
+			'integration' => array(
+				'url'   => admin_url( 'admin.php?page=wc-settings&tab=integration' ),
+				'title' => __( 'Integration Settings', 'assistify-for-woocommerce' ),
+			),
+			'advanced'    => array(
+				'url'   => admin_url( 'admin.php?page=wc-settings&tab=advanced' ),
+				'title' => __( 'Advanced Settings', 'assistify-for-woocommerce' ),
+			),
+			'assistify'   => array(
+				'url'   => admin_url( 'admin.php?page=wc-settings&tab=assistify' ),
+				'title' => __( 'Assistify Settings', 'assistify-for-woocommerce' ),
+			),
+		);
+
+		if ( ! isset( $settings_map[ $section ] ) ) {
+			$available = implode( ', ', array_keys( $settings_map ) );
+			return new \WP_Error(
+				'invalid_section',
+				/* translators: %s: Available sections. */
+				sprintf( __( 'Invalid section. Available: %s', 'assistify-for-woocommerce' ), $available )
+			);
+		}
+
+		return array(
+			'success' => true,
+			'section' => $section,
+			'title'   => $settings_map[ $section ]['title'],
+			'url'     => $settings_map[ $section ]['url'],
+		);
+	}
+
+	/**
+	 * Get page URL.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|WP_Error URL data.
+	 */
+	public function ability_urls_page( $params ) {
+		$page = null;
+
+		if ( ! empty( $params['page_id'] ) ) {
+			$page = get_post( absint( $params['page_id'] ) );
+		} elseif ( ! empty( $params['page_slug'] ) ) {
+			$page = get_page_by_path( sanitize_title( $params['page_slug'] ) );
+		} elseif ( ! empty( $params['page_title'] ) ) {
+			// Use WP_Query instead of deprecated get_page_by_title (WP 6.2+).
+			$query = new \WP_Query(
+				array(
+					'post_type'              => 'page',
+					'title'                  => sanitize_text_field( $params['page_title'] ),
+					'post_status'            => 'publish',
+					'posts_per_page'         => 1,
+					'no_found_rows'          => true,
+					'update_post_term_cache' => false,
+					'update_post_meta_cache' => false,
+				)
+			);
+
+			if ( $query->have_posts() ) {
+				$page = $query->posts[0];
+			}
+		}
+
+		if ( ! $page || 'page' !== $page->post_type ) {
+			return new \WP_Error( 'not_found', __( 'Page not found.', 'assistify-for-woocommerce' ) );
+		}
+
+		return array(
+			'success'    => true,
+			'page_id'    => $page->ID,
+			'page_title' => $page->post_title,
+			'url'        => get_permalink( $page->ID ),
+			'edit_url'   => admin_url( 'post.php?post=' . $page->ID . '&action=edit' ),
+		);
 	}
 }
 

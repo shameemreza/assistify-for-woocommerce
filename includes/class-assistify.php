@@ -156,10 +156,8 @@ final class Assistify {
 			require_once ASSISTIFY_PLUGIN_DIR . 'includes/admin/class-assistify-admin.php';
 		}
 
-		// Load frontend classes.
-		if ( ! is_admin() || wp_doing_ajax() ) {
-			require_once ASSISTIFY_PLUGIN_DIR . 'includes/frontend/class-assistify-frontend.php';
-		}
+		// Load frontend classes (always needed for AJAX handlers).
+		require_once ASSISTIFY_PLUGIN_DIR . 'includes/frontend/class-assistify-frontend.php';
 
 		$this->loader = new Assistify_Loader();
 	}
@@ -257,7 +255,7 @@ final class Assistify {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
 		// Add admin menu items.
-		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_admin_menu' );
+		// Settings integrated into WooCommerce Settings tab.
 
 		// Add settings link on plugins page.
 		$this->loader->add_filter( 'plugin_action_links_' . ASSISTIFY_PLUGIN_BASENAME, $plugin_admin, 'add_plugin_action_links' );
@@ -291,11 +289,15 @@ final class Assistify {
 	 * @return void
 	 */
 	private function define_public_hooks() {
+		$plugin_frontend = new Frontend\Assistify_Frontend();
+
+		// AJAX handlers for customer chat (both logged in and guests).
+		$this->loader->add_action( 'wp_ajax_assistify_customer_chat', $plugin_frontend, 'handle_customer_chat' );
+		$this->loader->add_action( 'wp_ajax_nopriv_assistify_customer_chat', $plugin_frontend, 'handle_customer_chat' );
+
 		if ( is_admin() && ! wp_doing_ajax() ) {
 			return;
 		}
-
-		$plugin_frontend = new Frontend\Assistify_Frontend();
 
 		// Enqueue frontend styles and scripts.
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_frontend, 'enqueue_styles' );

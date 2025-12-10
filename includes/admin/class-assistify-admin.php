@@ -131,101 +131,6 @@ class Assistify_Admin {
 	}
 
 	/**
-	 * Add admin menu items.
-	 *
-	 * @since 1.0.0
-	 * @return void
-	 */
-	public function add_admin_menu() {
-		// Add submenu under WooCommerce.
-		add_submenu_page(
-			'woocommerce',
-			esc_html__( 'Assistify', 'assistify-for-woocommerce' ),
-			esc_html__( 'Assistify', 'assistify-for-woocommerce' ),
-			'manage_woocommerce',
-			'assistify',
-			array( $this, 'render_dashboard_page' )
-		);
-	}
-
-	/**
-	 * Render the dashboard page.
-	 *
-	 * @since 1.0.0
-	 * @return void
-	 */
-	public function render_dashboard_page() {
-		?>
-		<div class="wrap">
-			<h1><?php echo esc_html__( 'Assistify for WooCommerce', 'assistify-for-woocommerce' ); ?></h1>
-			
-			<div class="assistify-dashboard">
-				<div class="assistify-welcome-panel">
-					<h2><?php echo esc_html__( 'Welcome to Assistify', 'assistify-for-woocommerce' ); ?></h2>
-					<p><?php echo esc_html__( 'Your AI-powered assistant for WooCommerce is ready.', 'assistify-for-woocommerce' ); ?></p>
-					
-					<div class="assistify-quick-links">
-						<a href="<?php echo esc_url( admin_url( 'admin.php?page=wc-settings&tab=assistify' ) ); ?>" class="button button-primary">
-							<?php echo esc_html__( 'Configure Settings', 'assistify-for-woocommerce' ); ?>
-						</a>
-					</div>
-				</div>
-
-				<div class="assistify-status-section">
-					<h3><?php echo esc_html__( 'Status', 'assistify-for-woocommerce' ); ?></h3>
-					<table class="widefat striped">
-						<tbody>
-							<tr>
-								<td><?php echo esc_html__( 'AI Provider', 'assistify-for-woocommerce' ); ?></td>
-								<td>
-									<?php
-									$provider = get_option( 'assistify_ai_provider', 'openai' );
-									echo esc_html( ucfirst( $provider ) );
-									?>
-								</td>
-							</tr>
-							<tr>
-								<td><?php echo esc_html__( 'Admin Chat', 'assistify-for-woocommerce' ); ?></td>
-								<td>
-									<?php
-									$admin_chat = get_option( 'assistify_admin_chat_enabled', 'yes' );
-									echo 'yes' === $admin_chat 
-										? '<span class="dashicons dashicons-yes-alt" style="color: #46b450;"></span> ' . esc_html__( 'Enabled', 'assistify-for-woocommerce' )
-										: '<span class="dashicons dashicons-dismiss" style="color: #dc3232;"></span> ' . esc_html__( 'Disabled', 'assistify-for-woocommerce' );
-									?>
-								</td>
-							</tr>
-							<tr>
-								<td><?php echo esc_html__( 'Customer Chat', 'assistify-for-woocommerce' ); ?></td>
-								<td>
-									<?php
-									$customer_chat = get_option( 'assistify_customer_chat_enabled', 'no' );
-									echo 'yes' === $customer_chat 
-										? '<span class="dashicons dashicons-yes-alt" style="color: #46b450;"></span> ' . esc_html__( 'Enabled', 'assistify-for-woocommerce' )
-										: '<span class="dashicons dashicons-dismiss" style="color: #dc3232;"></span> ' . esc_html__( 'Disabled', 'assistify-for-woocommerce' );
-									?>
-								</td>
-							</tr>
-							<tr>
-								<td><?php echo esc_html__( 'API Key', 'assistify-for-woocommerce' ); ?></td>
-								<td>
-									<?php
-									$api_key = get_option( 'assistify_api_key', '' );
-									echo ! empty( $api_key ) 
-										? '<span class="dashicons dashicons-yes-alt" style="color: #46b450;"></span> ' . esc_html__( 'Configured', 'assistify-for-woocommerce' )
-										: '<span class="dashicons dashicons-warning" style="color: #ffb900;"></span> ' . esc_html__( 'Not configured', 'assistify-for-woocommerce' );
-									?>
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-		<?php
-	}
-
-	/**
 	 * Add plugin action links.
 	 *
 	 * @since 1.0.0
@@ -636,6 +541,70 @@ class Assistify_Admin {
 					'bottom-left'  => esc_html__( 'Bottom Left', 'assistify-for-woocommerce' ),
 				),
 				'desc_tip' => true,
+			),
+			array(
+				'title'    => esc_html__( 'Assistant Name', 'assistify-for-woocommerce' ),
+				'desc'     => esc_html__( 'Name shown to customers as the AI assistant.', 'assistify-for-woocommerce' ),
+				'id'       => 'assistify_assistant_name',
+				'type'     => 'text',
+				'default'  => 'Ayana',
+				'desc_tip' => true,
+			),
+			array(
+				'title'    => esc_html__( 'Primary Color', 'assistify-for-woocommerce' ),
+				'desc'     => esc_html__( 'Main color for the chat widget.', 'assistify-for-woocommerce' ),
+				'id'       => 'assistify_primary_color',
+				'type'     => 'color',
+				'default'  => '#7F54B3',
+				'desc_tip' => true,
+			),
+			array(
+				'title'   => esc_html__( 'Enable Notification Sound', 'assistify-for-woocommerce' ),
+				'desc'    => esc_html__( 'Play a sound when AI responds.', 'assistify-for-woocommerce' ),
+				'id'      => 'assistify_sound_enabled',
+				'type'    => 'checkbox',
+				'default' => 'yes',
+			),
+			array(
+				'title'    => esc_html__( 'Custom Sound URL', 'assistify-for-woocommerce' ),
+				'desc'     => esc_html__( 'Optional: URL to a custom notification sound (MP3/WAV).', 'assistify-for-woocommerce' ),
+				'id'       => 'assistify_custom_sound_url',
+				'type'     => 'url',
+				'default'  => '',
+				'desc_tip' => true,
+			),
+			array(
+				'title'   => esc_html__( 'Auto-Open Chat', 'assistify-for-woocommerce' ),
+				'desc'    => esc_html__( 'Automatically open chat after user is idle (once per day).', 'assistify-for-woocommerce' ),
+				'id'      => 'assistify_auto_open_enabled',
+				'type'    => 'checkbox',
+				'default' => 'no',
+			),
+			array(
+				'title'             => esc_html__( 'Auto-Open Delay', 'assistify-for-woocommerce' ),
+				'desc'              => esc_html__( 'Seconds of idle time before auto-opening chat.', 'assistify-for-woocommerce' ),
+				'id'                => 'assistify_auto_open_delay',
+				'type'              => 'number',
+				'default'           => '90',
+				'custom_attributes' => array(
+					'min'  => '30',
+					'max'  => '300',
+					'step' => '10',
+				),
+				'desc_tip'          => true,
+			),
+			array(
+				'title'             => esc_html__( 'Product Context Limit', 'assistify-for-woocommerce' ),
+				'desc'              => esc_html__( 'Maximum products to include in AI context for recommendations.', 'assistify-for-woocommerce' ),
+				'id'                => 'assistify_product_context_limit',
+				'type'              => 'number',
+				'default'           => '100',
+				'custom_attributes' => array(
+					'min'  => '10',
+					'max'  => '500',
+					'step' => '10',
+				),
+				'desc_tip'          => true,
 			),
 			array(
 				'type' => 'sectionend',
