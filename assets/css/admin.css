@@ -1,0 +1,255 @@
+/**
+ * Assistify for WooCommerce - Admin Styles
+ *
+ * @package Assistify_For_WooCommerce
+ * @since   1.0.0
+ */
+
+/* Dashboard */
+.assistify-dashboard {
+	max-width: 1200px;
+	margin-top: 20px;
+}
+
+.assistify-welcome-panel {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-left: 4px solid #7f54b3;
+	padding: 20px;
+	margin-bottom: 20px;
+}
+
+.assistify-welcome-panel h2 {
+	margin-top: 0;
+	color: #1d2327;
+}
+
+.assistify-welcome-panel p {
+	font-size: 14px;
+	color: #50575e;
+}
+
+.assistify-quick-links {
+	margin-top: 15px;
+}
+
+.assistify-status-section {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	padding: 20px;
+}
+
+.assistify-status-section h3 {
+	margin-top: 0;
+	padding-bottom: 10px;
+	border-bottom: 1px solid #c3c4c7;
+}
+
+.assistify-status-section table {
+	margin-top: 15px;
+}
+
+.assistify-status-section .dashicons {
+	vertical-align: middle;
+	margin-right: 5px;
+}
+
+/* Admin Chat Widget */
+.assistify-admin-chat {
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	z-index: 99999;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+}
+
+.assistify-admin-chat-toggle {
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background: #7f54b3;
+	border: none;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.assistify-admin-chat-toggle:hover {
+	transform: scale(1.05);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.assistify-admin-chat-toggle:focus {
+	outline: 2px solid #0073aa;
+	outline-offset: 2px;
+}
+
+.assistify-admin-chat-toggle svg {
+	fill: #fff;
+}
+
+.assistify-admin-chat-container {
+	position: absolute;
+	bottom: 70px;
+	right: 0;
+	width: 380px;
+	height: 500px;
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+	display: none;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.assistify-admin-chat-container.is-open {
+	display: flex;
+}
+
+.assistify-admin-chat-header {
+	background: #7f54b3;
+	color: #fff;
+	padding: 16px 20px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.assistify-admin-chat-header h3 {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.assistify-admin-chat-messages {
+	flex: 1;
+	overflow-y: auto;
+	padding: 16px;
+	background: #f6f7f7;
+}
+
+.assistify-message {
+	margin-bottom: 12px;
+	max-width: 85%;
+	animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateY(10px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.assistify-message-user {
+	margin-left: auto;
+}
+
+.assistify-message-content {
+	padding: 10px 14px;
+	border-radius: 12px;
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.assistify-message-user .assistify-message-content {
+	background: #7f54b3;
+	color: #fff;
+	border-bottom-right-radius: 4px;
+}
+
+.assistify-message-assistant .assistify-message-content {
+	background: #fff;
+	color: #1d2327;
+	border: 1px solid #c3c4c7;
+	border-bottom-left-radius: 4px;
+}
+
+.assistify-admin-chat-form {
+	display: flex;
+	padding: 12px;
+	background: #fff;
+	border-top: 1px solid #c3c4c7;
+	gap: 8px;
+}
+
+.assistify-admin-chat-input {
+	flex: 1;
+	padding: 10px 14px;
+	border: 1px solid #c3c4c7;
+	border-radius: 8px;
+	font-size: 14px;
+	transition: border-color 0.2s ease;
+}
+
+.assistify-admin-chat-input:focus {
+	border-color: #7f54b3;
+	outline: none;
+	box-shadow: 0 0 0 1px #7f54b3;
+}
+
+.assistify-admin-chat-send {
+	padding: 10px 16px;
+	background: #7f54b3;
+	color: #fff;
+	border: none;
+	border-radius: 8px;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 500;
+	transition: background 0.2s ease;
+}
+
+.assistify-admin-chat-send:hover {
+	background: #674399;
+}
+
+.assistify-admin-chat-send:focus {
+	outline: 2px solid #0073aa;
+	outline-offset: 2px;
+}
+
+/* Loading indicator */
+.assistify-typing-indicator {
+	display: flex;
+	gap: 4px;
+	padding: 10px 14px;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 12px;
+	border-bottom-left-radius: 4px;
+	width: fit-content;
+}
+
+.assistify-typing-indicator span {
+	width: 8px;
+	height: 8px;
+	background: #c3c4c7;
+	border-radius: 50%;
+	animation: typing 1.4s infinite;
+}
+
+.assistify-typing-indicator span:nth-child(2) {
+	animation-delay: 0.2s;
+}
+
+.assistify-typing-indicator span:nth-child(3) {
+	animation-delay: 0.4s;
+}
+
+@keyframes typing {
+	0%, 60%, 100% {
+		transform: translateY(0);
+	}
+	30% {
+		transform: translateY(-8px);
+	}
+}
+

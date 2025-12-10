@@ -1,0 +1,14 @@
+*** Assistify for WooCommerce Changelog ***
+
+2025-XX-XX - version 1.0.0
+* Initial release
+* Admin chat interface with natural language queries
+* Customer chat widget with self-service capabilities
+* Support for OpenAI, Anthropic, Google, xAI, and DeepSeek
+* Content generation for products
+* AI image generation
+* Store health diagnostics
+* WooCommerce Subscriptions integration (when installed)
+* WooCommerce Bookings integration (when installed)
+* HPOS compatibility
+* GDPR compliance features
