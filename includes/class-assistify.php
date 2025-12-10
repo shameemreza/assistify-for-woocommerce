@@ -61,12 +61,56 @@ final class Assistify {
 	 */
 	private function __construct() {
 		$this->load_dependencies();
+		$this->maybe_upgrade();
 		$this->set_locale();
 		$this->init_abilities();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_rest_api();
 		$this->run();
+	}
+
+	/**
+	 * Check if database needs upgrade and run if necessary.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	private function maybe_upgrade() {
+		$installed_version = get_option( 'assistify_db_version', '0' );
+		$current_version   = '1.0.2'; // Increment this when schema changes.
+
+		if ( version_compare( $installed_version, $current_version, '<' ) ) {
+			// Run database upgrade.
+			$this->run_database_upgrade( $installed_version );
+
+			// Update version.
+			update_option( 'assistify_db_version', $current_version );
+		}
+	}
+
+	/**
+	 * Run database upgrade based on version.
+	 *
+	 * @since 1.0.0
+	 * @param string $from_version The version upgrading from.
+	 * @return void
+	 */
+	private function run_database_upgrade( $from_version ) {
+		global $wpdb;
+
+		// For fresh install or major schema change, recreate tables.
+		if ( version_compare( $from_version, '1.0.2', '<' ) ) {
+			// Drop old tables if they exist with wrong schema.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
+			$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}afw_messages" );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange
+			$wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}afw_sessions" );
+
+			// Now create fresh tables with correct schema.
+			require_once ASSISTIFY_PLUGIN_DIR . 'includes/class-assistify-activator.php';
+			Assistify_Activator::create_tables();
+		}
 	}
 
 	/**
@@ -224,6 +268,19 @@ final class Assistify {
 		$this->loader->add_filter( 'woocommerce_settings_tabs_array', $plugin_admin, 'add_settings_tab', 50 );
 		$this->loader->add_action( 'woocommerce_settings_tabs_assistify', $plugin_admin, 'settings_tab_content' );
 		$this->loader->add_action( 'woocommerce_update_options_assistify', $plugin_admin, 'save_settings' );
+
+		// AJAX handlers for admin chat.
+		$this->loader->add_action( 'wp_ajax_assistify_admin_chat', $plugin_admin, 'handle_admin_chat' );
+
+		// AJAX handlers for chat sessions.
+		$this->loader->add_action( 'wp_ajax_assistify_get_sessions', $plugin_admin, 'handle_get_sessions' );
+		$this->loader->add_action( 'wp_ajax_assistify_get_session_messages', $plugin_admin, 'handle_get_session_messages' );
+		$this->loader->add_action( 'wp_ajax_assistify_create_session', $plugin_admin, 'handle_create_session' );
+		$this->loader->add_action( 'wp_ajax_assistify_delete_session', $plugin_admin, 'handle_delete_session' );
+		$this->loader->add_action( 'wp_ajax_assistify_clear_all_sessions', $plugin_admin, 'handle_clear_all_sessions' );
+
+		// AJAX handler for testing API key.
+		$this->loader->add_action( 'wp_ajax_assistify_test_api_key', $plugin_admin, 'handle_test_api_key' );
 	}
 
 	/**

@@ -161,6 +161,64 @@ class Abilities_Registry {
 			)
 		);
 
+		$this->register(
+			'afw/orders/update-status',
+			array(
+				'name'             => __( 'Update Order Status', 'assistify-for-woocommerce' ),
+				'description'      => __( 'Update the status of an order.', 'assistify-for-woocommerce' ),
+				'category'         => 'orders',
+				'callback'         => array( $this, 'ability_orders_update_status' ),
+				'parameters'       => array(
+					'order_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'The order ID.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+					'status'   => array(
+						'type'        => 'string',
+						'description' => __( 'New order status (pending, processing, on-hold, completed, cancelled, refunded, failed).', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+					'note'     => array(
+						'type'        => 'string',
+						'description' => __( 'Optional note to add with the status change.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+				),
+				'capability'       => 'manage_woocommerce',
+				'requires_confirm' => true,
+			)
+		);
+
+		$this->register(
+			'afw/orders/add-note',
+			array(
+				'name'        => __( 'Add Order Note', 'assistify-for-woocommerce' ),
+				'description' => __( 'Add a note to an order.', 'assistify-for-woocommerce' ),
+				'category'    => 'orders',
+				'callback'    => array( $this, 'ability_orders_add_note' ),
+				'parameters'  => array(
+					'order_id'      => array(
+						'type'        => 'integer',
+						'description' => __( 'The order ID.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+					'note'          => array(
+						'type'        => 'string',
+						'description' => __( 'The note content.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+					'customer_note' => array(
+						'type'        => 'boolean',
+						'description' => __( 'Whether this is a note for the customer (true) or private (false).', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => false,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
 		// Product abilities.
 		$this->register(
 			'afw/products/get',
@@ -282,6 +340,104 @@ class Abilities_Registry {
 					'limit'  => array(
 						'type'        => 'integer',
 						'description' => __( 'Number of products to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 10,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Customer abilities.
+		$this->register(
+			'afw/customers/get',
+			array(
+				'name'        => __( 'Get Customer', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get details of a specific customer.', 'assistify-for-woocommerce' ),
+				'category'    => 'customers',
+				'callback'    => array( $this, 'ability_customers_get' ),
+				'parameters'  => array(
+					'customer_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'The customer/user ID.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		$this->register(
+			'afw/customers/list',
+			array(
+				'name'        => __( 'List Customers', 'assistify-for-woocommerce' ),
+				'description' => __( 'List customers with optional filters.', 'assistify-for-woocommerce' ),
+				'category'    => 'customers',
+				'callback'    => array( $this, 'ability_customers_list' ),
+				'parameters'  => array(
+					'orderby' => array(
+						'type'        => 'string',
+						'description' => __( 'Order by: registered, order_count, total_spent.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 'registered',
+					),
+					'order'   => array(
+						'type'        => 'string',
+						'description' => __( 'Order direction: ASC or DESC.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 'DESC',
+					),
+					'limit'   => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of customers to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 10,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		$this->register(
+			'afw/customers/search',
+			array(
+				'name'        => __( 'Search Customers', 'assistify-for-woocommerce' ),
+				'description' => __( 'Search customers by name or email.', 'assistify-for-woocommerce' ),
+				'category'    => 'customers',
+				'callback'    => array( $this, 'ability_customers_search' ),
+				'parameters'  => array(
+					'query' => array(
+						'type'        => 'string',
+						'description' => __( 'Search query (name, email, or username).', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+					'limit' => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of results to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 10,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		$this->register(
+			'afw/customers/orders',
+			array(
+				'name'        => __( 'Get Customer Orders', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get orders for a specific customer.', 'assistify-for-woocommerce' ),
+				'category'    => 'customers',
+				'callback'    => array( $this, 'ability_customers_orders' ),
+				'parameters'  => array(
+					'customer_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'The customer/user ID.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+					'limit'       => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of orders to return.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 						'default'     => 10,
 					),
@@ -1027,6 +1183,360 @@ class Abilities_Registry {
 			'products' => $products,
 			'period'   => $period,
 			'count'    => count( $products ),
+		);
+	}
+
+	/**
+	 * Update order status.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters with 'order_id' and 'status'.
+	 * @return array|\WP_Error Result or error.
+	 */
+	public function ability_orders_update_status( $params ) {
+		$order = wc_get_order( absint( $params['order_id'] ) );
+
+		if ( ! $order ) {
+			return new \WP_Error(
+				'assistify_order_not_found',
+				__( 'Order not found.', 'assistify-for-woocommerce' )
+			);
+		}
+
+		$new_status = sanitize_text_field( $params['status'] );
+
+		// Validate status.
+		$valid_statuses = array_keys( wc_get_order_statuses() );
+		// Remove 'wc-' prefix for comparison if needed.
+		$status_key = 'wc-' . $new_status;
+		if ( ! in_array( $status_key, $valid_statuses, true ) && ! in_array( 'wc-' . $new_status, $valid_statuses, true ) ) {
+			return new \WP_Error(
+				'assistify_invalid_status',
+				sprintf(
+					/* translators: %s: status name. */
+					__( 'Invalid order status: %s', 'assistify-for-woocommerce' ),
+					$new_status
+				)
+			);
+		}
+
+		$old_status = $order->get_status();
+
+		// Update the status.
+		$order->set_status( $new_status );
+
+		// Add note if provided.
+		if ( ! empty( $params['note'] ) ) {
+			$order->add_order_note(
+				sanitize_textarea_field( $params['note'] ),
+				false,
+				true
+			);
+		}
+
+		$order->save();
+
+		return array(
+			'success'    => true,
+			'order_id'   => $order->get_id(),
+			'old_status' => $old_status,
+			'new_status' => $order->get_status(),
+			'message'    => sprintf(
+				/* translators: %1$d: order ID, %2$s: old status, %3$s: new status. */
+				__( 'Order #%1$d status changed from %2$s to %3$s.', 'assistify-for-woocommerce' ),
+				$order->get_id(),
+				wc_get_order_status_name( $old_status ),
+				wc_get_order_status_name( $order->get_status() )
+			),
+		);
+	}
+
+	/**
+	 * Add note to order.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters with 'order_id' and 'note'.
+	 * @return array|\WP_Error Result or error.
+	 */
+	public function ability_orders_add_note( $params ) {
+		$order = wc_get_order( absint( $params['order_id'] ) );
+
+		if ( ! $order ) {
+			return new \WP_Error(
+				'assistify_order_not_found',
+				__( 'Order not found.', 'assistify-for-woocommerce' )
+			);
+		}
+
+		$note          = sanitize_textarea_field( $params['note'] );
+		$customer_note = ! empty( $params['customer_note'] );
+
+		$note_id = $order->add_order_note( $note, $customer_note, true );
+
+		if ( ! $note_id ) {
+			return new \WP_Error(
+				'assistify_note_failed',
+				__( 'Failed to add note to order.', 'assistify-for-woocommerce' )
+			);
+		}
+
+		return array(
+			'success'       => true,
+			'order_id'      => $order->get_id(),
+			'note_id'       => $note_id,
+			'customer_note' => $customer_note,
+			'message'       => sprintf(
+				/* translators: %d: order ID. */
+				__( 'Note added to order #%d successfully.', 'assistify-for-woocommerce' ),
+				$order->get_id()
+			),
+		);
+	}
+
+	/**
+	 * Get customer details.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters with 'customer_id'.
+	 * @return array|\WP_Error Customer data or error.
+	 */
+	public function ability_customers_get( $params ) {
+		$customer_id = absint( $params['customer_id'] );
+		$customer    = new \WC_Customer( $customer_id );
+
+		if ( ! $customer->get_id() ) {
+			return new \WP_Error(
+				'assistify_customer_not_found',
+				__( 'Customer not found.', 'assistify-for-woocommerce' )
+			);
+		}
+
+		return array(
+			'id'            => $customer->get_id(),
+			'email'         => $customer->get_email(),
+			'first_name'    => $customer->get_first_name(),
+			'last_name'     => $customer->get_last_name(),
+			'display_name'  => $customer->get_display_name(),
+			'username'      => $customer->get_username(),
+			'date_created'  => $customer->get_date_created() ? $customer->get_date_created()->format( 'Y-m-d H:i:s' ) : '',
+			'total_spent'   => $customer->get_total_spent(),
+			'order_count'   => $customer->get_order_count(),
+			'billing'       => array(
+				'first_name' => $customer->get_billing_first_name(),
+				'last_name'  => $customer->get_billing_last_name(),
+				'company'    => $customer->get_billing_company(),
+				'address_1'  => $customer->get_billing_address_1(),
+				'address_2'  => $customer->get_billing_address_2(),
+				'city'       => $customer->get_billing_city(),
+				'state'      => $customer->get_billing_state(),
+				'postcode'   => $customer->get_billing_postcode(),
+				'country'    => $customer->get_billing_country(),
+				'email'      => $customer->get_billing_email(),
+				'phone'      => $customer->get_billing_phone(),
+			),
+			'shipping'      => array(
+				'first_name' => $customer->get_shipping_first_name(),
+				'last_name'  => $customer->get_shipping_last_name(),
+				'company'    => $customer->get_shipping_company(),
+				'address_1'  => $customer->get_shipping_address_1(),
+				'address_2'  => $customer->get_shipping_address_2(),
+				'city'       => $customer->get_shipping_city(),
+				'state'      => $customer->get_shipping_state(),
+				'postcode'   => $customer->get_shipping_postcode(),
+				'country'    => $customer->get_shipping_country(),
+			),
+		);
+	}
+
+	/**
+	 * List customers.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Customers list.
+	 */
+	public function ability_customers_list( $params ) {
+		$limit   = isset( $params['limit'] ) ? absint( $params['limit'] ) : 10;
+		$orderby = isset( $params['orderby'] ) ? sanitize_text_field( $params['orderby'] ) : 'registered';
+		$order   = isset( $params['order'] ) ? strtoupper( sanitize_text_field( $params['order'] ) ) : 'DESC';
+
+		// Validate order direction.
+		$order = in_array( $order, array( 'ASC', 'DESC' ), true ) ? $order : 'DESC';
+
+		// Map orderby to WP_User_Query compatible values.
+		$orderby_map = array(
+			'registered'  => 'user_registered',
+			'order_count' => 'meta_value_num',
+			'total_spent' => 'meta_value_num',
+		);
+
+		$args = array(
+			'role'    => 'customer',
+			'number'  => $limit,
+			'orderby' => isset( $orderby_map[ $orderby ] ) ? $orderby_map[ $orderby ] : 'user_registered',
+			'order'   => $order,
+		);
+
+		// Add meta query for sorting by WooCommerce customer data.
+		if ( in_array( $orderby, array( 'order_count', 'total_spent' ), true ) ) {
+			$meta_key            = 'order_count' === $orderby ? '_order_count' : '_money_spent';
+			$args['meta_key']    = $meta_key; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+			$args['meta_query']  = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+				'relation' => 'OR',
+				array(
+					'key'     => $meta_key,
+					'compare' => 'EXISTS',
+				),
+				array(
+					'key'     => $meta_key,
+					'compare' => 'NOT EXISTS',
+				),
+			);
+		}
+
+		$user_query = new \WP_User_Query( $args );
+		$customers  = $user_query->get_results();
+		$results    = array();
+
+		foreach ( $customers as $user ) {
+			$customer = new \WC_Customer( $user->ID );
+			if ( $customer->get_id() ) {
+				$results[] = array(
+					'id'           => $customer->get_id(),
+					'email'        => $customer->get_email(),
+					'name'         => $customer->get_display_name(),
+					'date_created' => $customer->get_date_created() ? $customer->get_date_created()->format( 'Y-m-d' ) : '',
+					'total_spent'  => $customer->get_total_spent(),
+					'order_count'  => $customer->get_order_count(),
+				);
+			}
+		}
+
+		return array(
+			'customers' => $results,
+			'count'     => count( $results ),
+		);
+	}
+
+	/**
+	 * Search customers.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters with 'query'.
+	 * @return array Search results.
+	 */
+	public function ability_customers_search( $params ) {
+		$query = sanitize_text_field( $params['query'] );
+		$limit = isset( $params['limit'] ) ? absint( $params['limit'] ) : 10;
+
+		$args = array(
+			'role'   => 'customer',
+			'number' => $limit,
+			'search' => '*' . $query . '*',
+			'search_columns' => array( 'user_login', 'user_email', 'user_nicename', 'display_name' ),
+		);
+
+		$user_query = new \WP_User_Query( $args );
+		$users      = $user_query->get_results();
+
+		// Also search in billing/shipping names via meta query if no results.
+		if ( empty( $users ) ) {
+			$meta_args = array(
+				'role'       => 'customer',
+				'number'     => $limit,
+				'meta_query' => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					'relation' => 'OR',
+					array(
+						'key'     => 'billing_first_name',
+						'value'   => $query,
+						'compare' => 'LIKE',
+					),
+					array(
+						'key'     => 'billing_last_name',
+						'value'   => $query,
+						'compare' => 'LIKE',
+					),
+					array(
+						'key'     => 'billing_email',
+						'value'   => $query,
+						'compare' => 'LIKE',
+					),
+				),
+			);
+
+			$user_query = new \WP_User_Query( $meta_args );
+			$users      = $user_query->get_results();
+		}
+
+		$results = array();
+		foreach ( $users as $user ) {
+			$customer = new \WC_Customer( $user->ID );
+			if ( $customer->get_id() ) {
+				$results[] = array(
+					'id'          => $customer->get_id(),
+					'email'       => $customer->get_email(),
+					'name'        => $customer->get_display_name(),
+					'total_spent' => $customer->get_total_spent(),
+					'order_count' => $customer->get_order_count(),
+				);
+			}
+		}
+
+		return array(
+			'customers' => $results,
+			'count'     => count( $results ),
+			'query'     => $query,
+		);
+	}
+
+	/**
+	 * Get customer orders.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters with 'customer_id'.
+	 * @return array|\WP_Error Customer orders or error.
+	 */
+	public function ability_customers_orders( $params ) {
+		$customer_id = absint( $params['customer_id'] );
+		$limit       = isset( $params['limit'] ) ? absint( $params['limit'] ) : 10;
+
+		// Verify customer exists.
+		$customer = new \WC_Customer( $customer_id );
+		if ( ! $customer->get_id() ) {
+			return new \WP_Error(
+				'assistify_customer_not_found',
+				__( 'Customer not found.', 'assistify-for-woocommerce' )
+			);
+		}
+
+		$orders  = wc_get_orders(
+			array(
+				'customer' => $customer_id,
+				'limit'    => $limit,
+				'orderby'  => 'date',
+				'order'    => 'DESC',
+			)
+		);
+		$results = array();
+
+		foreach ( $orders as $order ) {
+			$results[] = array(
+				'id'           => $order->get_id(),
+				'number'       => $order->get_order_number(),
+				'status'       => $order->get_status(),
+				'date_created' => $order->get_date_created() ? $order->get_date_created()->format( 'Y-m-d H:i:s' ) : '',
+				'total'        => $order->get_total(),
+				'items_count'  => $order->get_item_count(),
+			);
+		}
+
+		return array(
+			'customer_id'   => $customer_id,
+			'customer_name' => $customer->get_display_name(),
+			'orders'        => $results,
+			'count'         => count( $results ),
+			'total_orders'  => $customer->get_order_count(),
+			'total_spent'   => $customer->get_total_spent(),
 		);
 	}
 

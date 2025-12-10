@@ -48,10 +48,12 @@ class Assistify_Activator {
 	/**
 	 * Create database tables.
 	 *
+	 * This method is public so it can be called during upgrades.
+	 *
 	 * @since 1.0.0
 	 * @return void
 	 */
-	private static function create_tables() {
+	public static function create_tables() {
 		global $wpdb;
 
 		$charset_collate = $wpdb->get_charset_collate();
@@ -61,12 +63,12 @@ class Assistify_Activator {
 		// Sessions table.
 		$sql[] = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}afw_sessions (
 			id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-			session_id VARCHAR(36) NOT NULL,
+			session_id VARCHAR(64) NOT NULL,
 			user_id BIGINT UNSIGNED DEFAULT NULL,
 			context VARCHAR(20) NOT NULL DEFAULT 'customer',
 			metadata LONGTEXT,
-			created_at DATETIME NOT NULL,
-			updated_at DATETIME NOT NULL,
+			started_at DATETIME NOT NULL,
+			last_activity DATETIME NOT NULL,
 			INDEX idx_session_id (session_id),
 			INDEX idx_user (user_id),
 			INDEX idx_context (context)
