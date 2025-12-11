@@ -196,4 +196,3 @@ class AI_Provider_DeepSeek extends AI_Provider_Abstract {
 		return 64000;
 	}
 }
-

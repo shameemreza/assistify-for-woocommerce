@@ -84,4 +84,3 @@ class REST_API {
 		return isset( $this->controllers[ $name ] ) ? $this->controllers[ $name ] : null;
 	}
 }
-

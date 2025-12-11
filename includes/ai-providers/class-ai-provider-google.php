@@ -53,22 +53,22 @@ class AI_Provider_Google extends AI_Provider_Abstract {
 	 * @var array
 	 */
 	protected $available_models = array(
-		'gemini-2.5-pro'           => array(
+		'gemini-2.5-pro'            => array(
 			'name'           => 'Gemini 2.5 Pro',
 			'context_length' => 1048576,
 			'description'    => 'Latest Pro model with enhanced reasoning.',
 		),
-		'gemini-2.5-flash'         => array(
+		'gemini-2.5-flash'          => array(
 			'name'           => 'Gemini 2.5 Flash',
 			'context_length' => 1048576,
 			'description'    => 'Fast model with adaptive thinking.',
 		),
-		'gemini-2.0-flash'         => array(
+		'gemini-2.0-flash'          => array(
 			'name'           => 'Gemini 2.0 Flash',
 			'context_length' => 1048576,
 			'description'    => 'Fast model with 1M context.',
 		),
-		'gemini-2.0-flash-lite'    => array(
+		'gemini-2.0-flash-lite'     => array(
 			'name'           => 'Gemini 2.0 Flash-Lite',
 			'context_length' => 1048576,
 			'description'    => 'Cost-efficient for high-volume tasks.',
@@ -78,17 +78,17 @@ class AI_Provider_Google extends AI_Provider_Abstract {
 			'context_length' => 1048576,
 			'description'    => 'Enhanced reasoning capabilities.',
 		),
-		'gemini-1.5-pro'           => array(
+		'gemini-1.5-pro'            => array(
 			'name'           => 'Gemini 1.5 Pro',
 			'context_length' => 2097152,
 			'description'    => 'Most capable with 2M context window.',
 		),
-		'gemini-1.5-flash'         => array(
+		'gemini-1.5-flash'          => array(
 			'name'           => 'Gemini 1.5 Flash',
 			'context_length' => 1048576,
 			'description'    => 'Fast and efficient with 1M context.',
 		),
-		'gemini-1.5-flash-8b'      => array(
+		'gemini-1.5-flash-8b'       => array(
 			'name'           => 'Gemini 1.5 Flash-8B',
 			'context_length' => 1048576,
 			'description'    => 'Lightweight, high-volume tasks.',
@@ -226,7 +226,7 @@ class AI_Provider_Google extends AI_Provider_Abstract {
 		$model   = isset( $options['model'] ) ? $options['model'] : $this->model;
 
 		// Convert messages to Gemini format.
-		$contents        = array();
+		$contents           = array();
 		$system_instruction = '';
 
 		foreach ( $messages as $message ) {
@@ -235,7 +235,7 @@ class AI_Provider_Google extends AI_Provider_Abstract {
 				continue;
 			}
 
-			$role = 'user' === $message['role'] ? 'user' : 'model';
+			$role       = 'user' === $message['role'] ? 'user' : 'model';
 			$contents[] = array(
 				'role'  => $role,
 				'parts' => array(
@@ -315,4 +315,3 @@ class AI_Provider_Google extends AI_Provider_Abstract {
 		return 1048576;
 	}
 }
-

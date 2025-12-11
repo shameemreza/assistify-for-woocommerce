@@ -145,16 +145,16 @@ class Assistify_Activator {
 	 */
 	private static function set_default_options() {
 		$defaults = array(
-			'assistify_ai_provider'             => 'openai',
-			'assistify_admin_chat_enabled'      => 'yes',
-			'assistify_customer_chat_enabled'   => 'no',
-			'assistify_guest_chat_enabled'      => 'no',
+			'assistify_ai_provider'              => 'openai',
+			'assistify_admin_chat_enabled'       => 'yes',
+			'assistify_customer_chat_enabled'    => 'no',
+			'assistify_guest_chat_enabled'       => 'no',
 			'assistify_remove_data_on_uninstall' => 'no',
-			'assistify_rate_limit_admin'        => 100,
-			'assistify_rate_limit_customer'     => 20,
-			'assistify_rate_limit_guest'        => 5,
-			'assistify_chat_position'           => 'bottom-right',
-			'assistify_primary_color'           => '#7F54B3',
+			'assistify_rate_limit_admin'         => 100,
+			'assistify_rate_limit_customer'      => 20,
+			'assistify_rate_limit_guest'         => 5,
+			'assistify_chat_position'            => 'bottom-right',
+			'assistify_primary_color'            => '#7F54B3',
 		);
 
 		foreach ( $defaults as $key => $value ) {
@@ -164,4 +164,3 @@ class Assistify_Activator {
 		}
 	}
 }
-

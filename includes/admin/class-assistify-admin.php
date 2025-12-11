@@ -852,10 +852,10 @@ class Assistify_Admin {
 	 * @return string System prompt.
 	 */
 	private function get_admin_system_prompt() {
-		$store_name     = get_bloginfo( 'name' );
-		$currency       = function_exists( 'get_woocommerce_currency' ) ? get_woocommerce_currency() : 'USD';
+		$store_name      = get_bloginfo( 'name' );
+		$currency        = function_exists( 'get_woocommerce_currency' ) ? get_woocommerce_currency() : 'USD';
 		$currency_symbol = function_exists( 'get_woocommerce_currency_symbol' ) ? html_entity_decode( get_woocommerce_currency_symbol() ) : '$';
-		$admin_name     = wp_get_current_user()->display_name;
+		$admin_name      = wp_get_current_user()->display_name;
 
 		$prompt = sprintf(
 			/* translators: %1$s: Admin name, %2$s: Store name, %3$s: Currency code, %4$s: Currency symbol. */
@@ -863,10 +863,11 @@ class Assistify_Admin {
 				'You are Ayana, the AI assistant for "%2$s" WooCommerce store. You help %1$s manage their business.
 
 ## Your Capabilities:
-- **Orders**: View details, list by status, search orders
-- **Products**: Check inventory, low stock alerts, product details
-- **Customers**: Look up info, purchase history
-- **Analytics**: Sales reports, revenue, top products
+- **Orders**: View details, list by status, search orders, track fulfillment
+- **Products**: Check inventory, low stock alerts, product details, sales performance
+- **Customers**: Look up info, purchase history, lifetime value
+- **Analytics**: Sales reports, revenue, top products, geographic sales, AOV
+- **Coupons**: List coupons, check usage stats, view available codes
 
 ## Store Info:
 - Currency: %3$s (%4$s)
@@ -879,6 +880,11 @@ class Assistify_Admin {
 4. Be concise and direct
 5. Include key numbers and metrics
 6. Use currency symbol (%4$s) for prices
+
+## CRITICAL - Coupon Display Rules:
+When showing coupons, ALWAYS display the coupon code prominently like this:
+- **Code**: `COUPONCODE` (in backticks for easy copying)
+- Then show discount amount, expiry, usage stats
 
 ## Tone:
 Friendly, helpful, and efficient. Keep responses focused.',
@@ -1103,7 +1109,12 @@ Friendly, helpful, and efficient. Keep responses focused.',
 		);
 
 		if ( $existing ) {
-			wp_send_json_success( array( 'session_id' => $session_id, 'status' => 'exists' ) );
+			wp_send_json_success(
+				array(
+					'session_id' => $session_id,
+					'status'     => 'exists',
+				)
+			);
 			return;
 		}
 
@@ -1122,7 +1133,12 @@ Friendly, helpful, and efficient. Keep responses focused.',
 		);
 
 		if ( $result ) {
-			wp_send_json_success( array( 'session_id' => $session_id, 'status' => 'created' ) );
+			wp_send_json_success(
+				array(
+					'session_id' => $session_id,
+					'status'     => 'created',
+				)
+			);
 		} else {
 			wp_send_json_error( array( 'message' => __( 'Failed to create session.', 'assistify-for-woocommerce' ) ) );
 		}
@@ -1383,4 +1399,3 @@ Friendly, helpful, and efficient. Keep responses focused.',
 		}
 	}
 }
-

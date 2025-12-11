@@ -165,7 +165,7 @@ class REST_Chat_Controller extends REST_API_Controller {
 		}
 
 		// Build messages array.
-		$messages = $history;
+		$messages   = $history;
 		$messages[] = array(
 			'role'    => 'user',
 			'content' => $message,
@@ -236,7 +236,7 @@ class REST_Chat_Controller extends REST_API_Controller {
 		}
 
 		// Build messages array.
-		$messages = $history;
+		$messages   = $history;
 		$messages[] = array(
 			'role'    => 'user',
 			'content' => $message,
@@ -473,4 +473,3 @@ Guidelines:
 		return apply_filters( 'assistify_customer_system_prompt', $prompt );
 	}
 }
-

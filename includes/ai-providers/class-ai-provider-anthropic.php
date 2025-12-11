@@ -268,4 +268,3 @@ class AI_Provider_Anthropic extends AI_Provider_Abstract {
 		return 200000;
 	}
 }
-

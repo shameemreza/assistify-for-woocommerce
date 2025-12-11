@@ -77,9 +77,9 @@ abstract class AI_Provider_Abstract implements AI_Provider_Interface {
 	 * @var array
 	 */
 	protected $default_options = array(
-		'temperature'   => 0.7,
-		'max_tokens'    => 2048,
-		'timeout'       => 60,
+		'temperature' => 0.7,
+		'max_tokens'  => 2048,
+		'timeout'     => 60,
 	);
 
 	/**
@@ -307,4 +307,3 @@ abstract class AI_Provider_Abstract implements AI_Provider_Interface {
 		update_option( 'assistify_api_usage', $total_usage );
 	}
 }
-

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<ruleset name="Assistify for WooCommerce">
+	<description>Custom ruleset for Assistify for WooCommerce plugin.</description>
+
+	<!-- Include WordPress standards -->
+	<rule ref="WordPress"/>
+	
+	<!-- Check PHP files only -->
+	<arg name="extensions" value="php"/>
+	
+	<!-- Exclude vendor and node_modules -->
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+
+	<!-- Configure known custom capabilities -->
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="manage_woocommerce"/>
+				<element value="edit_shop_orders"/>
+				<element value="read_shop_orders"/>
+				<element value="edit_products"/>
+				<element value="read_products"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Allow unused parameters in ability callbacks (required by API signature) -->
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter">
+		<exclude-pattern>*/abilities/*</exclude-pattern>
+	</rule>
+</ruleset>

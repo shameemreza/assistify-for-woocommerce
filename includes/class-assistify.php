@@ -233,7 +233,7 @@ final class Assistify {
 	 * @return void
 	 */
 	private function set_locale() {
-		$plugin_i18n = new Assistify_i18n();
+		$plugin_i18n = new Assistify_I18n();
 		$this->loader->add_action( 'init', $plugin_i18n, 'load_plugin_textdomain' );
 	}
 
@@ -362,4 +362,3 @@ final class Assistify {
 		return ASSISTIFY_VERSION;
 	}
 }
-

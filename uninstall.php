@@ -46,4 +46,3 @@ foreach ( $assistify_tables as $assistify_table ) {
 
 // Clear any cached data that may have been set.
 wp_cache_flush();
-

@@ -138,6 +138,24 @@ class Abilities_Registry {
 		);
 
 		$this->register(
+			'afw/orders/get-last',
+			array(
+				'name'        => __( 'Get Last Order', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get the most recent order with full details.', 'assistify-for-woocommerce' ),
+				'category'    => 'orders',
+				'callback'    => array( $this, 'ability_orders_get_last' ),
+				'parameters'  => array(
+					'status' => array(
+						'type'        => 'string',
+						'description' => __( 'Optional filter by status (e.g., on-hold, processing).', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		$this->register(
 			'afw/orders/search',
 			array(
 				'name'        => __( 'Search Orders', 'assistify-for-woocommerce' ),
@@ -227,29 +245,29 @@ class Abilities_Registry {
 				'category'         => 'orders',
 				'callback'         => array( $this, 'ability_orders_refund' ),
 				'parameters'       => array(
-					'order_id'         => array(
+					'order_id'       => array(
 						'type'        => 'integer',
 						'description' => __( 'The order ID to refund.', 'assistify-for-woocommerce' ),
 						'required'    => true,
 					),
-					'amount'           => array(
+					'amount'         => array(
 						'type'        => 'number',
 						'description' => __( 'Refund amount. Leave empty for full refund.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 					),
-					'reason'           => array(
+					'reason'         => array(
 						'type'        => 'string',
 						'description' => __( 'Reason for the refund.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 						'default'     => '',
 					),
-					'restock_items'    => array(
+					'restock_items'  => array(
 						'type'        => 'boolean',
 						'description' => __( 'Whether to restock refunded items.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 						'default'     => true,
 					),
-					'refund_payment'   => array(
+					'refund_payment' => array(
 						'type'        => 'boolean',
 						'description' => __( 'Whether to attempt to refund payment via gateway.', 'assistify-for-woocommerce' ),
 						'required'    => false,
@@ -792,6 +810,382 @@ class Abilities_Registry {
 			)
 		);
 
+		// Daily summary - quick overview for store owners.
+		$this->register(
+			'afw/analytics/daily-summary',
+			array(
+				'name'        => __( 'Daily Summary', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get today\'s store summary: orders, revenue, new customers, etc.', 'assistify-for-woocommerce' ),
+				'category'    => 'analytics',
+				'callback'    => array( $this, 'ability_analytics_daily_summary' ),
+				'parameters'  => array(
+					'date' => array(
+						'type'        => 'string',
+						'description' => __( 'Date to get summary for (YYYY-MM-DD). Defaults to today.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Orders ready to ship.
+		$this->register(
+			'afw/orders/ready-to-ship',
+			array(
+				'name'        => __( 'Orders Ready to Ship', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get orders with "processing" status ready for fulfillment.', 'assistify-for-woocommerce' ),
+				'category'    => 'orders',
+				'callback'    => array( $this, 'ability_orders_ready_to_ship' ),
+				'parameters'  => array(
+					'limit' => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of orders to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 20,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Pending payments.
+		$this->register(
+			'afw/orders/pending-payment',
+			array(
+				'name'        => __( 'Pending Payment Orders', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get orders awaiting payment (pending and on-hold).', 'assistify-for-woocommerce' ),
+				'category'    => 'orders',
+				'callback'    => array( $this, 'ability_orders_pending_payment' ),
+				'parameters'  => array(
+					'limit' => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of orders to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 20,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Out of stock products.
+		$this->register(
+			'afw/products/out-of-stock',
+			array(
+				'name'        => __( 'Out of Stock Products', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get products that are out of stock.', 'assistify-for-woocommerce' ),
+				'category'    => 'products',
+				'callback'    => array( $this, 'ability_products_out_of_stock' ),
+				'parameters'  => array(
+					'limit' => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of products to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 50,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Stock value report.
+		$this->register(
+			'afw/products/stock-value',
+			array(
+				'name'        => __( 'Stock Value Report', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get total inventory value based on stock quantity and prices.', 'assistify-for-woocommerce' ),
+				'category'    => 'products',
+				'callback'    => array( $this, 'ability_products_stock_value' ),
+				'parameters'  => array(),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Recent refunds.
+		$this->register(
+			'afw/analytics/refunds',
+			array(
+				'name'        => __( 'Recent Refunds', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get recent refunds summary.', 'assistify-for-woocommerce' ),
+				'category'    => 'analytics',
+				'callback'    => array( $this, 'ability_analytics_refunds' ),
+				'parameters'  => array(
+					'days' => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of days to look back.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 30,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Payment method breakdown.
+		$this->register(
+			'afw/analytics/payment-methods',
+			array(
+				'name'        => __( 'Payment Methods Stats', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get revenue breakdown by payment method.', 'assistify-for-woocommerce' ),
+				'category'    => 'analytics',
+				'callback'    => array( $this, 'ability_analytics_payment_methods' ),
+				'parameters'  => array(
+					'period' => array(
+						'type'        => 'string',
+						'description' => __( 'Period: week, month, year.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 'month',
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// New customers.
+		$this->register(
+			'afw/customers/recent',
+			array(
+				'name'        => __( 'Recent Customers', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get recently registered customers.', 'assistify-for-woocommerce' ),
+				'category'    => 'customers',
+				'callback'    => array( $this, 'ability_customers_recent' ),
+				'parameters'  => array(
+					'days'  => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of days to look back.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 7,
+					),
+					'limit' => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of customers to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 20,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Repeat customers.
+		$this->register(
+			'afw/customers/repeat',
+			array(
+				'name'        => __( 'Repeat Customers', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get customers with multiple orders.', 'assistify-for-woocommerce' ),
+				'category'    => 'customers',
+				'callback'    => array( $this, 'ability_customers_repeat' ),
+				'parameters'  => array(
+					'min_orders' => array(
+						'type'        => 'integer',
+						'description' => __( 'Minimum number of orders.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 2,
+					),
+					'limit'      => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of customers to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 20,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Reviews summary.
+		$this->register(
+			'afw/analytics/reviews',
+			array(
+				'name'        => __( 'Reviews Summary', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get recent product reviews and ratings summary.', 'assistify-for-woocommerce' ),
+				'category'    => 'analytics',
+				'callback'    => array( $this, 'ability_analytics_reviews' ),
+				'parameters'  => array(
+					'days'  => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of days to look back.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 30,
+					),
+					'limit' => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of reviews to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 20,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Order comparison.
+		$this->register(
+			'afw/analytics/comparison',
+			array(
+				'name'        => __( 'Order Comparison', 'assistify-for-woocommerce' ),
+				'description' => __( 'Compare orders and revenue between two periods.', 'assistify-for-woocommerce' ),
+				'category'    => 'analytics',
+				'callback'    => array( $this, 'ability_analytics_comparison' ),
+				'parameters'  => array(
+					'period' => array(
+						'type'        => 'string',
+						'description' => __( 'Comparison period: week, month, quarter, year.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 'week',
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Category sales.
+		$this->register(
+			'afw/analytics/category-sales',
+			array(
+				'name'        => __( 'Category Sales', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get sales performance by product category.', 'assistify-for-woocommerce' ),
+				'category'    => 'analytics',
+				'callback'    => array( $this, 'ability_analytics_category_sales' ),
+				'parameters'  => array(
+					'period' => array(
+						'type'        => 'string',
+						'description' => __( 'Period: week, month, year, all.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 'month',
+					),
+					'limit'  => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of categories to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 10,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Average order value.
+		$this->register(
+			'afw/analytics/aov',
+			array(
+				'name'        => __( 'Average Order Value', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get average order value trends.', 'assistify-for-woocommerce' ),
+				'category'    => 'analytics',
+				'callback'    => array( $this, 'ability_analytics_aov' ),
+				'parameters'  => array(
+					'period' => array(
+						'type'        => 'string',
+						'description' => __( 'Period: week, month, quarter, year.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 'month',
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Failed orders.
+		$this->register(
+			'afw/orders/failed',
+			array(
+				'name'        => __( 'Failed Orders', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get orders with failed payment status.', 'assistify-for-woocommerce' ),
+				'category'    => 'orders',
+				'callback'    => array( $this, 'ability_orders_failed' ),
+				'parameters'  => array(
+					'days'  => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of days to look back.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 30,
+					),
+					'limit' => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of orders to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 20,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Pending reviews (reviews awaiting moderation).
+		$this->register(
+			'afw/products/pending-reviews',
+			array(
+				'name'        => __( 'Pending Reviews', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get product reviews awaiting moderation.', 'assistify-for-woocommerce' ),
+				'category'    => 'products',
+				'callback'    => array( $this, 'ability_products_pending_reviews' ),
+				'parameters'  => array(
+					'limit' => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of reviews to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 20,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Product availability check (for customers).
+		$this->register(
+			'afw/products/availability',
+			array(
+				'name'        => __( 'Check Product Availability', 'assistify-for-woocommerce' ),
+				'description' => __( 'Check if a product is in stock and available.', 'assistify-for-woocommerce' ),
+				'category'    => 'products',
+				'callback'    => array( $this, 'ability_products_availability' ),
+				'parameters'  => array(
+					'product_id'   => array(
+						'type'        => 'integer',
+						'description' => __( 'The product ID to check.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'product_name' => array(
+						'type'        => 'string',
+						'description' => __( 'The product name to search for.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+				),
+				'capability'  => '', // Public - no capability required.
+			)
+		);
+
+		// Related products (for customers).
+		$this->register(
+			'afw/products/related',
+			array(
+				'name'        => __( 'Related Products', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get related or similar products.', 'assistify-for-woocommerce' ),
+				'category'    => 'products',
+				'callback'    => array( $this, 'ability_products_related' ),
+				'parameters'  => array(
+					'product_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'The product ID to find related products for.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'category'   => array(
+						'type'        => 'string',
+						'description' => __( 'Category to find products from.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'limit'      => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of products to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 5,
+					),
+				),
+				'capability'  => '', // Public - no capability required.
+			)
+		);
+
 		// Customer abilities.
 		$this->register(
 			'afw/customers/get',
@@ -1051,65 +1445,65 @@ class Abilities_Registry {
 				'category'         => 'coupons',
 				'callback'         => array( $this, 'ability_coupons_create' ),
 				'parameters'       => array(
-					'code'                        => array(
+					'code'                 => array(
 						'type'        => 'string',
 						'description' => __( 'Coupon code (required).', 'assistify-for-woocommerce' ),
 						'required'    => true,
 					),
-					'discount_type'               => array(
+					'discount_type'        => array(
 						'type'        => 'string',
 						'description' => __( 'Discount type: percent, fixed_cart, fixed_product.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 						'default'     => 'percent',
 					),
-					'amount'                      => array(
+					'amount'               => array(
 						'type'        => 'string',
 						'description' => __( 'Discount amount.', 'assistify-for-woocommerce' ),
 						'required'    => true,
 					),
-					'description'                 => array(
+					'description'          => array(
 						'type'        => 'string',
 						'description' => __( 'Coupon description.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 					),
-					'date_expires'                => array(
+					'date_expires'         => array(
 						'type'        => 'string',
 						'description' => __( 'Expiration date (YYYY-MM-DD).', 'assistify-for-woocommerce' ),
 						'required'    => false,
 					),
-					'usage_limit'                 => array(
+					'usage_limit'          => array(
 						'type'        => 'integer',
 						'description' => __( 'Total usage limit.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 					),
-					'usage_limit_per_user'        => array(
+					'usage_limit_per_user' => array(
 						'type'        => 'integer',
 						'description' => __( 'Usage limit per user.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 					),
-					'free_shipping'               => array(
+					'free_shipping'        => array(
 						'type'        => 'boolean',
 						'description' => __( 'Whether coupon grants free shipping.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 						'default'     => false,
 					),
-					'minimum_amount'              => array(
+					'minimum_amount'       => array(
 						'type'        => 'string',
 						'description' => __( 'Minimum order amount required.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 					),
-					'maximum_amount'              => array(
+					'maximum_amount'       => array(
 						'type'        => 'string',
 						'description' => __( 'Maximum order amount allowed.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 					),
-					'individual_use'              => array(
+					'individual_use'       => array(
 						'type'        => 'boolean',
 						'description' => __( 'Whether coupon can only be used alone.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 						'default'     => false,
 					),
-					'exclude_sale_items'          => array(
+					'exclude_sale_items'   => array(
 						'type'        => 'boolean',
 						'description' => __( 'Whether to exclude sale items.', 'assistify-for-woocommerce' ),
 						'required'    => false,
@@ -1129,37 +1523,37 @@ class Abilities_Registry {
 				'category'         => 'coupons',
 				'callback'         => array( $this, 'ability_coupons_update' ),
 				'parameters'       => array(
-					'coupon_id'                   => array(
+					'coupon_id'     => array(
 						'type'        => 'integer',
 						'description' => __( 'The coupon ID to update.', 'assistify-for-woocommerce' ),
 						'required'    => true,
 					),
-					'code'                        => array(
+					'code'          => array(
 						'type'        => 'string',
 						'description' => __( 'New coupon code.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 					),
-					'amount'                      => array(
+					'amount'        => array(
 						'type'        => 'string',
 						'description' => __( 'New discount amount.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 					),
-					'discount_type'               => array(
+					'discount_type' => array(
 						'type'        => 'string',
 						'description' => __( 'New discount type.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 					),
-					'date_expires'                => array(
+					'date_expires'  => array(
 						'type'        => 'string',
 						'description' => __( 'New expiration date (YYYY-MM-DD) or empty to remove.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 					),
-					'usage_limit'                 => array(
+					'usage_limit'   => array(
 						'type'        => 'integer',
 						'description' => __( 'New total usage limit.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 					),
-					'status'                      => array(
+					'status'        => array(
 						'type'        => 'string',
 						'description' => __( 'New status: publish, draft, pending.', 'assistify-for-woocommerce' ),
 						'required'    => false,
@@ -1338,7 +1732,7 @@ class Abilities_Registry {
 				'category'    => 'urls',
 				'callback'    => array( $this, 'ability_urls_product' ),
 				'parameters'  => array(
-					'product_id' => array(
+					'product_id'   => array(
 						'type'        => 'integer',
 						'description' => __( 'The product ID.', 'assistify-for-woocommerce' ),
 						'required'    => false,
@@ -1361,7 +1755,7 @@ class Abilities_Registry {
 				'category'    => 'urls',
 				'callback'    => array( $this, 'ability_urls_product_edit' ),
 				'parameters'  => array(
-					'product_id' => array(
+					'product_id'   => array(
 						'type'        => 'integer',
 						'description' => __( 'The product ID.', 'assistify-for-woocommerce' ),
 						'required'    => false,
@@ -1420,7 +1814,7 @@ class Abilities_Registry {
 				'category'    => 'urls',
 				'callback'    => array( $this, 'ability_urls_category' ),
 				'parameters'  => array(
-					'category_id' => array(
+					'category_id'   => array(
 						'type'        => 'integer',
 						'description' => __( 'The category ID.', 'assistify-for-woocommerce' ),
 						'required'    => false,
@@ -1461,7 +1855,7 @@ class Abilities_Registry {
 				'category'    => 'urls',
 				'callback'    => array( $this, 'ability_urls_page' ),
 				'parameters'  => array(
-					'page_id' => array(
+					'page_id'    => array(
 						'type'        => 'integer',
 						'description' => __( 'The page ID.', 'assistify-for-woocommerce' ),
 						'required'    => false,
@@ -1471,13 +1865,265 @@ class Abilities_Registry {
 						'description' => __( 'Search by page title.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 					),
-					'page_slug' => array(
+					'page_slug'  => array(
 						'type'        => 'string',
 						'description' => __( 'Search by page slug.', 'assistify-for-woocommerce' ),
 						'required'    => false,
 					),
 				),
 				'capability'  => 'read',
+			)
+		);
+
+		// =========================================================================
+		// Additional Customer-Facing Abilities (Safe - Public Data)
+		// =========================================================================
+
+		// Products on sale (for customers).
+		$this->register(
+			'afw/products/on-sale',
+			array(
+				'name'        => __( 'Products On Sale', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get products that are currently on sale.', 'assistify-for-woocommerce' ),
+				'category'    => 'products',
+				'callback'    => array( $this, 'ability_products_on_sale' ),
+				'parameters'  => array(
+					'limit'    => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of products to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 10,
+					),
+					'category' => array(
+						'type'        => 'string',
+						'description' => __( 'Filter by category slug.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+				),
+				'capability'  => '', // Public - no capability required.
+			)
+		);
+
+		// Featured products (for customers).
+		$this->register(
+			'afw/products/featured',
+			array(
+				'name'        => __( 'Featured Products', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get featured products.', 'assistify-for-woocommerce' ),
+				'category'    => 'products',
+				'callback'    => array( $this, 'ability_products_featured' ),
+				'parameters'  => array(
+					'limit' => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of products to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 10,
+					),
+				),
+				'capability'  => '', // Public - no capability required.
+			)
+		);
+
+		// Available coupons (for customers - public coupons only).
+		$this->register(
+			'afw/coupons/available',
+			array(
+				'name'        => __( 'Available Coupons', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get currently available public coupon codes.', 'assistify-for-woocommerce' ),
+				'category'    => 'coupons',
+				'callback'    => array( $this, 'ability_coupons_available' ),
+				'parameters'  => array(
+					'limit' => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of coupons to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 5,
+					),
+				),
+				'capability'  => '', // Public - no capability required.
+			)
+		);
+
+		// Product by SKU (for customers).
+		$this->register(
+			'afw/products/by-sku',
+			array(
+				'name'        => __( 'Find Product by SKU', 'assistify-for-woocommerce' ),
+				'description' => __( 'Find a product using its SKU code.', 'assistify-for-woocommerce' ),
+				'category'    => 'products',
+				'callback'    => array( $this, 'ability_products_by_sku' ),
+				'parameters'  => array(
+					'sku' => array(
+						'type'        => 'string',
+						'description' => __( 'The product SKU to search for.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+				),
+				'capability'  => '', // Public - no capability required.
+			)
+		);
+
+		// =========================================================================
+		// Additional Admin Analytics Abilities (Read-Only)
+		// =========================================================================
+
+		// Coupon usage statistics (admin).
+		$this->register(
+			'afw/coupons/stats',
+			array(
+				'name'        => __( 'Coupon Usage Statistics', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get detailed coupon usage statistics and performance.', 'assistify-for-woocommerce' ),
+				'category'    => 'coupons',
+				'callback'    => array( $this, 'ability_coupons_stats' ),
+				'parameters'  => array(
+					'days'  => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of days to analyze.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 30,
+					),
+					'limit' => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of top coupons to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 10,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Sales by product (admin).
+		$this->register(
+			'afw/analytics/by-product',
+			array(
+				'name'        => __( 'Sales by Product', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get sales performance for individual products.', 'assistify-for-woocommerce' ),
+				'category'    => 'analytics',
+				'callback'    => array( $this, 'ability_analytics_by_product' ),
+				'parameters'  => array(
+					'days'       => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of days to analyze.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 30,
+					),
+					'limit'      => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of products to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 10,
+					),
+					'product_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'Specific product ID to get stats for.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Geographic sales (admin).
+		$this->register(
+			'afw/analytics/by-location',
+			array(
+				'name'        => __( 'Sales by Location', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get sales breakdown by customer location (country/state).', 'assistify-for-woocommerce' ),
+				'category'    => 'analytics',
+				'callback'    => array( $this, 'ability_analytics_by_location' ),
+				'parameters'  => array(
+					'days'  => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of days to analyze.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 30,
+					),
+					'limit' => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of locations to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 10,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Processing orders count (admin - quick stat).
+		$this->register(
+			'afw/orders/processing-count',
+			array(
+				'name'        => __( 'Processing Orders Count', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get count of orders awaiting processing/fulfillment.', 'assistify-for-woocommerce' ),
+				'category'    => 'orders',
+				'callback'    => array( $this, 'ability_orders_processing_count' ),
+				'parameters'  => array(),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Tax collected report (admin).
+		$this->register(
+			'afw/analytics/tax-collected',
+			array(
+				'name'        => __( 'Tax Collected Report', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get summary of tax collected over a period.', 'assistify-for-woocommerce' ),
+				'category'    => 'analytics',
+				'callback'    => array( $this, 'ability_analytics_tax_collected' ),
+				'parameters'  => array(
+					'days' => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of days to analyze.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 30,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Most stocked products (admin).
+		$this->register(
+			'afw/products/most-stocked',
+			array(
+				'name'        => __( 'Most Stocked Products', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get products with highest stock quantities.', 'assistify-for-woocommerce' ),
+				'category'    => 'products',
+				'callback'    => array( $this, 'ability_products_most_stocked' ),
+				'parameters'  => array(
+					'limit' => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of products to return.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 10,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Customer lifetime value (admin).
+		$this->register(
+			'afw/customers/lifetime-value',
+			array(
+				'name'        => __( 'Customer Lifetime Value', 'assistify-for-woocommerce' ),
+				'description' => __( 'Get lifetime value and order history for a customer.', 'assistify-for-woocommerce' ),
+				'category'    => 'customers',
+				'callback'    => array( $this, 'ability_customers_lifetime_value' ),
+				'parameters'  => array(
+					'customer_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'The customer/user ID.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'email'       => array(
+						'type'        => 'string',
+						'description' => __( 'Customer email address.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+				),
+				'capability'  => 'manage_woocommerce',
 			)
 		);
 	}
@@ -1508,14 +2154,14 @@ class Abilities_Registry {
 	 */
 	public function register( $ability_id, $args ) {
 		$defaults = array(
-			'name'            => '',
-			'description'     => '',
-			'category'        => 'store',
-			'callback'        => null,
-			'parameters'      => array(),
-			'capability'      => 'manage_woocommerce',
+			'name'             => '',
+			'description'      => '',
+			'category'         => 'store',
+			'callback'         => null,
+			'parameters'       => array(),
+			'capability'       => 'manage_woocommerce',
 			'requires_confirm' => false,
-			'is_destructive'  => false,
+			'is_destructive'   => false,
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -1787,23 +2433,230 @@ class Abilities_Registry {
 			);
 		}
 
-		return array(
-			'id'               => $order->get_id(),
-			'number'           => $order->get_order_number(),
-			'status'           => $order->get_status(),
-			'date_created'     => $order->get_date_created() ? $order->get_date_created()->format( 'Y-m-d H:i:s' ) : '',
-			'total'            => $order->get_total(),
-			'currency'         => $order->get_currency(),
-			'customer'         => array(
+		return $this->format_detailed_order( $order );
+	}
+
+	/**
+	 * Format detailed order data for admin context.
+	 *
+	 * @since 1.0.0
+	 * @param \WC_Order $order Order object.
+	 * @return array Formatted order data.
+	 */
+	private function format_detailed_order( $order ) {
+		$status         = $order->get_status();
+		$payment_method = $order->get_payment_method();
+
+		// Get status explanation.
+		$status_explanation = $this->get_order_status_explanation( $status, $payment_method );
+
+		// Build comprehensive order data.
+		$data = array(
+			'id'                 => $order->get_id(),
+			'number'             => $order->get_order_number(),
+			'status'             => $status,
+			'status_label'       => wc_get_order_status_name( $status ),
+			'status_explanation' => $status_explanation,
+			'date_created'       => $order->get_date_created() ? $order->get_date_created()->format( 'Y-m-d H:i:s' ) : '',
+			'date_modified'      => $order->get_date_modified() ? $order->get_date_modified()->format( 'Y-m-d H:i:s' ) : '',
+			'total'              => html_entity_decode( wp_strip_all_tags( $order->get_formatted_order_total() ) ),
+			'subtotal'           => html_entity_decode( wp_strip_all_tags( wc_price( $order->get_subtotal() ) ) ),
+			'shipping_total'     => html_entity_decode( wp_strip_all_tags( wc_price( $order->get_shipping_total() ) ) ),
+			'tax_total'          => html_entity_decode( wp_strip_all_tags( wc_price( $order->get_total_tax() ) ) ),
+			'discount_total'     => html_entity_decode( wp_strip_all_tags( wc_price( $order->get_discount_total() ) ) ),
+			'currency'           => $order->get_currency(),
+			'customer'           => array(
 				'id'    => $order->get_customer_id(),
 				'name'  => $order->get_formatted_billing_full_name(),
 				'email' => $order->get_billing_email(),
+				'phone' => $order->get_billing_phone(),
 			),
-			'items'            => $this->format_order_items( $order ),
-			'shipping_method'  => $order->get_shipping_method(),
-			'payment_method'   => $order->get_payment_method_title(),
-			'notes'            => $this->get_order_notes( $order->get_id() ),
+			'billing_address'    => $this->format_address( $order, 'billing' ),
+			'shipping_address'   => $this->format_address( $order, 'shipping' ),
+			'items'              => $this->format_order_items( $order ),
+			'shipping_method'    => $order->get_shipping_method(),
+			'payment'            => $this->get_order_payment_details( $order ),
+			'notes'              => $this->get_order_notes( $order->get_id() ),
+			'coupons_used'       => $order->get_coupon_codes(),
+			'customer_note'      => $order->get_customer_note(),
+			'admin_url'          => admin_url( 'post.php?post=' . $order->get_id() . '&action=edit' ),
 		);
+
+		// Add tracking info if available.
+		$tracking = $this->get_admin_order_tracking( $order );
+		if ( ! empty( $tracking ) ) {
+			$data['tracking'] = $tracking;
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Get explanation for order status.
+	 *
+	 * @since 1.0.0
+	 * @param string $status         Order status.
+	 * @param string $payment_method Payment method ID.
+	 * @return string Status explanation.
+	 */
+	private function get_order_status_explanation( $status, $payment_method ) {
+		$explanations = array(
+			'pending'    => __( 'Order received but payment not yet initiated. Customer may have abandoned checkout.', 'assistify-for-woocommerce' ),
+			'on-hold'    => $this->get_on_hold_explanation( $payment_method ),
+			'processing' => __( 'Payment received. Order is being prepared for shipment.', 'assistify-for-woocommerce' ),
+			'completed'  => __( 'Order fulfilled and completed.', 'assistify-for-woocommerce' ),
+			'cancelled'  => __( 'Order was cancelled by customer or admin.', 'assistify-for-woocommerce' ),
+			'refunded'   => __( 'Order has been fully refunded.', 'assistify-for-woocommerce' ),
+			'failed'     => __( 'Payment failed or was declined.', 'assistify-for-woocommerce' ),
+		);
+
+		return isset( $explanations[ $status ] ) ? $explanations[ $status ] : '';
+	}
+
+	/**
+	 * Get explanation for on-hold status based on payment method.
+	 *
+	 * @since 1.0.0
+	 * @param string $payment_method Payment method ID.
+	 * @return string Explanation.
+	 */
+	private function get_on_hold_explanation( $payment_method ) {
+		switch ( $payment_method ) {
+			case 'bacs':
+				return __( 'Awaiting bank transfer payment. Check bank account for incoming payment.', 'assistify-for-woocommerce' );
+			case 'cheque':
+				return __( 'Awaiting check payment. Check mail for incoming payment.', 'assistify-for-woocommerce' );
+			case 'cod':
+				return __( 'Cash on delivery - payment will be collected upon delivery.', 'assistify-for-woocommerce' );
+			default:
+				return __( 'Order is on hold pending payment verification or manual review.', 'assistify-for-woocommerce' );
+		}
+	}
+
+	/**
+	 * Format address for order.
+	 *
+	 * @since 1.0.0
+	 * @param \WC_Order $order Order object.
+	 * @param string    $type  Address type (billing or shipping).
+	 * @return array Address data.
+	 */
+	private function format_address( $order, $type ) {
+		$getter = 'get_' . $type;
+		if ( 'billing' === $type ) {
+			return array(
+				'name'     => $order->get_formatted_billing_full_name(),
+				'company'  => $order->get_billing_company(),
+				'address1' => $order->get_billing_address_1(),
+				'address2' => $order->get_billing_address_2(),
+				'city'     => $order->get_billing_city(),
+				'state'    => $order->get_billing_state(),
+				'postcode' => $order->get_billing_postcode(),
+				'country'  => $order->get_billing_country(),
+				'email'    => $order->get_billing_email(),
+				'phone'    => $order->get_billing_phone(),
+			);
+		}
+		return array(
+			'name'     => $order->get_formatted_shipping_full_name(),
+			'company'  => $order->get_shipping_company(),
+			'address1' => $order->get_shipping_address_1(),
+			'address2' => $order->get_shipping_address_2(),
+			'city'     => $order->get_shipping_city(),
+			'state'    => $order->get_shipping_state(),
+			'postcode' => $order->get_shipping_postcode(),
+			'country'  => $order->get_shipping_country(),
+			'phone'    => $order->get_shipping_phone(),
+		);
+	}
+
+	/**
+	 * Get payment details for order.
+	 *
+	 * @since 1.0.0
+	 * @param \WC_Order $order Order object.
+	 * @return array Payment details.
+	 */
+	private function get_order_payment_details( $order ) {
+		$payment_method = $order->get_payment_method();
+		$status         = $order->get_status();
+
+		$details = array(
+			'method_id'    => $payment_method,
+			'method_title' => $order->get_payment_method_title(),
+			'paid'         => $order->is_paid(),
+			'paid_date'    => $order->get_date_paid() ? $order->get_date_paid()->format( 'Y-m-d H:i:s' ) : null,
+		);
+
+		// Add transaction ID if available.
+		$transaction_id = $order->get_transaction_id();
+		if ( ! empty( $transaction_id ) ) {
+			$details['transaction_id'] = $transaction_id;
+		}
+
+		// Add payment action hint for unpaid orders.
+		if ( ! $order->is_paid() && in_array( $status, array( 'pending', 'on-hold' ), true ) ) {
+			$details['action_needed'] = $this->get_payment_action_needed( $payment_method );
+		}
+
+		return $details;
+	}
+
+	/**
+	 * Get action needed for unpaid order based on payment method.
+	 *
+	 * @since 1.0.0
+	 * @param string $payment_method Payment method ID.
+	 * @return string Action needed.
+	 */
+	private function get_payment_action_needed( $payment_method ) {
+		switch ( $payment_method ) {
+			case 'bacs':
+				return __( 'Check bank account for incoming transfer. Once received, change status to Processing.', 'assistify-for-woocommerce' );
+			case 'cheque':
+				return __( 'Check mail for incoming payment. Once received and deposited, change status to Processing.', 'assistify-for-woocommerce' );
+			case 'cod':
+				return __( 'No payment action needed. Collect payment upon delivery.', 'assistify-for-woocommerce' );
+			case 'paypal':
+				return __( 'Check PayPal account for payment status. Payment may be pending review.', 'assistify-for-woocommerce' );
+			default:
+				return __( 'Contact customer to confirm payment or retry payment.', 'assistify-for-woocommerce' );
+		}
+	}
+
+	/**
+	 * Get tracking info for admin order view.
+	 *
+	 * @since 1.0.0
+	 * @param \WC_Order $order Order object.
+	 * @return array|string Tracking info.
+	 */
+	private function get_admin_order_tracking( $order ) {
+		// Check WooCommerce Shipment Tracking.
+		$tracking_items = $order->get_meta( '_wc_shipment_tracking_items' );
+		if ( ! empty( $tracking_items ) && is_array( $tracking_items ) ) {
+			$tracking = array();
+			foreach ( $tracking_items as $item ) {
+				$tracking[] = array(
+					'provider'      => isset( $item['tracking_provider'] ) ? $item['tracking_provider'] : '',
+					'number'        => isset( $item['tracking_number'] ) ? $item['tracking_number'] : '',
+					'date_shipped'  => isset( $item['date_shipped'] ) ? gmdate( 'Y-m-d', $item['date_shipped'] ) : '',
+					'tracking_link' => isset( $item['tracking_link'] ) ? $item['tracking_link'] : '',
+				);
+			}
+			return $tracking;
+		}
+
+		// Check for generic tracking meta.
+		$tracking_number = $order->get_meta( '_tracking_number' );
+		if ( ! empty( $tracking_number ) ) {
+			return array(
+				'number'   => $tracking_number,
+				'provider' => $order->get_meta( '_tracking_provider' ),
+			);
+		}
+
+		return '';
 	}
 
 	/**
@@ -1833,12 +2686,17 @@ class Abilities_Registry {
 
 		foreach ( $orders as $order ) {
 			$results[] = array(
-				'id'           => $order->get_id(),
-				'number'       => $order->get_order_number(),
-				'status'       => $order->get_status(),
-				'date_created' => $order->get_date_created() ? $order->get_date_created()->format( 'Y-m-d H:i:s' ) : '',
-				'total'        => $order->get_total(),
-				'customer'     => $order->get_formatted_billing_full_name(),
+				'id'             => $order->get_id(),
+				'number'         => $order->get_order_number(),
+				'status'         => $order->get_status(),
+				'status_label'   => wc_get_order_status_name( $order->get_status() ),
+				'date_created'   => $order->get_date_created() ? $order->get_date_created()->format( 'Y-m-d H:i:s' ) : '',
+				'total'          => html_entity_decode( wp_strip_all_tags( $order->get_formatted_order_total() ) ),
+				'customer'       => $order->get_formatted_billing_full_name(),
+				'customer_email' => $order->get_billing_email(),
+				'payment_method' => $order->get_payment_method_title(),
+				'paid'           => $order->is_paid(),
+				'items_count'    => $order->get_item_count(),
 			);
 		}
 
@@ -1846,6 +2704,37 @@ class Abilities_Registry {
 			'orders' => $results,
 			'count'  => count( $results ),
 		);
+	}
+
+	/**
+	 * Get the most recent order (last order).
+	 *
+	 * @since 1.0.0
+	 * @param array $params Optional parameters.
+	 * @return array|\WP_Error Order data or error.
+	 */
+	public function ability_orders_get_last( $params ) {
+		$args = array(
+			'limit'   => 1,
+			'orderby' => 'date',
+			'order'   => 'DESC',
+		);
+
+		// Optionally filter by status.
+		if ( ! empty( $params['status'] ) ) {
+			$args['status'] = sanitize_text_field( $params['status'] );
+		}
+
+		$orders = wc_get_orders( $args );
+
+		if ( empty( $orders ) ) {
+			return new \WP_Error(
+				'assistify_no_orders',
+				__( 'No orders found.', 'assistify-for-woocommerce' )
+			);
+		}
+
+		return $this->format_detailed_order( $orders[0] );
 	}
 
 	/**
@@ -1870,10 +2759,10 @@ class Abilities_Registry {
 
 		// Search by customer email or name.
 		$args = array(
-			'limit'          => $limit,
-			'orderby'        => 'date',
-			'order'          => 'DESC',
-			'billing_email'  => $query,
+			'limit'         => $limit,
+			'orderby'       => 'date',
+			'order'         => 'DESC',
+			'billing_email' => $query,
 		);
 
 		$orders = wc_get_orders( $args );
@@ -2200,7 +3089,7 @@ class Abilities_Registry {
 
 		foreach ( $products as $product ) {
 			$stock = $product->get_stock_quantity();
-			if ( $stock !== null && $stock <= $threshold ) {
+			if ( null !== $stock && $stock <= $threshold ) {
 				$results[] = array(
 					'id'             => $product->get_id(),
 					'name'           => $product->get_name(),
@@ -2257,18 +3146,18 @@ class Abilities_Registry {
 
 		// Get orders in date range.
 		$args = array(
-			'limit'      => -1,
-			'status'     => array( 'completed', 'processing' ),
-			'date_after' => $start_date . ' 00:00:00',
+			'limit'       => -1,
+			'status'      => array( 'completed', 'processing' ),
+			'date_after'  => $start_date . ' 00:00:00',
 			'date_before' => $end_date . ' 23:59:59',
 		);
 
 		$orders = wc_get_orders( $args );
 
-		$total_sales    = 0;
-		$total_orders   = count( $orders );
-		$total_items    = 0;
-		$average_order  = 0;
+		$total_sales   = 0;
+		$total_orders  = count( $orders );
+		$total_items   = 0;
+		$average_order = 0;
 
 		foreach ( $orders as $order ) {
 			$total_sales += $order->get_total();
@@ -2529,16 +3418,16 @@ class Abilities_Registry {
 		}
 
 		return array(
-			'id'            => $customer->get_id(),
-			'email'         => $customer->get_email(),
-			'first_name'    => $customer->get_first_name(),
-			'last_name'     => $customer->get_last_name(),
-			'display_name'  => $customer->get_display_name(),
-			'username'      => $customer->get_username(),
-			'date_created'  => $customer->get_date_created() ? $customer->get_date_created()->format( 'Y-m-d H:i:s' ) : '',
-			'total_spent'   => $customer->get_total_spent(),
-			'order_count'   => $customer->get_order_count(),
-			'billing'       => array(
+			'id'           => $customer->get_id(),
+			'email'        => $customer->get_email(),
+			'first_name'   => $customer->get_first_name(),
+			'last_name'    => $customer->get_last_name(),
+			'display_name' => $customer->get_display_name(),
+			'username'     => $customer->get_username(),
+			'date_created' => $customer->get_date_created() ? $customer->get_date_created()->format( 'Y-m-d H:i:s' ) : '',
+			'total_spent'  => $customer->get_total_spent(),
+			'order_count'  => $customer->get_order_count(),
+			'billing'      => array(
 				'first_name' => $customer->get_billing_first_name(),
 				'last_name'  => $customer->get_billing_last_name(),
 				'company'    => $customer->get_billing_company(),
@@ -2551,7 +3440,7 @@ class Abilities_Registry {
 				'email'      => $customer->get_billing_email(),
 				'phone'      => $customer->get_billing_phone(),
 			),
-			'shipping'      => array(
+			'shipping'     => array(
 				'first_name' => $customer->get_shipping_first_name(),
 				'last_name'  => $customer->get_shipping_last_name(),
 				'company'    => $customer->get_shipping_company(),
@@ -2596,9 +3485,9 @@ class Abilities_Registry {
 
 		// Add meta query for sorting by WooCommerce customer data.
 		if ( in_array( $orderby, array( 'order_count', 'total_spent' ), true ) ) {
-			$meta_key            = 'order_count' === $orderby ? '_order_count' : '_money_spent';
-			$args['meta_key']    = $meta_key; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-			$args['meta_query']  = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+			$meta_key           = 'order_count' === $orderby ? '_order_count' : '_money_spent';
+			$args['meta_key']   = $meta_key; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+			$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 				'relation' => 'OR',
 				array(
 					'key'     => $meta_key,
@@ -2647,9 +3536,9 @@ class Abilities_Registry {
 		$limit = isset( $params['limit'] ) ? absint( $params['limit'] ) : 10;
 
 		$args = array(
-			'role'   => 'customer',
-			'number' => $limit,
-			'search' => '*' . $query . '*',
+			'role'           => 'customer',
+			'number'         => $limit,
+			'search'         => '*' . $query . '*',
 			'search_columns' => array( 'user_login', 'user_email', 'user_nicename', 'display_name' ),
 		);
 
@@ -2874,12 +3763,12 @@ class Abilities_Registry {
 	 * @return array Search results.
 	 */
 	public function ability_products_search( $params ) {
-		$query    = sanitize_text_field( $params['query'] );
-		$limit    = isset( $params['limit'] ) ? absint( $params['limit'] ) : 10;
-		$status   = isset( $params['status'] ) ? sanitize_text_field( $params['status'] ) : 'publish';
-		$type     = isset( $params['type'] ) ? sanitize_text_field( $params['type'] ) : '';
-		$category = isset( $params['category'] ) ? sanitize_text_field( $params['category'] ) : '';
-		$virtual  = isset( $params['virtual'] ) ? filter_var( $params['virtual'], FILTER_VALIDATE_BOOLEAN ) : null;
+		$query        = sanitize_text_field( $params['query'] );
+		$limit        = isset( $params['limit'] ) ? absint( $params['limit'] ) : 10;
+		$status       = isset( $params['status'] ) ? sanitize_text_field( $params['status'] ) : 'publish';
+		$type         = isset( $params['type'] ) ? sanitize_text_field( $params['type'] ) : '';
+		$category     = isset( $params['category'] ) ? sanitize_text_field( $params['category'] ) : '';
+		$virtual      = isset( $params['virtual'] ) ? filter_var( $params['virtual'], FILTER_VALIDATE_BOOLEAN ) : null;
 		$downloadable = isset( $params['downloadable'] ) ? filter_var( $params['downloadable'], FILTER_VALIDATE_BOOLEAN ) : null;
 
 		// Search by SKU first (exact match).
@@ -2979,8 +3868,8 @@ class Abilities_Registry {
 			'count'    => count( $results ),
 			'query'    => $query,
 			'filters'  => array(
-				'type'         => $type ?: null,
-				'category'     => $category ?: null,
+				'type'         => ! empty( $type ) ? $type : null,
+				'category'     => ! empty( $category ) ? $category : null,
 				'status'       => $status,
 				'virtual'      => $virtual,
 				'downloadable' => $downloadable,
@@ -3159,16 +4048,16 @@ class Abilities_Registry {
 			'product_id'     => $product->get_id(),
 			'updated_fields' => $updated_fields,
 			'product'        => array(
-				'id'                => $product->get_id(),
-				'name'              => $product->get_name(),
-				'type'              => $product->get_type(),
-				'sku'               => $product->get_sku(),
-				'price'             => $product->get_price(),
-				'regular_price'     => $product->get_regular_price(),
-				'sale_price'        => $product->get_sale_price(),
-				'stock_status'      => $product->get_stock_status(),
-				'stock_quantity'    => $product->get_stock_quantity(),
-				'status'            => $product->get_status(),
+				'id'             => $product->get_id(),
+				'name'           => $product->get_name(),
+				'type'           => $product->get_type(),
+				'sku'            => $product->get_sku(),
+				'price'          => $product->get_price(),
+				'regular_price'  => $product->get_regular_price(),
+				'sale_price'     => $product->get_sale_price(),
+				'stock_status'   => $product->get_stock_status(),
+				'stock_quantity' => $product->get_stock_quantity(),
+				'status'         => $product->get_status(),
 			),
 			'message'        => sprintf(
 				/* translators: %1$d: product ID, %2$s: updated fields. */
@@ -3375,11 +4264,11 @@ class Abilities_Registry {
 		$current_data = $this->calculate_revenue_for_period( $start_date, $end_date );
 
 		$result = array(
-			'period'      => $period,
-			'start_date'  => $start_date,
-			'end_date'    => $end_date,
-			'currency'    => get_woocommerce_currency(),
-			'current'     => $current_data,
+			'period'     => $period,
+			'start_date' => $start_date,
+			'end_date'   => $end_date,
+			'currency'   => get_woocommerce_currency(),
+			'current'    => $current_data,
 		);
 
 		// Add comparison data if requested.
@@ -3389,7 +4278,7 @@ class Abilities_Registry {
 
 			$previous_data = $this->calculate_revenue_for_period( $prev_start_date, $prev_end_date );
 
-			$result['previous'] = $previous_data;
+			$result['previous']   = $previous_data;
 			$result['comparison'] = array(
 				'period_start' => $prev_start_date,
 				'period_end'   => $prev_end_date,
@@ -3570,47 +4459,46 @@ class Abilities_Registry {
 					ARRAY_A
 				);
 			}
+		} elseif ( 'total_spent' === $orderby ) {
+			// All time - no date filter, order by total_spent.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Analytics query.
+			$results = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT 
+						customer_id,
+						COUNT(id) as order_count,
+						SUM(total_amount) as total_spent
+					FROM %i
+					WHERE status IN ('wc-completed', 'wc-processing')
+					AND customer_id > 0
+					GROUP BY customer_id
+					ORDER BY total_spent DESC
+					LIMIT %d",
+					$orders_table,
+					$limit
+				),
+				ARRAY_A
+			);
 		} else {
-			// All time - no date filter.
-			if ( 'total_spent' === $orderby ) {
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Analytics query.
-				$results = $wpdb->get_results(
-					$wpdb->prepare(
-						"SELECT 
-							customer_id,
-							COUNT(id) as order_count,
-							SUM(total_amount) as total_spent
-						FROM %i
-						WHERE status IN ('wc-completed', 'wc-processing')
-						AND customer_id > 0
-						GROUP BY customer_id
-						ORDER BY total_spent DESC
-						LIMIT %d",
-						$orders_table,
-						$limit
-					),
-					ARRAY_A
-				);
-			} else {
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Analytics query.
-				$results = $wpdb->get_results(
-					$wpdb->prepare(
-						"SELECT 
-							customer_id,
-							COUNT(id) as order_count,
-							SUM(total_amount) as total_spent
-						FROM %i
-						WHERE status IN ('wc-completed', 'wc-processing')
-						AND customer_id > 0
-						GROUP BY customer_id
-						ORDER BY order_count DESC
-						LIMIT %d",
-						$orders_table,
-						$limit
-					),
-					ARRAY_A
-				);
-			}
+			// All time - no date filter, order by order_count.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Analytics query.
+			$results = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT 
+						customer_id,
+						COUNT(id) as order_count,
+						SUM(total_amount) as total_spent
+					FROM %i
+					WHERE status IN ('wc-completed', 'wc-processing')
+					AND customer_id > 0
+					GROUP BY customer_id
+					ORDER BY order_count DESC
+					LIMIT %d",
+					$orders_table,
+					$limit
+				),
+				ARRAY_A
+			);
 		}
 
 		$customers = array();
@@ -3621,18 +4509,18 @@ class Abilities_Registry {
 
 				if ( $customer->get_id() ) {
 					$customers[] = array(
-						'id'           => $customer_id,
-						'name'         => $customer->get_display_name(),
-						'email'        => $customer->get_email(),
-						'order_count'  => absint( $row['order_count'] ),
-						'total_spent'  => wc_format_decimal( $row['total_spent'], 2 ),
+						'id'            => $customer_id,
+						'name'          => $customer->get_display_name(),
+						'email'         => $customer->get_email(),
+						'order_count'   => absint( $row['order_count'] ),
+						'total_spent'   => wc_format_decimal( $row['total_spent'], 2 ),
 						'average_order' => wc_format_decimal(
 							absint( $row['order_count'] ) > 0
 								? floatval( $row['total_spent'] ) / absint( $row['order_count'] )
 								: 0,
 							2
 						),
-						'date_created' => $customer->get_date_created()
+						'date_created'  => $customer->get_date_created()
 							? $customer->get_date_created()->format( 'Y-m-d' )
 							: '',
 					);
@@ -3646,6 +4534,1215 @@ class Abilities_Registry {
 			'period'    => $period,
 			'orderby'   => $orderby,
 			'currency'  => get_woocommerce_currency(),
+		);
+	}
+
+	/**
+	 * Get daily summary for store owner.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters with optional 'date'.
+	 * @return array Daily summary data.
+	 */
+	public function ability_analytics_daily_summary( $params ) {
+		$date = isset( $params['date'] ) ? sanitize_text_field( $params['date'] ) : gmdate( 'Y-m-d' );
+
+		// Get orders for the day.
+		$orders = wc_get_orders(
+			array(
+				'date_created' => $date,
+				'status'       => array( 'completed', 'processing', 'on-hold', 'pending' ),
+				'limit'        => -1,
+			)
+		);
+
+		$total_revenue     = 0;
+		$completed_revenue = 0;
+		$pending_orders    = 0;
+		$processing_orders = 0;
+		$completed_orders  = 0;
+		$on_hold_orders    = 0;
+		$items_sold        = 0;
+		$payment_methods   = array();
+
+		foreach ( $orders as $order ) {
+			$status = $order->get_status();
+			$total  = (float) $order->get_total();
+
+			if ( in_array( $status, array( 'completed', 'processing' ), true ) ) {
+				$total_revenue     += $total;
+				$completed_revenue += ( 'completed' === $status ) ? $total : 0;
+				$items_sold        += $order->get_item_count();
+			}
+
+			switch ( $status ) {
+				case 'pending':
+					++$pending_orders;
+					break;
+				case 'processing':
+					++$processing_orders;
+					break;
+				case 'completed':
+					++$completed_orders;
+					break;
+				case 'on-hold':
+					++$on_hold_orders;
+					break;
+			}
+
+			// Track payment methods.
+			$pm = $order->get_payment_method_title();
+			if ( ! empty( $pm ) ) {
+				if ( ! isset( $payment_methods[ $pm ] ) ) {
+					$payment_methods[ $pm ] = 0;
+				}
+				++$payment_methods[ $pm ];
+			}
+		}
+
+		// Get new customers for the day.
+		$new_customers = get_users(
+			array(
+				'role'       => 'customer',
+				'date_query' => array(
+					array(
+						'after'     => $date . ' 00:00:00',
+						'before'    => $date . ' 23:59:59',
+						'inclusive' => true,
+					),
+				),
+				'fields'     => 'ID',
+			)
+		);
+
+		$currency_symbol = html_entity_decode( get_woocommerce_currency_symbol() );
+
+		return array(
+			'date'             => $date,
+			'summary'          => array(
+				'total_orders'  => count( $orders ),
+				'revenue'       => $currency_symbol . number_format( $total_revenue, 2 ),
+				'items_sold'    => $items_sold,
+				'new_customers' => count( $new_customers ),
+			),
+			'orders_by_status' => array(
+				'pending'    => $pending_orders,
+				'processing' => $processing_orders,
+				'on_hold'    => $on_hold_orders,
+				'completed'  => $completed_orders,
+			),
+			'payment_methods'  => $payment_methods,
+			'action_needed'    => array(
+				'orders_to_ship'   => $processing_orders,
+				'awaiting_payment' => $pending_orders + $on_hold_orders,
+			),
+		);
+	}
+
+	/**
+	 * Get orders ready to ship (processing status).
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Orders ready to ship.
+	 */
+	public function ability_orders_ready_to_ship( $params ) {
+		$limit = isset( $params['limit'] ) ? absint( $params['limit'] ) : 20;
+
+		$orders = wc_get_orders(
+			array(
+				'status'  => 'processing',
+				'limit'   => $limit,
+				'orderby' => 'date',
+				'order'   => 'ASC', // Oldest first.
+			)
+		);
+
+		$results = array();
+		foreach ( $orders as $order ) {
+			$results[] = array(
+				'id'               => $order->get_id(),
+				'number'           => $order->get_order_number(),
+				'date'             => $order->get_date_created()->format( 'Y-m-d H:i' ),
+				'customer'         => $order->get_formatted_billing_full_name(),
+				'shipping_address' => $order->get_formatted_shipping_address(),
+				'shipping_method'  => $order->get_shipping_method(),
+				'items_count'      => $order->get_item_count(),
+				'total'            => html_entity_decode( wp_strip_all_tags( $order->get_formatted_order_total() ) ),
+				'days_waiting'     => (int) ( ( time() - $order->get_date_created()->getTimestamp() ) / DAY_IN_SECONDS ),
+			);
+		}
+
+		return array(
+			'orders'          => $results,
+			'count'           => count( $results ),
+			'oldest_order_id' => ! empty( $results ) ? $results[0]['id'] : null,
+		);
+	}
+
+	/**
+	 * Get orders pending payment.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Pending payment orders.
+	 */
+	public function ability_orders_pending_payment( $params ) {
+		$limit = isset( $params['limit'] ) ? absint( $params['limit'] ) : 20;
+
+		$orders = wc_get_orders(
+			array(
+				'status'  => array( 'pending', 'on-hold' ),
+				'limit'   => $limit,
+				'orderby' => 'date',
+				'order'   => 'DESC',
+			)
+		);
+
+		$results = array();
+		foreach ( $orders as $order ) {
+			$results[] = array(
+				'id'             => $order->get_id(),
+				'number'         => $order->get_order_number(),
+				'status'         => $order->get_status(),
+				'date'           => $order->get_date_created()->format( 'Y-m-d H:i' ),
+				'customer'       => $order->get_formatted_billing_full_name(),
+				'email'          => $order->get_billing_email(),
+				'payment_method' => $order->get_payment_method_title(),
+				'total'          => html_entity_decode( wp_strip_all_tags( $order->get_formatted_order_total() ) ),
+				'days_waiting'   => (int) ( ( time() - $order->get_date_created()->getTimestamp() ) / DAY_IN_SECONDS ),
+			);
+		}
+
+		$total_pending = 0;
+		foreach ( $results as $order ) {
+			$total_pending += floatval( str_replace( array( ',', html_entity_decode( get_woocommerce_currency_symbol() ) ), '', $order['total'] ) );
+		}
+
+		return array(
+			'orders'        => $results,
+			'count'         => count( $results ),
+			'total_pending' => html_entity_decode( get_woocommerce_currency_symbol() ) . number_format( $total_pending, 2 ),
+		);
+	}
+
+	/**
+	 * Get out of stock products.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Out of stock products.
+	 */
+	public function ability_products_out_of_stock( $params ) {
+		$limit = isset( $params['limit'] ) ? absint( $params['limit'] ) : 50;
+
+		$products = wc_get_products(
+			array(
+				'stock_status' => 'outofstock',
+				'limit'        => $limit,
+				'status'       => 'publish',
+			)
+		);
+
+		$results = array();
+		foreach ( $products as $product ) {
+			$results[] = array(
+				'id'         => $product->get_id(),
+				'name'       => $product->get_name(),
+				'sku'        => $product->get_sku(),
+				'price'      => html_entity_decode( wp_strip_all_tags( wc_price( $product->get_price() ) ) ),
+				'type'       => $product->get_type(),
+				'categories' => wp_list_pluck( $product->get_category_ids(), 'term_id' ),
+				'edit_url'   => admin_url( 'post.php?post=' . $product->get_id() . '&action=edit' ),
+			);
+		}
+
+		return array(
+			'products' => $results,
+			'count'    => count( $results ),
+			'message'  => count( $results ) > 0
+				? sprintf(
+					/* translators: %d: Number of products out of stock. */
+					__( '%d products are out of stock and need restocking.', 'assistify-for-woocommerce' ),
+					count( $results )
+				)
+				: __( 'All products are in stock!', 'assistify-for-woocommerce' ),
+		);
+	}
+
+	/**
+	 * Get stock value report.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Stock value data.
+	 */
+	public function ability_products_stock_value( $params ) {
+		$products = wc_get_products(
+			array(
+				'limit'        => -1,
+				'status'       => 'publish',
+				'manage_stock' => true,
+			)
+		);
+
+		$total_value       = 0;
+		$total_items       = 0;
+		$low_stock_value   = 0;
+		$products_by_value = array();
+
+		foreach ( $products as $product ) {
+			$stock = $product->get_stock_quantity();
+			$price = (float) $product->get_price();
+
+			if ( null !== $stock && $stock > 0 && $price > 0 ) {
+				$value        = $stock * $price;
+				$total_value += $value;
+				$total_items += $stock;
+
+				// Check if low stock.
+				$low_stock_amount = $product->get_low_stock_amount();
+				if ( empty( $low_stock_amount ) ) {
+					$low_stock_amount = get_option( 'woocommerce_notify_low_stock_amount', 2 );
+				}
+				if ( $stock <= $low_stock_amount ) {
+					$low_stock_value += $value;
+				}
+
+				$products_by_value[] = array(
+					'id'    => $product->get_id(),
+					'name'  => $product->get_name(),
+					'stock' => $stock,
+					'price' => $price,
+					'value' => $value,
+				);
+			}
+		}
+
+		// Sort by value descending and get top 10.
+		usort(
+			$products_by_value,
+			function ( $a, $b ) {
+				return $b['value'] - $a['value'];
+			}
+		);
+
+		$currency_symbol = html_entity_decode( get_woocommerce_currency_symbol() );
+
+		return array(
+			'total_stock_value'   => $currency_symbol . number_format( $total_value, 2 ),
+			'total_items'         => $total_items,
+			'products_with_stock' => count( $products_by_value ),
+			'low_stock_value'     => $currency_symbol . number_format( $low_stock_value, 2 ),
+			'top_10_by_value'     => array_slice(
+				array_map(
+					function ( $p ) use ( $currency_symbol ) {
+						return array(
+							'id'    => $p['id'],
+							'name'  => $p['name'],
+							'stock' => $p['stock'],
+							'value' => $currency_symbol . number_format( $p['value'], 2 ),
+						);
+					},
+					$products_by_value
+				),
+				0,
+				10
+			),
+			'currency'            => get_woocommerce_currency(),
+		);
+	}
+
+	/**
+	 * Get recent refunds summary.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Refunds data.
+	 */
+	public function ability_analytics_refunds( $params ) {
+		$days = isset( $params['days'] ) ? absint( $params['days'] ) : 30;
+
+		$date_after = gmdate( 'Y-m-d', strtotime( "-{$days} days" ) );
+
+		$orders = wc_get_orders(
+			array(
+				'status'       => 'refunded',
+				'date_created' => '>' . $date_after,
+				'limit'        => -1,
+			)
+		);
+
+		$total_refunded = 0;
+		$refunds_list   = array();
+
+		foreach ( $orders as $order ) {
+			$refund_amount   = $order->get_total_refunded();
+			$total_refunded += $refund_amount;
+
+			$refunds_list[] = array(
+				'order_id'    => $order->get_id(),
+				'order_total' => html_entity_decode( wp_strip_all_tags( $order->get_formatted_order_total() ) ),
+				'refunded'    => html_entity_decode( wp_strip_all_tags( wc_price( $refund_amount ) ) ),
+				'date'        => $order->get_date_created()->format( 'Y-m-d' ),
+				'customer'    => $order->get_formatted_billing_full_name(),
+				'reason'      => $order->get_customer_note(),
+			);
+		}
+
+		$currency_symbol = html_entity_decode( get_woocommerce_currency_symbol() );
+
+		return array(
+			'period'         => sprintf(
+				/* translators: %d: Number of days. */
+				__( 'Last %d days', 'assistify-for-woocommerce' ),
+				$days
+			),
+			'total_refunds'  => count( $orders ),
+			'total_refunded' => $currency_symbol . number_format( $total_refunded, 2 ),
+			'refunds'        => array_slice( $refunds_list, 0, 20 ),
+		);
+	}
+
+	/**
+	 * Get payment methods breakdown.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Payment method stats.
+	 */
+	public function ability_analytics_payment_methods( $params ) {
+		$period = isset( $params['period'] ) ? sanitize_text_field( $params['period'] ) : 'month';
+
+		$date_after = gmdate( 'Y-m-d', strtotime( '-1 ' . $period ) );
+
+		$orders = wc_get_orders(
+			array(
+				'status'       => array( 'completed', 'processing' ),
+				'date_created' => '>' . $date_after,
+				'limit'        => -1,
+			)
+		);
+
+		$methods = array();
+		$total   = 0;
+
+		foreach ( $orders as $order ) {
+			$method = $order->get_payment_method_title();
+			$amount = (float) $order->get_total();
+
+			if ( empty( $method ) ) {
+				$method = __( 'Unknown', 'assistify-for-woocommerce' );
+			}
+
+			if ( ! isset( $methods[ $method ] ) ) {
+				$methods[ $method ] = array(
+					'count'  => 0,
+					'amount' => 0,
+				);
+			}
+
+			++$methods[ $method ]['count'];
+			$methods[ $method ]['amount'] += $amount;
+			$total                        += $amount;
+		}
+
+		// Sort by amount descending.
+		uasort(
+			$methods,
+			function ( $a, $b ) {
+				return $b['amount'] - $a['amount'];
+			}
+		);
+
+		$currency_symbol = html_entity_decode( get_woocommerce_currency_symbol() );
+		$formatted       = array();
+
+		foreach ( $methods as $name => $data ) {
+			$formatted[] = array(
+				'method'     => $name,
+				'orders'     => $data['count'],
+				'revenue'    => $currency_symbol . number_format( $data['amount'], 2 ),
+				'percentage' => $total > 0 ? round( ( $data['amount'] / $total ) * 100, 1 ) . '%' : '0%',
+			);
+		}
+
+		return array(
+			'period'          => $period,
+			'total_orders'    => count( $orders ),
+			'total_revenue'   => $currency_symbol . number_format( $total, 2 ),
+			'payment_methods' => $formatted,
+		);
+	}
+
+	/**
+	 * Get recently registered customers.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Recent customers.
+	 */
+	public function ability_customers_recent( $params ) {
+		$days  = isset( $params['days'] ) ? absint( $params['days'] ) : 7;
+		$limit = isset( $params['limit'] ) ? absint( $params['limit'] ) : 20;
+
+		$date_after = gmdate( 'Y-m-d H:i:s', strtotime( "-{$days} days" ) );
+
+		$users = get_users(
+			array(
+				'role'       => 'customer',
+				'date_query' => array(
+					array(
+						'after'     => $date_after,
+						'inclusive' => true,
+					),
+				),
+				'number'     => $limit,
+				'orderby'    => 'registered',
+				'order'      => 'DESC',
+			)
+		);
+
+		$customers = array();
+		foreach ( $users as $user ) {
+			$customer = new \WC_Customer( $user->ID );
+
+			$customers[] = array(
+				'id'          => $user->ID,
+				'name'        => $customer->get_display_name(),
+				'email'       => $customer->get_email(),
+				'registered'  => $user->user_registered,
+				'orders'      => $customer->get_order_count(),
+				'total_spent' => html_entity_decode( wp_strip_all_tags( wc_price( $customer->get_total_spent() ) ) ),
+				'is_paying'   => $customer->get_is_paying_customer(),
+			);
+		}
+
+		return array(
+			'period'    => sprintf(
+				/* translators: %d: Number of days. */
+				__( 'Last %d days', 'assistify-for-woocommerce' ),
+				$days
+			),
+			'customers' => $customers,
+			'count'     => count( $customers ),
+		);
+	}
+
+	/**
+	 * Get repeat customers.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Repeat customers.
+	 */
+	public function ability_customers_repeat( $params ) {
+		$min_orders = isset( $params['min_orders'] ) ? absint( $params['min_orders'] ) : 2;
+		$limit      = isset( $params['limit'] ) ? absint( $params['limit'] ) : 20;
+
+		global $wpdb;
+		$orders_table = $wpdb->prefix . 'wc_orders';
+
+		// Check if HPOS is enabled.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table existence check.
+		if ( ! $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $orders_table ) ) ) {
+			// Fall back to posts table.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$results = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT pm.meta_value as customer_id, COUNT(p.ID) as order_count, SUM(pm2.meta_value) as total_spent
+					FROM {$wpdb->posts} p
+					INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id AND pm.meta_key = '_customer_user'
+					INNER JOIN {$wpdb->postmeta} pm2 ON p.ID = pm2.post_id AND pm2.meta_key = '_order_total'
+					WHERE p.post_type = 'shop_order'
+					AND p.post_status IN ('wc-completed', 'wc-processing')
+					AND pm.meta_value > 0
+					GROUP BY pm.meta_value
+					HAVING order_count >= %d
+					ORDER BY order_count DESC
+					LIMIT %d",
+					$min_orders,
+					$limit
+				),
+				ARRAY_A
+			);
+		} else {
+			// Use HPOS table.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			$results = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT customer_id, COUNT(id) as order_count, SUM(total_amount) as total_spent
+					FROM %i
+					WHERE status IN ('wc-completed', 'wc-processing')
+					AND customer_id > 0
+					GROUP BY customer_id
+					HAVING order_count >= %d
+					ORDER BY order_count DESC
+					LIMIT %d",
+					$orders_table,
+					$min_orders,
+					$limit
+				),
+				ARRAY_A
+			);
+		}
+
+		$customers = array();
+		if ( $results ) {
+			foreach ( $results as $row ) {
+				$customer_id = absint( $row['customer_id'] );
+				$customer    = new \WC_Customer( $customer_id );
+
+				if ( $customer->get_id() ) {
+					$customers[] = array(
+						'id'          => $customer_id,
+						'name'        => $customer->get_display_name(),
+						'email'       => $customer->get_email(),
+						'orders'      => absint( $row['order_count'] ),
+						'total_spent' => html_entity_decode( wp_strip_all_tags( wc_price( $row['total_spent'] ) ) ),
+						'avg_order'   => html_entity_decode(
+							wp_strip_all_tags(
+								wc_price( floatval( $row['total_spent'] ) / absint( $row['order_count'] ) )
+							)
+						),
+						'last_order'  => $customer->get_last_order()
+							? $customer->get_last_order()->get_date_created()->format( 'Y-m-d' )
+							: '',
+					);
+				}
+			}
+		}
+
+		return array(
+			'min_orders' => $min_orders,
+			'customers'  => $customers,
+			'count'      => count( $customers ),
+			'insight'    => count( $customers ) > 0
+				? sprintf(
+					/* translators: %d: Number of repeat customers. */
+					__( 'You have %d loyal repeat customers!', 'assistify-for-woocommerce' ),
+					count( $customers )
+				)
+				: __( 'Focus on customer retention to build repeat business.', 'assistify-for-woocommerce' ),
+		);
+	}
+
+	/**
+	 * Get reviews summary.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Reviews summary.
+	 */
+	public function ability_analytics_reviews( $params ) {
+		$days  = isset( $params['days'] ) ? absint( $params['days'] ) : 30;
+		$limit = isset( $params['limit'] ) ? absint( $params['limit'] ) : 20;
+
+		$date_after = gmdate( 'Y-m-d H:i:s', strtotime( "-{$days} days" ) );
+
+		$reviews = get_comments(
+			array(
+				'type'       => 'review',
+				'status'     => 'approve',
+				'date_query' => array(
+					array(
+						'after' => $date_after,
+					),
+				),
+				'number'     => $limit,
+				'orderby'    => 'comment_date',
+				'order'      => 'DESC',
+			)
+		);
+
+		$review_list   = array();
+		$total_rating  = 0;
+		$rating_counts = array(
+			1 => 0,
+			2 => 0,
+			3 => 0,
+			4 => 0,
+			5 => 0,
+		);
+
+		foreach ( $reviews as $review ) {
+			$rating = (int) get_comment_meta( $review->comment_ID, 'rating', true );
+			if ( $rating >= 1 && $rating <= 5 ) {
+				$total_rating += $rating;
+				++$rating_counts[ $rating ];
+			}
+
+			$product = wc_get_product( $review->comment_post_ID );
+
+			$review_list[] = array(
+				'id'           => $review->comment_ID,
+				'product_id'   => $review->comment_post_ID,
+				'product_name' => $product ? $product->get_name() : __( 'Unknown Product', 'assistify-for-woocommerce' ),
+				'rating'       => $rating,
+				'author'       => $review->comment_author,
+				'content'      => wp_trim_words( $review->comment_content, 30 ),
+				'date'         => gmdate( 'Y-m-d', strtotime( $review->comment_date ) ),
+			);
+		}
+
+		$avg_rating = count( $reviews ) > 0 ? round( $total_rating / count( $reviews ), 1 ) : 0;
+
+		return array(
+			'period'           => sprintf(
+				/* translators: %d: Number of days. */
+				__( 'Last %d days', 'assistify-for-woocommerce' ),
+				$days
+			),
+			'total_reviews'    => count( $reviews ),
+			'average_rating'   => $avg_rating,
+			'rating_breakdown' => $rating_counts,
+			'reviews'          => $review_list,
+		);
+	}
+
+	/**
+	 * Get order comparison between periods.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Comparison data.
+	 */
+	public function ability_analytics_comparison( $params ) {
+		$period = isset( $params['period'] ) ? sanitize_text_field( $params['period'] ) : 'week';
+
+		// Calculate date ranges.
+		switch ( $period ) {
+			case 'month':
+				$current_start  = gmdate( 'Y-m-01' );
+				$current_end    = gmdate( 'Y-m-d' );
+				$previous_start = gmdate( 'Y-m-01', strtotime( '-1 month' ) );
+				$previous_end   = gmdate( 'Y-m-d', strtotime( '-1 month' ) );
+				break;
+			case 'quarter':
+				$current_start  = gmdate( 'Y-m-d', strtotime( '-90 days' ) );
+				$current_end    = gmdate( 'Y-m-d' );
+				$previous_start = gmdate( 'Y-m-d', strtotime( '-180 days' ) );
+				$previous_end   = gmdate( 'Y-m-d', strtotime( '-91 days' ) );
+				break;
+			case 'year':
+				$current_start  = gmdate( 'Y-01-01' );
+				$current_end    = gmdate( 'Y-m-d' );
+				$previous_start = gmdate( 'Y-01-01', strtotime( '-1 year' ) );
+				$previous_end   = gmdate( 'Y-m-d', strtotime( '-1 year' ) );
+				break;
+			default: // Week.
+				$current_start  = gmdate( 'Y-m-d', strtotime( '-7 days' ) );
+				$current_end    = gmdate( 'Y-m-d' );
+				$previous_start = gmdate( 'Y-m-d', strtotime( '-14 days' ) );
+				$previous_end   = gmdate( 'Y-m-d', strtotime( '-8 days' ) );
+		}
+
+		// Get current period orders.
+		$current_orders = wc_get_orders(
+			array(
+				'status'       => array( 'completed', 'processing' ),
+				'date_created' => $current_start . '...' . $current_end,
+				'limit'        => -1,
+			)
+		);
+
+		// Get previous period orders.
+		$previous_orders = wc_get_orders(
+			array(
+				'status'       => array( 'completed', 'processing' ),
+				'date_created' => $previous_start . '...' . $previous_end,
+				'limit'        => -1,
+			)
+		);
+
+		// Calculate totals.
+		$current_revenue  = 0;
+		$current_items    = 0;
+		$previous_revenue = 0;
+		$previous_items   = 0;
+
+		foreach ( $current_orders as $order ) {
+			$current_revenue += (float) $order->get_total();
+			$current_items   += $order->get_item_count();
+		}
+
+		foreach ( $previous_orders as $order ) {
+			$previous_revenue += (float) $order->get_total();
+			$previous_items   += $order->get_item_count();
+		}
+
+		// Calculate changes.
+		$order_change   = $previous_revenue > 0 ? round( ( ( count( $current_orders ) - count( $previous_orders ) ) / count( $previous_orders ) ) * 100, 1 ) : 0;
+		$revenue_change = $previous_revenue > 0 ? round( ( ( $current_revenue - $previous_revenue ) / $previous_revenue ) * 100, 1 ) : 0;
+
+		$currency_symbol = html_entity_decode( get_woocommerce_currency_symbol() );
+
+		return array(
+			'period'   => $period,
+			'current'  => array(
+				'label'   => __( 'Current Period', 'assistify-for-woocommerce' ),
+				'dates'   => $current_start . ' to ' . $current_end,
+				'orders'  => count( $current_orders ),
+				'revenue' => $currency_symbol . number_format( $current_revenue, 2 ),
+				'items'   => $current_items,
+				'aov'     => count( $current_orders ) > 0 ? $currency_symbol . number_format( $current_revenue / count( $current_orders ), 2 ) : $currency_symbol . '0.00',
+			),
+			'previous' => array(
+				'label'   => __( 'Previous Period', 'assistify-for-woocommerce' ),
+				'dates'   => $previous_start . ' to ' . $previous_end,
+				'orders'  => count( $previous_orders ),
+				'revenue' => $currency_symbol . number_format( $previous_revenue, 2 ),
+				'items'   => $previous_items,
+				'aov'     => count( $previous_orders ) > 0 ? $currency_symbol . number_format( $previous_revenue / count( $previous_orders ), 2 ) : $currency_symbol . '0.00',
+			),
+			'change'   => array(
+				'orders'  => ( $order_change >= 0 ? '+' : '' ) . $order_change . '%',
+				'revenue' => ( $revenue_change >= 0 ? '+' : '' ) . $revenue_change . '%',
+			),
+		);
+	}
+
+	/**
+	 * Get category sales data.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Category sales.
+	 */
+	public function ability_analytics_category_sales( $params ) {
+		$period = isset( $params['period'] ) ? sanitize_text_field( $params['period'] ) : 'month';
+		$limit  = isset( $params['limit'] ) ? absint( $params['limit'] ) : 10;
+
+		// Get date range.
+		$date_after = 'all' === $period ? null : gmdate( 'Y-m-d', strtotime( '-1 ' . $period ) );
+
+		$args = array(
+			'status' => array( 'completed', 'processing' ),
+			'limit'  => -1,
+		);
+
+		if ( $date_after ) {
+			$args['date_created'] = '>' . $date_after;
+		}
+
+		$orders = wc_get_orders( $args );
+
+		$category_data = array();
+
+		foreach ( $orders as $order ) {
+			foreach ( $order->get_items() as $item ) {
+				$product = $item->get_product();
+				if ( ! $product ) {
+					continue;
+				}
+
+				$categories = wp_get_post_terms( $product->get_id(), 'product_cat', array( 'fields' => 'names' ) );
+				$item_total = (float) $item->get_total();
+				$item_qty   = $item->get_quantity();
+
+				foreach ( $categories as $cat_name ) {
+					if ( ! isset( $category_data[ $cat_name ] ) ) {
+						$category_data[ $cat_name ] = array(
+							'revenue' => 0,
+							'items'   => 0,
+							'orders'  => array(),
+						);
+					}
+					$category_data[ $cat_name ]['revenue']                   += $item_total;
+					$category_data[ $cat_name ]['items']                     += $item_qty;
+					$category_data[ $cat_name ]['orders'][ $order->get_id() ] = true;
+				}
+			}
+		}
+
+		// Calculate order count and sort.
+		foreach ( $category_data as $name => &$data ) {
+			$data['order_count'] = count( $data['orders'] );
+			unset( $data['orders'] );
+		}
+
+		// Sort by revenue descending.
+		uasort(
+			$category_data,
+			function ( $a, $b ) {
+				return $b['revenue'] - $a['revenue'];
+			}
+		);
+
+		// Format output.
+		$currency_symbol = html_entity_decode( get_woocommerce_currency_symbol() );
+		$total_revenue   = array_sum( array_column( $category_data, 'revenue' ) );
+		$formatted       = array();
+		$count           = 0;
+
+		foreach ( $category_data as $name => $data ) {
+			if ( $count >= $limit ) {
+				break;
+			}
+			$formatted[] = array(
+				'category'   => $name,
+				'revenue'    => $currency_symbol . number_format( $data['revenue'], 2 ),
+				'items_sold' => $data['items'],
+				'orders'     => $data['order_count'],
+				'percentage' => $total_revenue > 0 ? round( ( $data['revenue'] / $total_revenue ) * 100, 1 ) . '%' : '0%',
+			);
+			++$count;
+		}
+
+		return array(
+			'period'        => $period,
+			'total_revenue' => $currency_symbol . number_format( $total_revenue, 2 ),
+			'categories'    => $formatted,
+		);
+	}
+
+	/**
+	 * Get average order value trends.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array AOV data.
+	 */
+	public function ability_analytics_aov( $params ) {
+		$period = isset( $params['period'] ) ? sanitize_text_field( $params['period'] ) : 'month';
+
+		$date_after = gmdate( 'Y-m-d', strtotime( '-1 ' . $period ) );
+
+		$orders = wc_get_orders(
+			array(
+				'status'       => array( 'completed', 'processing' ),
+				'date_created' => '>' . $date_after,
+				'limit'        => -1,
+			)
+		);
+
+		$total_revenue = 0;
+		$order_values  = array();
+		$daily_aov     = array();
+
+		foreach ( $orders as $order ) {
+			$total          = (float) $order->get_total();
+			$total_revenue += $total;
+			$order_values[] = $total;
+
+			$date = $order->get_date_created()->format( 'Y-m-d' );
+			if ( ! isset( $daily_aov[ $date ] ) ) {
+				$daily_aov[ $date ] = array(
+					'total' => 0,
+					'count' => 0,
+				);
+			}
+			$daily_aov[ $date ]['total'] += $total;
+			++$daily_aov[ $date ]['count'];
+		}
+
+		$order_count     = count( $orders );
+		$aov             = $order_count > 0 ? $total_revenue / $order_count : 0;
+		$currency_symbol = html_entity_decode( get_woocommerce_currency_symbol() );
+
+		// Calculate min/max.
+		$min_order = $order_count > 0 ? min( $order_values ) : 0;
+		$max_order = $order_count > 0 ? max( $order_values ) : 0;
+
+		// Get daily trend (last 7 data points).
+		$trend = array();
+		$dates = array_keys( $daily_aov );
+		sort( $dates );
+		$dates = array_slice( $dates, -7 );
+
+		foreach ( $dates as $date ) {
+			$day_data = $daily_aov[ $date ];
+			$trend[]  = array(
+				'date' => $date,
+				'aov'  => $currency_symbol . number_format( $day_data['total'] / $day_data['count'], 2 ),
+			);
+		}
+
+		return array(
+			'period'        => $period,
+			'total_orders'  => $order_count,
+			'total_revenue' => $currency_symbol . number_format( $total_revenue, 2 ),
+			'aov'           => $currency_symbol . number_format( $aov, 2 ),
+			'min_order'     => $currency_symbol . number_format( $min_order, 2 ),
+			'max_order'     => $currency_symbol . number_format( $max_order, 2 ),
+			'trend'         => $trend,
+		);
+	}
+
+	/**
+	 * Get failed orders.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Failed orders.
+	 */
+	public function ability_orders_failed( $params ) {
+		$days  = isset( $params['days'] ) ? absint( $params['days'] ) : 30;
+		$limit = isset( $params['limit'] ) ? absint( $params['limit'] ) : 20;
+
+		$date_after = gmdate( 'Y-m-d', strtotime( "-{$days} days" ) );
+
+		$orders = wc_get_orders(
+			array(
+				'status'       => 'failed',
+				'date_created' => '>' . $date_after,
+				'limit'        => $limit,
+				'orderby'      => 'date',
+				'order'        => 'DESC',
+			)
+		);
+
+		$results     = array();
+		$total_value = 0;
+
+		foreach ( $orders as $order ) {
+			$total        = (float) $order->get_total();
+			$total_value += $total;
+
+			$results[] = array(
+				'id'             => $order->get_id(),
+				'number'         => $order->get_order_number(),
+				'date'           => $order->get_date_created()->format( 'Y-m-d H:i' ),
+				'customer'       => $order->get_formatted_billing_full_name(),
+				'email'          => $order->get_billing_email(),
+				'payment_method' => $order->get_payment_method_title(),
+				'total'          => html_entity_decode( wp_strip_all_tags( $order->get_formatted_order_total() ) ),
+			);
+		}
+
+		$currency_symbol = html_entity_decode( get_woocommerce_currency_symbol() );
+
+		return array(
+			'period'       => sprintf(
+				/* translators: %d: Number of days. */
+				__( 'Last %d days', 'assistify-for-woocommerce' ),
+				$days
+			),
+			'count'        => count( $results ),
+			'lost_revenue' => $currency_symbol . number_format( $total_value, 2 ),
+			'orders'       => $results,
+			'insight'      => count( $results ) > 0
+				? __( 'Consider reaching out to these customers to recover lost sales.', 'assistify-for-woocommerce' )
+				: __( 'No failed orders - great job!', 'assistify-for-woocommerce' ),
+		);
+	}
+
+	/**
+	 * Get pending reviews.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Pending reviews.
+	 */
+	public function ability_products_pending_reviews( $params ) {
+		$limit = isset( $params['limit'] ) ? absint( $params['limit'] ) : 20;
+
+		$reviews = get_comments(
+			array(
+				'type'    => 'review',
+				'status'  => 'hold',
+				'number'  => $limit,
+				'orderby' => 'comment_date',
+				'order'   => 'DESC',
+			)
+		);
+
+		$review_list = array();
+
+		foreach ( $reviews as $review ) {
+			$rating  = (int) get_comment_meta( $review->comment_ID, 'rating', true );
+			$product = wc_get_product( $review->comment_post_ID );
+
+			$review_list[] = array(
+				'id'           => $review->comment_ID,
+				'product_id'   => $review->comment_post_ID,
+				'product_name' => $product ? $product->get_name() : __( 'Unknown Product', 'assistify-for-woocommerce' ),
+				'rating'       => $rating,
+				'author'       => $review->comment_author,
+				'email'        => $review->comment_author_email,
+				'content'      => wp_trim_words( $review->comment_content, 50 ),
+				'date'         => gmdate( 'Y-m-d H:i', strtotime( $review->comment_date ) ),
+				'approve_url'  => admin_url( 'comment.php?action=approve&c=' . $review->comment_ID ),
+			);
+		}
+
+		return array(
+			'count'   => count( $review_list ),
+			'reviews' => $review_list,
+			'message' => count( $review_list ) > 0
+				? sprintf(
+					/* translators: %d: Number of pending reviews. */
+					__( '%d reviews awaiting moderation.', 'assistify-for-woocommerce' ),
+					count( $review_list )
+				)
+				: __( 'No pending reviews - all caught up!', 'assistify-for-woocommerce' ),
+		);
+	}
+
+	/**
+	 * Check product availability.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Product availability.
+	 */
+	public function ability_products_availability( $params ) {
+		$product = null;
+
+		// Find by ID.
+		if ( ! empty( $params['product_id'] ) ) {
+			$product = wc_get_product( absint( $params['product_id'] ) );
+		}
+
+		// Find by name.
+		if ( ! $product && ! empty( $params['product_name'] ) ) {
+			$products = wc_get_products(
+				array(
+					's'      => sanitize_text_field( $params['product_name'] ),
+					'limit'  => 1,
+					'status' => 'publish',
+				)
+			);
+			if ( ! empty( $products ) ) {
+				$product = $products[0];
+			}
+		}
+
+		if ( ! $product ) {
+			return array(
+				'found'   => false,
+				'message' => __( 'Product not found. Please provide a valid product name or ID.', 'assistify-for-woocommerce' ),
+			);
+		}
+
+		$stock_status = $product->get_stock_status();
+		$stock_qty    = $product->get_stock_quantity();
+
+		$availability = array(
+			'found'        => true,
+			'product_id'   => $product->get_id(),
+			'name'         => $product->get_name(),
+			'price'        => html_entity_decode( wp_strip_all_tags( wc_price( $product->get_price() ) ) ),
+			'in_stock'     => $product->is_in_stock(),
+			'stock_status' => $stock_status,
+			'purchasable'  => $product->is_purchasable(),
+			'url'          => get_permalink( $product->get_id() ),
+		);
+
+		if ( null !== $stock_qty ) {
+			$availability['stock_quantity'] = $stock_qty;
+		}
+
+		// Add backorder info.
+		if ( $product->backorders_allowed() ) {
+			$availability['backorders_allowed'] = true;
+		}
+
+		// Status message.
+		if ( $product->is_in_stock() ) {
+			if ( null !== $stock_qty && $stock_qty > 0 ) {
+				/* translators: %d: Stock quantity. */
+				$availability['message'] = sprintf( __( 'In stock - %d available', 'assistify-for-woocommerce' ), $stock_qty );
+			} else {
+				$availability['message'] = __( 'In stock', 'assistify-for-woocommerce' );
+			}
+		} elseif ( 'onbackorder' === $stock_status ) {
+			$availability['message'] = __( 'Available on backorder', 'assistify-for-woocommerce' );
+		} else {
+			$availability['message'] = __( 'Out of stock', 'assistify-for-woocommerce' );
+		}
+
+		return $availability;
+	}
+
+	/**
+	 * Get related products.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Related products.
+	 */
+	public function ability_products_related( $params ) {
+		$limit    = isset( $params['limit'] ) ? absint( $params['limit'] ) : 5;
+		$products = array();
+
+		// Find related by product ID.
+		if ( ! empty( $params['product_id'] ) ) {
+			$product_id  = absint( $params['product_id'] );
+			$related_ids = wc_get_related_products( $product_id, $limit );
+
+			foreach ( $related_ids as $id ) {
+				$product = wc_get_product( $id );
+				if ( $product && $product->is_visible() ) {
+					$products[] = $this->format_product_for_customer( $product );
+				}
+			}
+		}
+
+		// Find by category.
+		if ( empty( $products ) && ! empty( $params['category'] ) ) {
+			$category = sanitize_text_field( $params['category'] );
+			$term     = get_term_by( 'name', $category, 'product_cat' );
+
+			if ( ! $term ) {
+				$term = get_term_by( 'slug', $category, 'product_cat' );
+			}
+
+			if ( $term ) {
+				$cat_products = wc_get_products(
+					array(
+						'category' => array( $term->slug ),
+						'limit'    => $limit,
+						'status'   => 'publish',
+						'orderby'  => 'popularity',
+					)
+				);
+
+				foreach ( $cat_products as $product ) {
+					if ( $product->is_visible() ) {
+						$products[] = $this->format_product_for_customer( $product );
+					}
+				}
+			}
+		}
+
+		// Fall back to best sellers.
+		if ( empty( $products ) ) {
+			$best_sellers = wc_get_products(
+				array(
+					'limit'   => $limit,
+					'status'  => 'publish',
+					'orderby' => 'popularity',
+				)
+			);
+
+			foreach ( $best_sellers as $product ) {
+				if ( $product->is_visible() ) {
+					$products[] = $this->format_product_for_customer( $product );
+				}
+			}
+		}
+
+		return array(
+			'products' => $products,
+			'count'    => count( $products ),
+		);
+	}
+
+	/**
+	 * Format product for customer display.
+	 *
+	 * @since 1.0.0
+	 * @param \WC_Product $product Product object.
+	 * @return array Formatted product data.
+	 */
+	private function format_product_for_customer( $product ) {
+		return array(
+			'id'       => $product->get_id(),
+			'name'     => $product->get_name(),
+			'price'    => html_entity_decode( wp_strip_all_tags( wc_price( $product->get_price() ) ) ),
+			'in_stock' => $product->is_in_stock(),
+			'url'      => get_permalink( $product->get_id() ),
 		);
 	}
 
@@ -3668,33 +5765,33 @@ class Abilities_Registry {
 		// General settings.
 		if ( 'all' === $group || 'general' === $group ) {
 			$settings['general'] = array(
-				'store_address'    => WC()->countries->get_base_address(),
-				'store_address_2'  => WC()->countries->get_base_address_2(),
-				'store_city'       => WC()->countries->get_base_city(),
-				'store_postcode'   => WC()->countries->get_base_postcode(),
-				'store_country'    => WC()->countries->get_base_country(),
-				'store_state'      => WC()->countries->get_base_state(),
-				'currency'         => get_woocommerce_currency(),
-				'currency_symbol'  => get_woocommerce_currency_symbol(),
-				'currency_pos'     => get_option( 'woocommerce_currency_pos' ),
-				'thousand_sep'     => wc_get_price_thousand_separator(),
-				'decimal_sep'      => wc_get_price_decimal_separator(),
-				'num_decimals'     => wc_get_price_decimals(),
+				'store_address'   => WC()->countries->get_base_address(),
+				'store_address_2' => WC()->countries->get_base_address_2(),
+				'store_city'      => WC()->countries->get_base_city(),
+				'store_postcode'  => WC()->countries->get_base_postcode(),
+				'store_country'   => WC()->countries->get_base_country(),
+				'store_state'     => WC()->countries->get_base_state(),
+				'currency'        => get_woocommerce_currency(),
+				'currency_symbol' => get_woocommerce_currency_symbol(),
+				'currency_pos'    => get_option( 'woocommerce_currency_pos' ),
+				'thousand_sep'    => wc_get_price_thousand_separator(),
+				'decimal_sep'     => wc_get_price_decimal_separator(),
+				'num_decimals'    => wc_get_price_decimals(),
 			);
 		}
 
 		// Product settings.
 		if ( 'all' === $group || 'products' === $group ) {
 			$settings['products'] = array(
-				'weight_unit'           => get_option( 'woocommerce_weight_unit' ),
-				'dimension_unit'        => get_option( 'woocommerce_dimension_unit' ),
-				'enable_reviews'        => 'yes' === get_option( 'woocommerce_enable_reviews' ),
-				'review_rating_required' => 'yes' === get_option( 'woocommerce_review_rating_required' ),
-				'manage_stock'          => 'yes' === get_option( 'woocommerce_manage_stock' ),
-				'hold_stock_minutes'    => get_option( 'woocommerce_hold_stock_minutes' ),
-				'notify_low_stock'      => 'yes' === get_option( 'woocommerce_notify_low_stock' ),
-				'notify_no_stock'       => 'yes' === get_option( 'woocommerce_notify_no_stock' ),
-				'low_stock_amount'      => get_option( 'woocommerce_notify_low_stock_amount' ),
+				'weight_unit'             => get_option( 'woocommerce_weight_unit' ),
+				'dimension_unit'          => get_option( 'woocommerce_dimension_unit' ),
+				'enable_reviews'          => 'yes' === get_option( 'woocommerce_enable_reviews' ),
+				'review_rating_required'  => 'yes' === get_option( 'woocommerce_review_rating_required' ),
+				'manage_stock'            => 'yes' === get_option( 'woocommerce_manage_stock' ),
+				'hold_stock_minutes'      => get_option( 'woocommerce_hold_stock_minutes' ),
+				'notify_low_stock'        => 'yes' === get_option( 'woocommerce_notify_low_stock' ),
+				'notify_no_stock'         => 'yes' === get_option( 'woocommerce_notify_no_stock' ),
+				'low_stock_amount'        => get_option( 'woocommerce_notify_low_stock_amount' ),
 				'out_of_stock_visibility' => get_option( 'woocommerce_hide_out_of_stock_items' ),
 			);
 		}
@@ -3702,40 +5799,40 @@ class Abilities_Registry {
 		// Tax settings.
 		if ( 'all' === $group || 'tax' === $group ) {
 			$settings['tax'] = array(
-				'enabled'              => wc_tax_enabled(),
-				'calc_taxes'           => 'yes' === get_option( 'woocommerce_calc_taxes' ),
-				'prices_include_tax'   => 'yes' === get_option( 'woocommerce_prices_include_tax' ),
-				'tax_based_on'         => get_option( 'woocommerce_tax_based_on' ),
-				'shipping_tax_class'   => get_option( 'woocommerce_shipping_tax_class' ),
+				'enabled'               => wc_tax_enabled(),
+				'calc_taxes'            => 'yes' === get_option( 'woocommerce_calc_taxes' ),
+				'prices_include_tax'    => 'yes' === get_option( 'woocommerce_prices_include_tax' ),
+				'tax_based_on'          => get_option( 'woocommerce_tax_based_on' ),
+				'shipping_tax_class'    => get_option( 'woocommerce_shipping_tax_class' ),
 				'tax_round_at_subtotal' => 'yes' === get_option( 'woocommerce_tax_round_at_subtotal' ),
-				'tax_display_shop'     => get_option( 'woocommerce_tax_display_shop' ),
-				'tax_display_cart'     => get_option( 'woocommerce_tax_display_cart' ),
-				'tax_total_display'    => get_option( 'woocommerce_tax_total_display' ),
+				'tax_display_shop'      => get_option( 'woocommerce_tax_display_shop' ),
+				'tax_display_cart'      => get_option( 'woocommerce_tax_display_cart' ),
+				'tax_total_display'     => get_option( 'woocommerce_tax_total_display' ),
 			);
 		}
 
 		// Shipping settings.
 		if ( 'all' === $group || 'shipping' === $group ) {
 			$settings['shipping'] = array(
-				'enabled'                 => 'yes' === get_option( 'woocommerce_ship_to_countries' ) || ! empty( get_option( 'woocommerce_specific_ship_to_countries' ) ),
-				'ship_to_countries'       => get_option( 'woocommerce_ship_to_countries' ),
-				'specific_ship_to'        => get_option( 'woocommerce_specific_ship_to_countries' ),
+				'enabled'                        => 'yes' === get_option( 'woocommerce_ship_to_countries' ) || ! empty( get_option( 'woocommerce_specific_ship_to_countries' ) ),
+				'ship_to_countries'              => get_option( 'woocommerce_ship_to_countries' ),
+				'specific_ship_to'               => get_option( 'woocommerce_specific_ship_to_countries' ),
 				'shipping_cost_requires_address' => 'yes' === get_option( 'woocommerce_shipping_cost_requires_address' ),
-				'shipping_debug_mode'     => 'yes' === get_option( 'woocommerce_shipping_debug_mode' ),
+				'shipping_debug_mode'            => 'yes' === get_option( 'woocommerce_shipping_debug_mode' ),
 			);
 		}
 
 		// Checkout settings.
 		if ( 'all' === $group || 'checkout' === $group ) {
 			$settings['checkout'] = array(
-				'enable_coupons'        => 'yes' === get_option( 'woocommerce_enable_coupons' ),
-				'calc_discounts_seq'    => 'yes' === get_option( 'woocommerce_calc_discounts_sequentially' ),
-				'enable_guest_checkout' => 'yes' === get_option( 'woocommerce_enable_guest_checkout' ),
-				'enable_checkout_login' => 'yes' === get_option( 'woocommerce_enable_checkout_login_reminder' ),
-				'enable_signup_and_login' => 'yes' === get_option( 'woocommerce_enable_signup_and_login_from_checkout' ),
+				'enable_coupons'              => 'yes' === get_option( 'woocommerce_enable_coupons' ),
+				'calc_discounts_seq'          => 'yes' === get_option( 'woocommerce_calc_discounts_sequentially' ),
+				'enable_guest_checkout'       => 'yes' === get_option( 'woocommerce_enable_guest_checkout' ),
+				'enable_checkout_login'       => 'yes' === get_option( 'woocommerce_enable_checkout_login_reminder' ),
+				'enable_signup_and_login'     => 'yes' === get_option( 'woocommerce_enable_signup_and_login_from_checkout' ),
 				'registration_privacy_policy' => get_option( 'woocommerce_registration_privacy_policy_text' ),
-				'checkout_privacy_policy' => get_option( 'woocommerce_checkout_privacy_policy_text' ),
-				'terms_page_id'         => get_option( 'woocommerce_terms_page_id' ),
+				'checkout_privacy_policy'     => get_option( 'woocommerce_checkout_privacy_policy_text' ),
+				'terms_page_id'               => get_option( 'woocommerce_terms_page_id' ),
 			);
 		}
 
@@ -3757,17 +5854,17 @@ class Abilities_Registry {
 
 		// Get WooCommerce system status.
 		$environment = array(
-			'wp_version'          => get_bloginfo( 'version' ),
-			'wc_version'          => WC()->version,
-			'php_version'         => phpversion(),
-			'mysql_version'       => $wpdb->db_version(),
-			'max_execution_time'  => ini_get( 'max_execution_time' ),
-			'memory_limit'        => ini_get( 'memory_limit' ),
-			'wp_memory_limit'     => WP_MEMORY_LIMIT,
-			'wp_debug'            => defined( 'WP_DEBUG' ) && WP_DEBUG,
-			'multisite'           => is_multisite(),
-			'site_url'            => get_site_url(),
-			'home_url'            => get_home_url(),
+			'wp_version'         => get_bloginfo( 'version' ),
+			'wc_version'         => WC()->version,
+			'php_version'        => phpversion(),
+			'mysql_version'      => $wpdb->db_version(),
+			'max_execution_time' => ini_get( 'max_execution_time' ),
+			'memory_limit'       => ini_get( 'memory_limit' ),
+			'wp_memory_limit'    => WP_MEMORY_LIMIT,
+			'wp_debug'           => defined( 'WP_DEBUG' ) && WP_DEBUG,
+			'multisite'          => is_multisite(),
+			'site_url'           => get_site_url(),
+			'home_url'           => get_home_url(),
 		);
 
 		// Active plugins.
@@ -3801,10 +5898,10 @@ class Abilities_Registry {
 			'wc_database_version' => get_option( 'woocommerce_db_version' ),
 			'database_prefix'     => $wpdb->prefix,
 			'database_tables'     => array(
-				'woocommerce_sessions'      => $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'woocommerce_sessions' ) ) ? 'exists' : 'missing',
-				'woocommerce_api_keys'      => $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'woocommerce_api_keys' ) ) ? 'exists' : 'missing',
-				'wc_orders'                 => $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'wc_orders' ) ) ? 'exists' : 'missing',
-				'wc_order_stats'            => $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'wc_order_stats' ) ) ? 'exists' : 'missing',
+				'woocommerce_sessions' => $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'woocommerce_sessions' ) ) ? 'exists' : 'missing',
+				'woocommerce_api_keys' => $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'woocommerce_api_keys' ) ) ? 'exists' : 'missing',
+				'wc_orders'            => $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'wc_orders' ) ) ? 'exists' : 'missing',
+				'wc_order_stats'       => $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'wc_order_stats' ) ) ? 'exists' : 'missing',
 			),
 		);
 		// phpcs:enable
@@ -3841,9 +5938,14 @@ class Abilities_Registry {
 			);
 		}
 
-		$enabled_count = count( array_filter( $results, function( $g ) {
-			return $g['enabled'];
-		} ) );
+		$enabled_count = count(
+			array_filter(
+				$results,
+				function ( $g ) {
+					return $g['enabled'];
+				}
+			)
+		);
 
 		return array(
 			'gateways'       => $results,
@@ -3865,8 +5967,8 @@ class Abilities_Registry {
 		$results = array();
 
 		// Add "Rest of the World" zone.
-		$rest_of_world                  = new \WC_Shipping_Zone( 0 );
-		$zones[ $rest_of_world->get_id() ] = $rest_of_world->get_data();
+		$rest_of_world                                = new \WC_Shipping_Zone( 0 );
+		$zones[ $rest_of_world->get_id() ]            = $rest_of_world->get_data();
 		$zones[ $rest_of_world->get_id() ]['zone_id'] = $rest_of_world->get_id();
 		$zones[ $rest_of_world->get_id() ]['shipping_methods'] = $rest_of_world->get_shipping_methods();
 
@@ -3877,10 +5979,10 @@ class Abilities_Registry {
 			$methods = array();
 			foreach ( $zone->get_shipping_methods() as $method ) {
 				$methods[] = array(
-					'instance_id' => $method->get_instance_id(),
-					'id'          => $method->id,
-					'title'       => $method->get_title(),
-					'enabled'     => 'yes' === $method->enabled,
+					'instance_id'  => $method->get_instance_id(),
+					'id'           => $method->id,
+					'title'        => $method->get_title(),
+					'enabled'      => 'yes' === $method->enabled,
 					'method_title' => $method->get_method_title(),
 				);
 			}
@@ -3958,17 +6060,17 @@ class Abilities_Registry {
 		$results = array();
 		foreach ( $rates as $rate ) {
 			$results[] = array(
-				'id'        => absint( $rate->tax_rate_id ),
-				'country'   => $rate->tax_rate_country,
-				'state'     => $rate->tax_rate_state,
-				'postcode'  => $rate->tax_rate_postcode ?? '*',
-				'city'      => $rate->tax_rate_city ?? '*',
-				'rate'      => $rate->tax_rate,
-				'name'      => $rate->tax_rate_name,
-				'priority'  => absint( $rate->tax_rate_priority ),
-				'compound'  => (bool) $rate->tax_rate_compound,
-				'shipping'  => (bool) $rate->tax_rate_shipping,
-				'class'     => $rate->tax_rate_class ?: 'standard',
+				'id'       => absint( $rate->tax_rate_id ),
+				'country'  => $rate->tax_rate_country,
+				'state'    => $rate->tax_rate_state,
+				'postcode' => $rate->tax_rate_postcode ?? '*',
+				'city'     => $rate->tax_rate_city ?? '*',
+				'rate'     => $rate->tax_rate,
+				'name'     => $rate->tax_rate_name,
+				'priority' => absint( $rate->tax_rate_priority ),
+				'compound' => (bool) $rate->tax_rate_compound,
+				'shipping' => (bool) $rate->tax_rate_shipping,
+				'class'    => ! empty( $rate->tax_rate_class ) ? $rate->tax_rate_class : 'standard',
 			);
 		}
 
@@ -3976,7 +6078,7 @@ class Abilities_Registry {
 			'tax_rates' => $results,
 			'count'     => count( $results ),
 			'filter'    => array(
-				'class' => $tax_class ?: 'all',
+				'class' => ! empty( $tax_class ) ? $tax_class : 'all',
 			),
 		);
 	}
@@ -4036,24 +6138,44 @@ class Abilities_Registry {
 		$coupons = get_posts( $args );
 		$results = array();
 
+		$currency_symbol = get_woocommerce_currency_symbol();
+
 		foreach ( $coupons as $coupon_post ) {
-			$coupon    = new \WC_Coupon( $coupon_post->ID );
+			$coupon        = new \WC_Coupon( $coupon_post->ID );
+			$discount_type = $coupon->get_discount_type();
+			$amount        = $coupon->get_amount();
+
+			// Format discount for easy reading.
+			$discount_formatted = '';
+			if ( 'percent' === $discount_type ) {
+				$discount_formatted = $amount . '% off';
+			} elseif ( 'fixed_cart' === $discount_type ) {
+				$discount_formatted = $currency_symbol . $amount . ' off cart';
+			} elseif ( 'fixed_product' === $discount_type ) {
+				$discount_formatted = $currency_symbol . $amount . ' off per item';
+			}
+
 			$results[] = array(
-				'id'              => $coupon->get_id(),
-				'code'            => $coupon->get_code(),
-				'discount_type'   => $coupon->get_discount_type(),
-				'amount'          => $coupon->get_amount(),
-				'date_expires'    => $coupon->get_date_expires() ? $coupon->get_date_expires()->format( 'Y-m-d' ) : null,
-				'usage_count'     => $coupon->get_usage_count(),
-				'usage_limit'     => $coupon->get_usage_limit(),
-				'free_shipping'   => $coupon->get_free_shipping(),
-				'status'          => $coupon_post->post_status,
+				'id'             => $coupon->get_id(),
+				'code'           => strtoupper( $coupon->get_code() ),
+				'code_to_copy'   => '`' . strtoupper( $coupon->get_code() ) . '`',
+				'discount'       => $discount_formatted,
+				'discount_type'  => $discount_type,
+				'amount'         => $amount,
+				'date_expires'   => $coupon->get_date_expires() ? $coupon->get_date_expires()->format( 'M j, Y' ) : 'No expiry',
+				'usage_count'    => $coupon->get_usage_count(),
+				'usage_limit'    => $coupon->get_usage_limit() ? $coupon->get_usage_limit() : 'Unlimited',
+				'remaining_uses' => $coupon->get_usage_limit() ? ( $coupon->get_usage_limit() - $coupon->get_usage_count() ) : 'Unlimited',
+				'free_shipping'  => $coupon->get_free_shipping() ? 'Yes' : 'No',
+				'minimum_spend'  => $coupon->get_minimum_amount() ? $currency_symbol . $coupon->get_minimum_amount() : 'None',
+				'status'         => $coupon_post->post_status,
 			);
 		}
 
 		return array(
-			'coupons' => $results,
-			'count'   => count( $results ),
+			'coupons'     => $results,
+			'count'       => count( $results ),
+			'display_tip' => 'Show coupon codes in backticks like `CODE` for easy copying',
 		);
 	}
 
@@ -4086,26 +6208,26 @@ class Abilities_Registry {
 		}
 
 		return array(
-			'id'                   => $coupon->get_id(),
-			'code'                 => $coupon->get_code(),
-			'description'          => $coupon->get_description(),
-			'discount_type'        => $coupon->get_discount_type(),
-			'amount'               => $coupon->get_amount(),
-			'date_created'         => $coupon->get_date_created() ? $coupon->get_date_created()->format( 'Y-m-d H:i:s' ) : null,
-			'date_expires'         => $coupon->get_date_expires() ? $coupon->get_date_expires()->format( 'Y-m-d' ) : null,
-			'usage_count'          => $coupon->get_usage_count(),
-			'usage_limit'          => $coupon->get_usage_limit(),
-			'usage_limit_per_user' => $coupon->get_usage_limit_per_user(),
-			'individual_use'       => $coupon->get_individual_use(),
-			'free_shipping'        => $coupon->get_free_shipping(),
-			'minimum_amount'       => $coupon->get_minimum_amount(),
-			'maximum_amount'       => $coupon->get_maximum_amount(),
-			'exclude_sale_items'   => $coupon->get_exclude_sale_items(),
-			'product_ids'          => $coupon->get_product_ids(),
-			'excluded_product_ids' => $coupon->get_excluded_product_ids(),
-			'product_categories'   => $coupon->get_product_categories(),
+			'id'                          => $coupon->get_id(),
+			'code'                        => $coupon->get_code(),
+			'description'                 => $coupon->get_description(),
+			'discount_type'               => $coupon->get_discount_type(),
+			'amount'                      => $coupon->get_amount(),
+			'date_created'                => $coupon->get_date_created() ? $coupon->get_date_created()->format( 'Y-m-d H:i:s' ) : null,
+			'date_expires'                => $coupon->get_date_expires() ? $coupon->get_date_expires()->format( 'Y-m-d' ) : null,
+			'usage_count'                 => $coupon->get_usage_count(),
+			'usage_limit'                 => $coupon->get_usage_limit(),
+			'usage_limit_per_user'        => $coupon->get_usage_limit_per_user(),
+			'individual_use'              => $coupon->get_individual_use(),
+			'free_shipping'               => $coupon->get_free_shipping(),
+			'minimum_amount'              => $coupon->get_minimum_amount(),
+			'maximum_amount'              => $coupon->get_maximum_amount(),
+			'exclude_sale_items'          => $coupon->get_exclude_sale_items(),
+			'product_ids'                 => $coupon->get_product_ids(),
+			'excluded_product_ids'        => $coupon->get_excluded_product_ids(),
+			'product_categories'          => $coupon->get_product_categories(),
 			'excluded_product_categories' => $coupon->get_excluded_product_categories(),
-			'email_restrictions'   => $coupon->get_email_restrictions(),
+			'email_restrictions'          => $coupon->get_email_restrictions(),
 		);
 	}
 
@@ -4402,7 +6524,7 @@ class Abilities_Registry {
 	 *
 	 * @since 1.0.0
 	 * @param array $params Parameters.
-	 * @return array|WP_Error Pages data.
+	 * @return array|\WP_Error Pages data.
 	 */
 	public function ability_content_pages( $params ) {
 		$args = array(
@@ -4444,7 +6566,7 @@ class Abilities_Registry {
 	 *
 	 * @since 1.0.0
 	 * @param array $params Parameters.
-	 * @return array|WP_Error Posts data.
+	 * @return array|\WP_Error Posts data.
 	 */
 	public function ability_content_posts( $params ) {
 		$args = array(
@@ -4629,7 +6751,7 @@ class Abilities_Registry {
 	 *
 	 * @since 1.0.0
 	 * @param array $params Parameters.
-	 * @return array|WP_Error URL data.
+	 * @return array|\WP_Error URL data.
 	 */
 	public function ability_urls_product( $params ) {
 		$product = null;
@@ -4668,7 +6790,7 @@ class Abilities_Registry {
 	 *
 	 * @since 1.0.0
 	 * @param array $params Parameters.
-	 * @return array|WP_Error URL data.
+	 * @return array|\WP_Error URL data.
 	 */
 	public function ability_urls_product_edit( $params ) {
 		$product = null;
@@ -4705,7 +6827,7 @@ class Abilities_Registry {
 	 *
 	 * @since 1.0.0
 	 * @param array $params Parameters.
-	 * @return array|WP_Error URL data.
+	 * @return array|\WP_Error URL data.
 	 */
 	public function ability_urls_order( $params ) {
 		if ( empty( $params['order_id'] ) ) {
@@ -4732,7 +6854,7 @@ class Abilities_Registry {
 	 *
 	 * @since 1.0.0
 	 * @param array $params Parameters.
-	 * @return array|WP_Error URL data.
+	 * @return array|\WP_Error URL data.
 	 */
 	public function ability_urls_customer( $params ) {
 		if ( empty( $params['customer_id'] ) ) {
@@ -4760,7 +6882,7 @@ class Abilities_Registry {
 	 *
 	 * @since 1.0.0
 	 * @param array $params Parameters.
-	 * @return array|WP_Error URL data.
+	 * @return array|\WP_Error URL data.
 	 */
 	public function ability_urls_category( $params ) {
 		$term = null;
@@ -4793,7 +6915,7 @@ class Abilities_Registry {
 	 *
 	 * @since 1.0.0
 	 * @param array $params Parameters.
-	 * @return array|WP_Error URL data.
+	 * @return array|\WP_Error URL data.
 	 */
 	public function ability_urls_settings( $params ) {
 		if ( empty( $params['section'] ) ) {
@@ -4869,7 +6991,7 @@ class Abilities_Registry {
 	 *
 	 * @since 1.0.0
 	 * @param array $params Parameters.
-	 * @return array|WP_Error URL data.
+	 * @return array|\WP_Error URL data.
 	 */
 	public function ability_urls_page( $params ) {
 		$page = null;
@@ -4909,5 +7031,810 @@ class Abilities_Registry {
 			'edit_url'   => admin_url( 'post.php?post=' . $page->ID . '&action=edit' ),
 		);
 	}
-}
 
+	// =========================================================================
+	// Additional Customer-Facing Ability Callbacks
+	// =========================================================================
+
+	/**
+	 * Get products currently on sale.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Products on sale.
+	 */
+	public function ability_products_on_sale( $params ) {
+		$limit    = isset( $params['limit'] ) ? absint( $params['limit'] ) : 10;
+		$category = isset( $params['category'] ) ? sanitize_text_field( $params['category'] ) : '';
+
+		$sale_ids = wc_get_product_ids_on_sale();
+
+		if ( empty( $sale_ids ) ) {
+			return array(
+				'found'    => false,
+				'message'  => __( 'No products are currently on sale.', 'assistify-for-woocommerce' ),
+				'products' => array(),
+			);
+		}
+
+		$args = array(
+			'include' => $sale_ids,
+			'limit'   => $limit,
+			'status'  => 'publish',
+			'orderby' => 'date',
+			'order'   => 'DESC',
+		);
+
+		if ( ! empty( $category ) ) {
+			$args['category'] = array( $category );
+		}
+
+		$products     = wc_get_products( $args );
+		$product_list = array();
+
+		foreach ( $products as $product ) {
+			$regular_price = $product->get_regular_price();
+			$sale_price    = $product->get_sale_price();
+
+			// Calculate discount percentage.
+			$discount = 0;
+			if ( $regular_price && $sale_price ) {
+				$discount = round( ( ( floatval( $regular_price ) - floatval( $sale_price ) ) / floatval( $regular_price ) ) * 100 );
+			}
+
+			$product_list[] = array(
+				'id'            => $product->get_id(),
+				'name'          => $product->get_name(),
+				'regular_price' => html_entity_decode( wp_strip_all_tags( wc_price( $regular_price ) ) ),
+				'sale_price'    => html_entity_decode( wp_strip_all_tags( wc_price( $sale_price ) ) ),
+				'discount'      => $discount . '%',
+				'in_stock'      => $product->is_in_stock(),
+				'url'           => get_permalink( $product->get_id() ),
+			);
+		}
+
+		return array(
+			'found'       => true,
+			'total_count' => count( $sale_ids ),
+			'showing'     => count( $product_list ),
+			'products'    => $product_list,
+		);
+	}
+
+	/**
+	 * Get featured products.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Featured products.
+	 */
+	public function ability_products_featured( $params ) {
+		$limit = isset( $params['limit'] ) ? absint( $params['limit'] ) : 10;
+
+		$featured_ids = wc_get_featured_product_ids();
+
+		if ( empty( $featured_ids ) ) {
+			return array(
+				'found'    => false,
+				'message'  => __( 'No featured products found.', 'assistify-for-woocommerce' ),
+				'products' => array(),
+			);
+		}
+
+		$products     = wc_get_products(
+			array(
+				'include' => array_slice( $featured_ids, 0, $limit ),
+				'status'  => 'publish',
+			)
+		);
+		$product_list = array();
+
+		foreach ( $products as $product ) {
+			$product_list[] = $this->format_product_for_customer( $product );
+		}
+
+		return array(
+			'found'       => true,
+			'total_count' => count( $featured_ids ),
+			'showing'     => count( $product_list ),
+			'products'    => $product_list,
+		);
+	}
+
+	/**
+	 * Get available public coupons for customers.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Available coupons.
+	 */
+	public function ability_coupons_available( $params ) {
+		$limit = isset( $params['limit'] ) ? absint( $params['limit'] ) : 5;
+
+		// Get published coupons.
+		$coupons = get_posts(
+			array(
+				'post_type'      => 'shop_coupon',
+				'post_status'    => 'publish',
+				'posts_per_page' => $limit * 3, // Get extra to filter.
+				'orderby'        => 'date',
+				'order'          => 'DESC',
+			)
+		);
+
+		if ( empty( $coupons ) ) {
+			return array(
+				'found'   => false,
+				'message' => __( 'No coupons are currently available.', 'assistify-for-woocommerce' ),
+				'coupons' => array(),
+			);
+		}
+
+		$coupon_list = array();
+		$now         = current_time( 'timestamp' ); // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp.Requested
+
+		foreach ( $coupons as $coupon_post ) {
+			if ( count( $coupon_list ) >= $limit ) {
+				break;
+			}
+
+			$coupon = new \WC_Coupon( $coupon_post->ID );
+
+			// Skip expired coupons.
+			$expiry = $coupon->get_date_expires();
+			if ( $expiry && $expiry->getTimestamp() < $now ) {
+				continue;
+			}
+
+			// Skip coupons with usage limits reached.
+			$usage_limit = $coupon->get_usage_limit();
+			$usage_count = $coupon->get_usage_count();
+			if ( $usage_limit && $usage_count >= $usage_limit ) {
+				continue;
+			}
+
+			// Skip email-restricted coupons (private).
+			$email_restrictions = $coupon->get_email_restrictions();
+			if ( ! empty( $email_restrictions ) ) {
+				continue;
+			}
+
+			// Skip coupons restricted to specific products/categories (likely private).
+			$product_ids  = $coupon->get_product_ids();
+			$category_ids = $coupon->get_product_categories();
+			if ( count( $product_ids ) > 5 || count( $category_ids ) > 5 ) {
+				// Likely a targeted promotion, skip.
+				continue;
+			}
+
+			// Format coupon info.
+			$discount_type  = $coupon->get_discount_type();
+			$amount         = $coupon->get_amount();
+			$discount_label = '';
+
+			if ( 'percent' === $discount_type ) {
+				$discount_label = $amount . '% off';
+			} elseif ( 'fixed_cart' === $discount_type ) {
+				$discount_label = html_entity_decode( wp_strip_all_tags( wc_price( $amount ) ) ) . ' off your order';
+			} elseif ( 'fixed_product' === $discount_type ) {
+				$discount_label = html_entity_decode( wp_strip_all_tags( wc_price( $amount ) ) ) . ' off per item';
+			}
+
+			$coupon_data = array(
+				'code'          => $coupon->get_code(),
+				'discount'      => $discount_label,
+				'free_shipping' => $coupon->get_free_shipping() ? true : false,
+			);
+
+			// Add minimum spend if set.
+			$min_amount = $coupon->get_minimum_amount();
+			if ( $min_amount ) {
+				$coupon_data['minimum_spend'] = html_entity_decode( wp_strip_all_tags( wc_price( $min_amount ) ) );
+			}
+
+			// Add expiry if set.
+			if ( $expiry ) {
+				$coupon_data['expires'] = $expiry->format( 'F j, Y' );
+			}
+
+			$coupon_list[] = $coupon_data;
+		}
+
+		if ( empty( $coupon_list ) ) {
+			return array(
+				'found'   => false,
+				'message' => __( 'No coupons are currently available.', 'assistify-for-woocommerce' ),
+				'coupons' => array(),
+			);
+		}
+
+		return array(
+			'found'   => true,
+			'count'   => count( $coupon_list ),
+			'coupons' => $coupon_list,
+			'note'    => __( 'Copy the coupon code and apply at checkout.', 'assistify-for-woocommerce' ),
+		);
+	}
+
+	/**
+	 * Find product by SKU.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|\WP_Error Product data.
+	 */
+	public function ability_products_by_sku( $params ) {
+		if ( empty( $params['sku'] ) ) {
+			return new \WP_Error( 'missing_sku', __( 'SKU is required.', 'assistify-for-woocommerce' ) );
+		}
+
+		$sku        = sanitize_text_field( $params['sku'] );
+		$product_id = wc_get_product_id_by_sku( $sku );
+
+		if ( ! $product_id ) {
+			return array(
+				'found'   => false,
+				'message' => sprintf(
+					/* translators: %s: SKU code. */
+					__( 'No product found with SKU: %s', 'assistify-for-woocommerce' ),
+					$sku
+				),
+			);
+		}
+
+		$product = wc_get_product( $product_id );
+
+		if ( ! $product || 'publish' !== $product->get_status() ) {
+			return array(
+				'found'   => false,
+				'message' => sprintf(
+					/* translators: %s: SKU code. */
+					__( 'No product found with SKU: %s', 'assistify-for-woocommerce' ),
+					$sku
+				),
+			);
+		}
+
+		return array(
+			'found'   => true,
+			'product' => $this->format_product_for_customer( $product ),
+		);
+	}
+
+	// =========================================================================
+	// Additional Admin Analytics Ability Callbacks
+	// =========================================================================
+
+	/**
+	 * Get coupon usage statistics.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Coupon stats.
+	 */
+	public function ability_coupons_stats( $params ) {
+		$days  = isset( $params['days'] ) ? absint( $params['days'] ) : 30;
+		$limit = isset( $params['limit'] ) ? absint( $params['limit'] ) : 10;
+
+		$date_from = gmdate( 'Y-m-d', strtotime( "-{$days} days" ) );
+
+		// Get orders with coupons.
+		$orders = wc_get_orders(
+			array(
+				'limit'        => -1,
+				'status'       => array( 'completed', 'processing' ),
+				'date_created' => '>' . $date_from,
+			)
+		);
+
+		$coupon_data   = array();
+		$total_savings = 0;
+
+		foreach ( $orders as $order ) {
+			$coupons_used = $order->get_coupon_codes();
+
+			foreach ( $coupons_used as $code ) {
+				$discount = $order->get_discount_total();
+
+				if ( ! isset( $coupon_data[ $code ] ) ) {
+					$coupon_data[ $code ] = array(
+						'code'           => $code,
+						'usage_count'    => 0,
+						'total_orders'   => 0,
+						'total_discount' => 0,
+						'orders'         => array(),
+					);
+				}
+
+				++$coupon_data[ $code ]['usage_count'];
+				++$coupon_data[ $code ]['total_orders'];
+				$coupon_data[ $code ]['total_discount'] += $discount;
+				$total_savings                          += $discount;
+			}
+		}
+
+		// Sort by usage count.
+		usort(
+			$coupon_data,
+			function ( $a, $b ) {
+				return $b['usage_count'] - $a['usage_count'];
+			}
+		);
+
+		// Limit results.
+		$coupon_data = array_slice( $coupon_data, 0, $limit );
+
+		// Format for output.
+		$currency_symbol = get_woocommerce_currency_symbol();
+		$formatted_list  = array();
+
+		foreach ( $coupon_data as $data ) {
+			// Get coupon details.
+			$coupon_id = wc_get_coupon_id_by_code( $data['code'] );
+			$coupon    = $coupon_id ? new \WC_Coupon( $coupon_id ) : null;
+
+			$formatted_list[] = array(
+				'code'           => $data['code'],
+				'times_used'     => $data['usage_count'],
+				'total_discount' => $currency_symbol . number_format( $data['total_discount'], 2 ),
+				'discount_type'  => $coupon ? $coupon->get_discount_type() : 'unknown',
+				'amount'         => $coupon ? $coupon->get_amount() : 0,
+				'is_active'      => $coupon ? ( 'publish' === get_post_status( $coupon_id ) ) : false,
+			);
+		}
+
+		return array(
+			'period'        => sprintf(
+				/* translators: %d: Number of days. */
+				__( 'Last %d days', 'assistify-for-woocommerce' ),
+				$days
+			),
+			'total_savings' => $currency_symbol . number_format( $total_savings, 2 ),
+			'coupons_used'  => count( $coupon_data ),
+			'top_coupons'   => $formatted_list,
+		);
+	}
+
+	/**
+	 * Get sales by product.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Product sales data.
+	 */
+	public function ability_analytics_by_product( $params ) {
+		$days       = isset( $params['days'] ) ? absint( $params['days'] ) : 30;
+		$limit      = isset( $params['limit'] ) ? absint( $params['limit'] ) : 10;
+		$product_id = isset( $params['product_id'] ) ? absint( $params['product_id'] ) : 0;
+
+		$date_from = gmdate( 'Y-m-d', strtotime( "-{$days} days" ) );
+
+		$orders = wc_get_orders(
+			array(
+				'limit'        => -1,
+				'status'       => array( 'completed', 'processing' ),
+				'date_created' => '>' . $date_from,
+			)
+		);
+
+		$product_sales = array();
+
+		foreach ( $orders as $order ) {
+			foreach ( $order->get_items() as $item ) {
+				$pid = $item->get_product_id();
+
+				// If filtering by specific product.
+				if ( $product_id && $pid !== $product_id ) {
+					continue;
+				}
+
+				if ( ! isset( $product_sales[ $pid ] ) ) {
+					$product               = wc_get_product( $pid );
+					$product_sales[ $pid ] = array(
+						'id'       => $pid,
+						'name'     => $product ? $product->get_name() : __( 'Unknown Product', 'assistify-for-woocommerce' ),
+						'sku'      => $product ? $product->get_sku() : '',
+						'qty_sold' => 0,
+						'revenue'  => 0,
+						'orders'   => 0,
+					);
+				}
+
+				$product_sales[ $pid ]['qty_sold'] += $item->get_quantity();
+				$product_sales[ $pid ]['revenue']  += $item->get_total();
+				++$product_sales[ $pid ]['orders'];
+			}
+		}
+
+		// Sort by revenue.
+		usort(
+			$product_sales,
+			function ( $a, $b ) {
+				return $b['revenue'] - $a['revenue'];
+			}
+		);
+
+		// If specific product requested.
+		if ( $product_id ) {
+			if ( isset( $product_sales[0] ) ) {
+				$product_sales = array( $product_sales[0] );
+			} else {
+				return array(
+					'found'   => false,
+					'message' => __( 'No sales found for this product in the specified period.', 'assistify-for-woocommerce' ),
+				);
+			}
+		}
+
+		// Limit results.
+		$product_sales = array_slice( $product_sales, 0, $limit );
+
+		// Format.
+		$currency_symbol = get_woocommerce_currency_symbol();
+		$formatted_list  = array();
+
+		foreach ( $product_sales as $data ) {
+			$formatted_list[] = array(
+				'id'       => $data['id'],
+				'name'     => $data['name'],
+				'sku'      => $data['sku'],
+				'qty_sold' => $data['qty_sold'],
+				'revenue'  => $currency_symbol . number_format( $data['revenue'], 2 ),
+				'orders'   => $data['orders'],
+				'edit_url' => admin_url( 'post.php?post=' . $data['id'] . '&action=edit' ),
+			);
+		}
+
+		return array(
+			'period'         => sprintf(
+				/* translators: %d: Number of days. */
+				__( 'Last %d days', 'assistify-for-woocommerce' ),
+				$days
+			),
+			'total_products' => count( $formatted_list ),
+			'products'       => $formatted_list,
+		);
+	}
+
+	/**
+	 * Get sales by location.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Location sales data.
+	 */
+	public function ability_analytics_by_location( $params ) {
+		$days  = isset( $params['days'] ) ? absint( $params['days'] ) : 30;
+		$limit = isset( $params['limit'] ) ? absint( $params['limit'] ) : 10;
+
+		$date_from = gmdate( 'Y-m-d', strtotime( "-{$days} days" ) );
+
+		$orders = wc_get_orders(
+			array(
+				'limit'        => -1,
+				'status'       => array( 'completed', 'processing' ),
+				'date_created' => '>' . $date_from,
+			)
+		);
+
+		$location_data = array();
+		$total_revenue = 0;
+
+		foreach ( $orders as $order ) {
+			$country = $order->get_billing_country();
+			$state   = $order->get_billing_state();
+			$total   = (float) $order->get_total();
+
+			if ( empty( $country ) ) {
+				$country = 'Unknown';
+			}
+
+			$location_key = $country;
+
+			if ( ! isset( $location_data[ $location_key ] ) ) {
+				$location_data[ $location_key ] = array(
+					'country'      => $country,
+					'country_name' => WC()->countries->countries[ $country ] ?? $country,
+					'orders'       => 0,
+					'revenue'      => 0,
+					'states'       => array(),
+				);
+			}
+
+			++$location_data[ $location_key ]['orders'];
+			$location_data[ $location_key ]['revenue'] += $total;
+			$total_revenue                             += $total;
+
+			// Track states.
+			if ( $state ) {
+				if ( ! isset( $location_data[ $location_key ]['states'][ $state ] ) ) {
+					$states     = WC()->countries->get_states( $country );
+					$state_name = isset( $states[ $state ] ) ? $states[ $state ] : $state;
+
+					$location_data[ $location_key ]['states'][ $state ] = array(
+						'code'    => $state,
+						'name'    => $state_name,
+						'orders'  => 0,
+						'revenue' => 0,
+					);
+				}
+
+				++$location_data[ $location_key ]['states'][ $state ]['orders'];
+				$location_data[ $location_key ]['states'][ $state ]['revenue'] += $total;
+			}
+		}
+
+		// Sort by revenue.
+		usort(
+			$location_data,
+			function ( $a, $b ) {
+				return $b['revenue'] - $a['revenue'];
+			}
+		);
+
+		// Limit and format.
+		$location_data   = array_slice( $location_data, 0, $limit );
+		$currency_symbol = get_woocommerce_currency_symbol();
+		$formatted_list  = array();
+
+		foreach ( $location_data as $data ) {
+			$percentage = $total_revenue > 0 ? round( ( $data['revenue'] / $total_revenue ) * 100, 1 ) : 0;
+
+			// Get top states.
+			$top_states = array_values( $data['states'] );
+			usort(
+				$top_states,
+				function ( $a, $b ) {
+					return $b['revenue'] - $a['revenue'];
+				}
+			);
+			$top_states = array_slice( $top_states, 0, 3 );
+
+			$formatted_states = array();
+			foreach ( $top_states as $state_data ) {
+				$formatted_states[] = array(
+					'name'    => $state_data['name'],
+					'orders'  => $state_data['orders'],
+					'revenue' => $currency_symbol . number_format( $state_data['revenue'], 2 ),
+				);
+			}
+
+			$formatted_list[] = array(
+				'country'    => $data['country_name'],
+				'code'       => $data['country'],
+				'orders'     => $data['orders'],
+				'revenue'    => $currency_symbol . number_format( $data['revenue'], 2 ),
+				'percentage' => $percentage . '%',
+				'top_states' => $formatted_states,
+			);
+		}
+
+		return array(
+			'period'        => sprintf(
+				/* translators: %d: Number of days. */
+				__( 'Last %d days', 'assistify-for-woocommerce' ),
+				$days
+			),
+			'total_revenue' => $currency_symbol . number_format( $total_revenue, 2 ),
+			'locations'     => $formatted_list,
+		);
+	}
+
+	/**
+	 * Get processing orders count.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters (unused).
+	 * @return array Processing count.
+	 */
+	public function ability_orders_processing_count( $params ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		$processing_count = wc_processing_order_count();
+		$on_hold_count    = wc_orders_count( 'on-hold' );
+		$pending_count    = wc_orders_count( 'pending' );
+
+		return array(
+			'processing'         => $processing_count,
+			'on_hold'            => $on_hold_count,
+			'pending'            => $pending_count,
+			'needs_action_total' => $processing_count + $on_hold_count + $pending_count,
+			'message'            => sprintf(
+				/* translators: 1: Processing count, 2: On-hold count, 3: Pending count. */
+				__( '%1$d processing, %2$d on-hold, %3$d pending payment', 'assistify-for-woocommerce' ),
+				$processing_count,
+				$on_hold_count,
+				$pending_count
+			),
+			'orders_url'         => admin_url( 'edit.php?post_type=shop_order' ),
+		);
+	}
+
+	/**
+	 * Get tax collected report.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Tax data.
+	 */
+	public function ability_analytics_tax_collected( $params ) {
+		$days = isset( $params['days'] ) ? absint( $params['days'] ) : 30;
+
+		$date_from = gmdate( 'Y-m-d', strtotime( "-{$days} days" ) );
+
+		$orders = wc_get_orders(
+			array(
+				'limit'        => -1,
+				'status'       => array( 'completed', 'processing' ),
+				'date_created' => '>' . $date_from,
+			)
+		);
+
+		$total_tax          = 0;
+		$total_shipping_tax = 0;
+		$orders_with_tax    = 0;
+
+		foreach ( $orders as $order ) {
+			$order_tax          = (float) $order->get_total_tax();
+			$order_shipping_tax = (float) $order->get_shipping_tax();
+
+			if ( $order_tax > 0 ) {
+				++$orders_with_tax;
+			}
+
+			$total_tax          += $order_tax;
+			$total_shipping_tax += $order_shipping_tax;
+		}
+
+		$currency_symbol = get_woocommerce_currency_symbol();
+
+		return array(
+			'period'           => sprintf(
+				/* translators: %d: Number of days. */
+				__( 'Last %d days', 'assistify-for-woocommerce' ),
+				$days
+			),
+			'total_tax'        => $currency_symbol . number_format( $total_tax, 2 ),
+			'product_tax'      => $currency_symbol . number_format( $total_tax - $total_shipping_tax, 2 ),
+			'shipping_tax'     => $currency_symbol . number_format( $total_shipping_tax, 2 ),
+			'orders_with_tax'  => $orders_with_tax,
+			'total_orders'     => count( $orders ),
+			'tax_settings_url' => admin_url( 'admin.php?page=wc-settings&tab=tax' ),
+		);
+	}
+
+	/**
+	 * Get most stocked products.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array Products data.
+	 */
+	public function ability_products_most_stocked( $params ) {
+		$limit = isset( $params['limit'] ) ? absint( $params['limit'] ) : 10;
+
+		$products = wc_get_products(
+			array(
+				'limit'        => $limit,
+				'status'       => 'publish',
+				'stock_status' => 'instock',
+				'manage_stock' => true,
+				'orderby'      => 'meta_value_num',
+				'meta_key'     => '_stock', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'order'        => 'DESC',
+			)
+		);
+
+		$product_list    = array();
+		$currency_symbol = get_woocommerce_currency_symbol();
+
+		foreach ( $products as $product ) {
+			$stock = $product->get_stock_quantity();
+
+			if ( null === $stock || $stock <= 0 ) {
+				continue;
+			}
+
+			$price       = (float) $product->get_price();
+			$stock_value = $stock * $price;
+
+			$product_list[] = array(
+				'id'          => $product->get_id(),
+				'name'        => $product->get_name(),
+				'sku'         => $product->get_sku(),
+				'stock'       => $stock,
+				'price'       => $currency_symbol . number_format( $price, 2 ),
+				'stock_value' => $currency_symbol . number_format( $stock_value, 2 ),
+				'edit_url'    => admin_url( 'post.php?post=' . $product->get_id() . '&action=edit' ),
+			);
+		}
+
+		return array(
+			'count'    => count( $product_list ),
+			'products' => $product_list,
+		);
+	}
+
+	/**
+	 * Get customer lifetime value.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|\WP_Error Customer data.
+	 */
+	public function ability_customers_lifetime_value( $params ) {
+		$customer_id = isset( $params['customer_id'] ) ? absint( $params['customer_id'] ) : 0;
+		$email       = isset( $params['email'] ) ? sanitize_email( $params['email'] ) : '';
+
+		if ( ! $customer_id && ! $email ) {
+			return new \WP_Error( 'missing_param', __( 'Customer ID or email is required.', 'assistify-for-woocommerce' ) );
+		}
+
+		// Find customer by email if no ID.
+		if ( ! $customer_id && $email ) {
+			$user = get_user_by( 'email', $email );
+			if ( $user ) {
+				$customer_id = $user->ID;
+			}
+		}
+
+		if ( ! $customer_id ) {
+			return array(
+				'found'   => false,
+				'message' => __( 'Customer not found.', 'assistify-for-woocommerce' ),
+			);
+		}
+
+		$customer = new \WC_Customer( $customer_id );
+
+		if ( ! $customer->get_id() ) {
+			return array(
+				'found'   => false,
+				'message' => __( 'Customer not found.', 'assistify-for-woocommerce' ),
+			);
+		}
+
+		// Get lifetime stats.
+		$total_spent = wc_get_customer_total_spent( $customer_id );
+		$order_count = wc_get_customer_order_count( $customer_id );
+		$last_order  = wc_get_customer_last_order( $customer_id );
+
+		// Calculate average order value.
+		$aov = $order_count > 0 ? $total_spent / $order_count : 0;
+
+		// Get registration date.
+		$registered = $customer->get_date_created();
+
+		// Calculate customer age in days.
+		$days_as_customer = 0;
+		if ( $registered ) {
+			$days_as_customer = floor( ( time() - $registered->getTimestamp() ) / DAY_IN_SECONDS );
+		}
+
+		$currency_symbol = get_woocommerce_currency_symbol();
+
+		$result = array(
+			'found'            => true,
+			'customer_id'      => $customer_id,
+			'email'            => $customer->get_email(),
+			'name'             => $customer->get_first_name() . ' ' . $customer->get_last_name(),
+			'total_spent'      => $currency_symbol . number_format( $total_spent, 2 ),
+			'order_count'      => $order_count,
+			'average_order'    => $currency_symbol . number_format( $aov, 2 ),
+			'days_as_customer' => $days_as_customer,
+			'customer_since'   => $registered ? $registered->format( 'F j, Y' ) : __( 'Unknown', 'assistify-for-woocommerce' ),
+		);
+
+		// Add last order info.
+		if ( $last_order ) {
+			$result['last_order'] = array(
+				'id'     => $last_order->get_id(),
+				'date'   => $last_order->get_date_created()->format( 'F j, Y' ),
+				'total'  => $currency_symbol . number_format( $last_order->get_total(), 2 ),
+				'status' => wc_get_order_status_name( $last_order->get_status() ),
+			);
+		}
+
+		$result['edit_url'] = admin_url( 'user-edit.php?user_id=' . $customer_id );
+
+		return $result;
+	}
+}

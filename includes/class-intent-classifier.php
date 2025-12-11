@@ -54,9 +54,23 @@ class Intent_Classifier {
 			'priority'  => 10,
 		);
 
+		// Get last/recent/latest order (singular - detailed view).
+		$this->intent_patterns['order_get_last'] = array(
+			'keywords'  => array( 'last order', 'recent order', 'latest order', 'most recent order', 'newest order' ),
+			'patterns'  => array(
+				'/(?:the\s+)?(?:last|most\s+recent|latest|newest)\s+order(?:\s+details?)?/i',
+				'/check\s+(?:the\s+)?(?:last|latest|recent)\s+order/i',
+				'/what.*(?:last|latest|recent)\s+order/i',
+				'/show\s+(?:me\s+)?(?:the\s+)?(?:last|latest|recent)\s+order/i',
+			),
+			'ability'   => 'afw/orders/get-last',
+			'extractor' => 'extract_last_order_params',
+			'priority'  => 12, // Higher than order_list.
+		);
+
 		$this->intent_patterns['order_list'] = array(
-			'keywords'  => array( 'orders', 'recent order', 'latest order', 'list order', 'show order', 'all order' ),
-			'patterns'  => array( '/(?:recent|latest|last|new|show|list|all|pending|processing|completed|cancelled|on-hold)\s*orders?/i' ),
+			'keywords'  => array( 'orders', 'list order', 'show orders', 'all order' ),
+			'patterns'  => array( '/(?:show|list|all|pending|processing|completed|cancelled|on-hold)\s*orders/i' ),
 			'ability'   => 'afw/orders/list',
 			'extractor' => 'extract_order_list_params',
 			'priority'  => 5,
@@ -176,6 +190,237 @@ class Intent_Classifier {
 			'ability'   => 'afw/analytics/top-products',
 			'extractor' => 'extract_top_products_params',
 			'priority'  => 9,
+		);
+
+		// Daily summary intent.
+		$this->intent_patterns['daily_summary'] = array(
+			'keywords'  => array( 'summary', 'overview', 'today', 'how are we doing', 'store status', 'daily report', 'daily stats' ),
+			'patterns'  => array(
+				'/(?:daily|today\'?s?)\s+(?:summary|overview|report|stats)/i',
+				'/how\s+(?:are\s+we|is\s+(?:the\s+)?store)\s+doing/i',
+				'/store\s+(?:status|overview|summary)/i',
+				'/what\'?s?\s+(?:happening|going\s+on)\s+today/i',
+			),
+			'ability'   => 'afw/analytics/daily-summary',
+			'extractor' => 'extract_daily_summary_params',
+			'priority'  => 10,
+		);
+
+		// Orders ready to ship.
+		$this->intent_patterns['orders_ready_to_ship'] = array(
+			'keywords'  => array( 'ready to ship', 'ship today', 'fulfillment', 'needs shipping', 'pending shipment', 'to ship' ),
+			'patterns'  => array(
+				'/(?:orders?\s+)?ready\s+to\s+ship/i',
+				'/(?:orders?\s+)?(?:need|needs|pending)\s+(?:to\s+)?ship/i',
+				'/what\s+(?:orders?\s+)?(?:need|needs|should)\s+(?:I|we)\s+ship/i',
+				'/fulfillment\s+(?:queue|list)/i',
+			),
+			'ability'   => 'afw/orders/ready-to-ship',
+			'extractor' => 'extract_basic_limit_params',
+			'priority'  => 10,
+		);
+
+		// Pending payment orders.
+		$this->intent_patterns['pending_payment'] = array(
+			'keywords'  => array( 'awaiting payment', 'pending payment', 'unpaid', 'not paid', 'waiting for payment' ),
+			'patterns'  => array(
+				'/(?:orders?\s+)?(?:awaiting|pending|waiting\s+for)\s+payment/i',
+				'/unpaid\s+orders?/i',
+				'/orders?\s+not\s+paid/i',
+				'/who\s+(?:hasn\'t|has\s+not)\s+paid/i',
+			),
+			'ability'   => 'afw/orders/pending-payment',
+			'extractor' => 'extract_basic_limit_params',
+			'priority'  => 10,
+		);
+
+		// Out of stock products.
+		$this->intent_patterns['out_of_stock'] = array(
+			'keywords'  => array( 'out of stock', 'no stock', 'zero stock', 'sold out' ),
+			'patterns'  => array(
+				'/(?:products?\s+)?out\s+of\s+stock/i',
+				'/(?:products?\s+)?(?:with\s+)?(?:no|zero)\s+stock/i',
+				'/sold\s+out\s+(?:products?|items?)/i',
+				'/what\'?s?\s+out\s+of\s+stock/i',
+			),
+			'ability'   => 'afw/products/out-of-stock',
+			'extractor' => 'extract_basic_limit_params',
+			'priority'  => 10,
+		);
+
+		// Stock value.
+		$this->intent_patterns['stock_value'] = array(
+			'keywords'  => array( 'stock value', 'inventory value', 'worth of inventory', 'total stock' ),
+			'patterns'  => array(
+				'/(?:stock|inventory)\s+value/i',
+				'/worth\s+of\s+(?:stock|inventory)/i',
+				'/(?:total|how\s+much)\s+(?:is\s+)?(?:my|our)\s+(?:stock|inventory)/i',
+			),
+			'ability'   => 'afw/products/stock-value',
+			'extractor' => 'extract_empty_params',
+			'priority'  => 10,
+		);
+
+		// Refunds summary.
+		$this->intent_patterns['refunds'] = array(
+			'keywords'  => array( 'refund', 'refunded', 'money back', 'return' ),
+			'patterns'  => array(
+				'/(?:recent|show|list)?\s*refunds?/i',
+				'/how\s+(?:many|much)\s+refund/i',
+				'/refund\s+(?:summary|report|stats)/i',
+			),
+			'ability'   => 'afw/analytics/refunds',
+			'extractor' => 'extract_days_params',
+			'priority'  => 9,
+		);
+
+		// Payment methods breakdown.
+		$this->intent_patterns['payment_methods_stats'] = array(
+			'keywords'  => array( 'payment method', 'how do customers pay', 'payment breakdown', 'popular payment' ),
+			'patterns'  => array(
+				'/payment\s+(?:method|breakdown|stats)/i',
+				'/how\s+(?:do|are)\s+(?:customers?|people)\s+pay/i',
+				'/popular\s+payment/i',
+				'/revenue\s+by\s+payment/i',
+			),
+			'ability'   => 'afw/analytics/payment-methods',
+			'extractor' => 'extract_period_params',
+			'priority'  => 9,
+		);
+
+		// Recent customers.
+		$this->intent_patterns['recent_customers'] = array(
+			'keywords'  => array( 'new customer', 'recent customer', 'latest customer', 'just signed up' ),
+			'patterns'  => array(
+				'/(?:new|recent|latest)\s+customers?/i',
+				'/customers?\s+(?:who\s+)?(?:just\s+)?signed?\s+up/i',
+				'/(?:who|how\s+many)\s+(?:new\s+)?customers?\s+(?:this|today|last)/i',
+			),
+			'ability'   => 'afw/customers/recent',
+			'extractor' => 'extract_days_params',
+			'priority'  => 9,
+		);
+
+		// Repeat customers.
+		$this->intent_patterns['repeat_customers'] = array(
+			'keywords'  => array( 'repeat customer', 'loyal customer', 'returning customer', 'multiple order' ),
+			'patterns'  => array(
+				'/(?:repeat|loyal|returning)\s+customers?/i',
+				'/customers?\s+(?:with\s+)?multiple\s+orders?/i',
+				'/who\s+(?:bought|ordered)\s+(?:more\s+than\s+once|again)/i',
+			),
+			'ability'   => 'afw/customers/repeat',
+			'extractor' => 'extract_repeat_customers_params',
+			'priority'  => 9,
+		);
+
+		// Reviews summary.
+		$this->intent_patterns['reviews_summary'] = array(
+			'keywords'  => array( 'review', 'rating', 'feedback', 'customer review' ),
+			'patterns'  => array(
+				'/(?:recent|show|list)?\s*reviews?/i',
+				'/(?:product|customer)\s+(?:reviews?|ratings?|feedback)/i',
+				'/how\s+are\s+(?:our|the)\s+reviews?/i',
+				'/(?:average|overall)\s+rating/i',
+			),
+			'ability'   => 'afw/analytics/reviews',
+			'extractor' => 'extract_days_params',
+			'priority'  => 9,
+		);
+
+		// Order comparison.
+		$this->intent_patterns['order_comparison'] = array(
+			'keywords'  => array( 'compare', 'vs', 'versus', 'compared to', 'this week vs', 'growth' ),
+			'patterns'  => array(
+				'/(?:compare|comparison)\s+(?:orders?|sales|revenue)/i',
+				'/(?:this|last)\s+(?:week|month|year)\s+(?:vs|versus|compared)/i',
+				'/(?:sales|revenue|orders?)\s+(?:vs|versus|compared)/i',
+				'/(?:are\s+we|how\s+are\s+we)\s+(?:doing|growing)/i',
+			),
+			'ability'   => 'afw/analytics/comparison',
+			'extractor' => 'extract_comparison_params',
+			'priority'  => 10,
+		);
+
+		// Category sales.
+		$this->intent_patterns['category_sales'] = array(
+			'keywords'  => array( 'category sales', 'best category', 'top category', 'sales by category' ),
+			'patterns'  => array(
+				'/(?:category|categories)\s+(?:sales|performance|revenue)/i',
+				'/(?:best|top)\s+(?:selling\s+)?(?:category|categories)/i',
+				'/sales\s+by\s+category/i',
+				'/which\s+(?:category|categories)\s+(?:sell|perform)/i',
+			),
+			'ability'   => 'afw/analytics/category-sales',
+			'extractor' => 'extract_period_params',
+			'priority'  => 9,
+		);
+
+		// Average order value.
+		$this->intent_patterns['aov'] = array(
+			'keywords'  => array( 'average order', 'aov', 'average cart', 'order value' ),
+			'patterns'  => array(
+				'/(?:average|avg)\s+(?:order|cart)\s+(?:value|size)/i',
+				'/\baov\b/i',
+				'/(?:what|how\s+much)\s+(?:is|are)\s+(?:customers?|people)\s+spending/i',
+			),
+			'ability'   => 'afw/analytics/aov',
+			'extractor' => 'extract_period_params',
+			'priority'  => 9,
+		);
+
+		// Failed orders.
+		$this->intent_patterns['failed_orders'] = array(
+			'keywords'  => array( 'failed order', 'failed payment', 'payment failure', 'declined' ),
+			'patterns'  => array(
+				'/(?:failed|declined)\s+(?:orders?|payments?)/i',
+				'/(?:orders?|payments?)\s+(?:that\s+)?failed/i',
+				'/payment\s+(?:failures?|declines?)/i',
+			),
+			'ability'   => 'afw/orders/failed',
+			'extractor' => 'extract_days_params',
+			'priority'  => 9,
+		);
+
+		// Pending reviews.
+		$this->intent_patterns['pending_reviews'] = array(
+			'keywords'  => array( 'pending review', 'unapproved review', 'review moderation', 'approve review' ),
+			'patterns'  => array(
+				'/(?:pending|unapproved|awaiting)\s+reviews?/i',
+				'/reviews?\s+(?:to\s+)?(?:approve|moderate)/i',
+				'/(?:any|are\s+there)\s+reviews?\s+(?:pending|waiting)/i',
+			),
+			'ability'   => 'afw/products/pending-reviews',
+			'extractor' => 'extract_basic_limit_params',
+			'priority'  => 9,
+		);
+
+		// Product availability (for customers).
+		$this->intent_patterns['product_availability'] = array(
+			'keywords'  => array( 'in stock', 'available', 'can i buy', 'is there', 'do you have' ),
+			'patterns'  => array(
+				'/(?:is|are)\s+.+\s+(?:in\s+stock|available)/i',
+				'/(?:do\s+you|does\s+the\s+store)\s+have\s+.+/i',
+				'/(?:can\s+i|is\s+it\s+possible\s+to)\s+(?:buy|get|order)\s+.+/i',
+				'/(?:check|what\'?s?)\s+(?:the\s+)?(?:stock|availability)/i',
+			),
+			'ability'   => 'afw/products/availability',
+			'extractor' => 'extract_product_availability_params',
+			'priority'  => 8,
+		);
+
+		// Related/similar products (for customers).
+		$this->intent_patterns['related_products'] = array(
+			'keywords'  => array( 'similar', 'like this', 'recommend', 'suggestion', 'alternative' ),
+			'patterns'  => array(
+				'/(?:similar|related|like\s+this)\s+products?/i',
+				'/(?:recommend|suggest)\s+(?:me\s+)?(?:some\s+)?products?/i',
+				'/(?:any|what)\s+(?:alternatives?|other\s+options?)/i',
+				'/(?:show|find)\s+(?:me\s+)?(?:similar|related)/i',
+			),
+			'ability'   => 'afw/products/related',
+			'extractor' => 'extract_related_products_params',
+			'priority'  => 8,
 		);
 
 		// Store settings intents.
@@ -331,6 +576,178 @@ class Intent_Classifier {
 			'ability'   => 'afw/content/menus',
 			'extractor' => null,
 			'priority'  => 5,
+		);
+
+		// =====================================================
+		// Additional Customer-Facing Intent Patterns
+		// =====================================================
+
+		// Products on sale.
+		$this->intent_patterns['products_on_sale'] = array(
+			'keywords'  => array( 'on sale', 'sale items', 'discounted', 'deals', 'sales', 'what\'s on sale' ),
+			'patterns'  => array(
+				'/(?:what|show|list|any|are\s+there)\s+(?:products?\s+)?(?:on\s+)?sale/i',
+				'/sale\s+(?:items?|products?)/i',
+				'/(?:current|today\'?s?)\s+(?:sales?|deals?)/i',
+				'/(?:discounted|reduced)\s+(?:items?|products?)/i',
+			),
+			'ability'   => 'afw/products/on-sale',
+			'extractor' => 'extract_sale_products_params',
+			'priority'  => 8,
+		);
+
+		// Featured products.
+		$this->intent_patterns['products_featured'] = array(
+			'keywords'  => array( 'featured', 'featured products', 'recommended', 'top picks', 'best products' ),
+			'patterns'  => array(
+				'/(?:show|list|what\s+are)\s+(?:the\s+)?featured\s+(?:products?|items?)/i',
+				'/featured\s+(?:products?|items?)/i',
+				'/(?:top|best)\s+(?:picks?|recommendations?)/i',
+				'/(?:recommended|popular)\s+(?:products?|items?)/i',
+			),
+			'ability'   => 'afw/products/featured',
+			'extractor' => 'extract_basic_limit_params',
+			'priority'  => 7,
+		);
+
+		// Available coupons.
+		$this->intent_patterns['coupons_available'] = array(
+			'keywords'  => array( 'coupon', 'discount code', 'promo code', 'coupons', 'discount', 'voucher' ),
+			'patterns'  => array(
+				'/(?:any|available|current|valid)\s+(?:coupon|discount|promo)\s*(?:code)?s?/i',
+				'/(?:do\s+you\s+have|is\s+there)\s+(?:a\s+)?(?:coupon|discount|promo)/i',
+				'/(?:show|give|list)\s+(?:me\s+)?(?:coupon|discount|promo)\s*(?:code)?s?/i',
+				'/(?:what\s+)?(?:coupon|discount|promo)\s*(?:code)?s?\s+(?:can\s+I\s+use|available)/i',
+			),
+			'ability'   => 'afw/coupons/available',
+			'extractor' => 'extract_basic_limit_params',
+			'priority'  => 9,
+		);
+
+		// Product by SKU.
+		$this->intent_patterns['product_by_sku'] = array(
+			'keywords'  => array( 'sku', 'product code', 'item code', 'part number' ),
+			'patterns'  => array(
+				'/sku\s*[:#]?\s*([a-zA-Z0-9_-]+)/i',
+				'/product\s+(?:code|sku)\s*[:#]?\s*([a-zA-Z0-9_-]+)/i',
+				'/find\s+(?:by\s+)?sku\s+([a-zA-Z0-9_-]+)/i',
+			),
+			'ability'   => 'afw/products/by-sku',
+			'extractor' => 'extract_sku_params',
+			'priority'  => 10,
+		);
+
+		// =====================================================
+		// Additional Admin Analytics Intent Patterns
+		// =====================================================
+
+		// Coupon statistics.
+		$this->intent_patterns['coupon_stats'] = array(
+			'keywords'  => array( 'coupon stats', 'coupon usage', 'coupon performance', 'discount stats', 'coupon report' ),
+			'patterns'  => array(
+				'/coupon\s+(?:stats?|statistics?|usage|performance|report)/i',
+				'/(?:how\s+are|which)\s+coupons?\s+(?:performing|used)/i',
+				'/(?:top|best|most\s+used)\s+coupons?/i',
+			),
+			'ability'   => 'afw/coupons/stats',
+			'extractor' => 'extract_days_params',
+			'priority'  => 8,
+		);
+
+		// Sales by product.
+		$this->intent_patterns['sales_by_product'] = array(
+			'keywords'  => array( 'product sales', 'sales by product', 'top selling', 'best sellers', 'product performance' ),
+			'patterns'  => array(
+				'/(?:sales|revenue)\s+(?:by|per)\s+product/i',
+				'/product\s+(?:sales|performance|stats?)/i',
+				'/(?:top|best)\s+sell(?:ing|ers?)/i',
+				'/which\s+products?\s+(?:are\s+)?sell(?:ing|s?)\s+(?:best|most)/i',
+			),
+			'ability'   => 'afw/analytics/by-product',
+			'extractor' => 'extract_sales_by_product_params',
+			'priority'  => 8,
+		);
+
+		// Sales by location.
+		$this->intent_patterns['sales_by_location'] = array(
+			'keywords'  => array( 'sales by location', 'geographic sales', 'sales by country', 'regional sales', 'where are customers' ),
+			'patterns'  => array(
+				'/(?:sales|revenue|orders?)\s+(?:by|per)\s+(?:location|country|region|state)/i',
+				'/(?:geographic|regional)\s+(?:sales|breakdown)/i',
+				'/where\s+(?:are\s+)?(?:my\s+)?(?:customers?|orders?)\s+(?:from|coming)/i',
+				'/(?:top|main)\s+(?:countries?|locations?|regions?)/i',
+			),
+			'ability'   => 'afw/analytics/by-location',
+			'extractor' => 'extract_days_params',
+			'priority'  => 8,
+		);
+
+		// Processing orders count.
+		$this->intent_patterns['processing_count'] = array(
+			'keywords'  => array( 'processing count', 'how many orders', 'orders to ship', 'orders waiting', 'unfulfilled' ),
+			'patterns'  => array(
+				'/how\s+many\s+(?:orders?\s+)?(?:to\s+)?(?:process|ship|fulfill)/i',
+				'/(?:unfulfilled|unshipped|pending)\s+orders?\s+count/i',
+				'/orders?\s+(?:to\s+be\s+)?(?:processed|shipped|fulfilled)/i',
+				'/processing\s+(?:orders?\s+)?count/i',
+			),
+			'ability'   => 'afw/orders/processing-count',
+			'extractor' => 'extract_empty_params',
+			'priority'  => 7,
+		);
+
+		// Tax collected.
+		$this->intent_patterns['tax_collected'] = array(
+			'keywords'  => array( 'tax collected', 'tax report', 'taxes', 'tax summary', 'sales tax' ),
+			'patterns'  => array(
+				'/(?:tax|taxes)\s+(?:collected|report|summary)/i',
+				'/how\s+much\s+tax\s+(?:collected|received)/i',
+				'/(?:sales|total)\s+tax\s+(?:collected|amount)/i',
+			),
+			'ability'   => 'afw/analytics/tax-collected',
+			'extractor' => 'extract_days_params',
+			'priority'  => 7,
+		);
+
+		// Most stocked products.
+		$this->intent_patterns['most_stocked'] = array(
+			'keywords'  => array( 'most stocked', 'highest stock', 'most inventory', 'overstocked' ),
+			'patterns'  => array(
+				'/(?:most|highest)\s+(?:stocked?|inventory)/i',
+				'/products?\s+with\s+(?:most|highest)\s+stock/i',
+				'/(?:overstocked?|excess)\s+(?:products?|inventory)/i',
+			),
+			'ability'   => 'afw/products/most-stocked',
+			'extractor' => 'extract_basic_limit_params',
+			'priority'  => 7,
+		);
+
+		// Low stock products.
+		$this->intent_patterns['low_stock'] = array(
+			'keywords'  => array( 'low stock', 'running low', 'almost out', 'need restock', 'low inventory' ),
+			'patterns'  => array(
+				'/(?:low|running\s+low)\s+(?:on\s+)?stock/i',
+				'/(?:products?|items?)\s+(?:running|almost)\s+(?:low|out)/i',
+				'/(?:need|needs?)\s+(?:to\s+)?restock/i',
+				'/low\s+(?:stock|inventory)\s+(?:products?|items?|alert)/i',
+			),
+			'ability'   => 'afw/products/low-stock',
+			'extractor' => 'extract_low_stock_params',
+			'priority'  => 8,
+		);
+
+		// Customer lifetime value.
+		$this->intent_patterns['customer_lifetime'] = array(
+			'keywords'  => array( 'lifetime value', 'customer value', 'total spent', 'customer history', 'clv', 'ltv' ),
+			'patterns'  => array(
+				'/(?:customer|user)\s+(?:lifetime\s+)?value/i',
+				'/(?:how\s+much|total)\s+(?:has\s+)?(?:customer|user)\s+spent/i',
+				'/(?:clv|ltv)\s+(?:for|of)\s+(?:customer|user)/i',
+				'/customer\s+(?:purchase|order)\s+history/i',
+			),
+			'ability'   => 'afw/customers/lifetime-value',
+			'extractor' => 'extract_customer_lookup_params',
+			'priority'  => 8,
 		);
 
 		/**
@@ -507,6 +924,28 @@ class Intent_Classifier {
 		// Extract limit.
 		if ( preg_match( '/(?:last|recent|top)\s+(\d+)/i', $message, $matches ) ) {
 			$params['limit'] = min( (int) $matches[1], 50 );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract last order parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_last_order_params( $message ) {
+		$message_lower = strtolower( $message );
+		$params        = array();
+
+		// Check if filtering by status.
+		$statuses = array( 'pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed' );
+		foreach ( $statuses as $status ) {
+			if ( strpos( $message_lower, $status ) !== false ) {
+				$params['status'] = $status;
+				break;
+			}
 		}
 
 		return $params;
@@ -804,6 +1243,199 @@ class Intent_Classifier {
 	}
 
 	/**
+	 * Extract daily summary parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_daily_summary_params( $message ) {
+		$params = array();
+
+		// Check for yesterday.
+		if ( strpos( strtolower( $message ), 'yesterday' ) !== false ) {
+			$params['date'] = gmdate( 'Y-m-d', strtotime( '-1 day' ) );
+		}
+
+		// Check for specific date pattern.
+		if ( preg_match( '/(\d{4}-\d{2}-\d{2})/', $message, $matches ) ) {
+			$params['date'] = $matches[1];
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract basic limit parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_basic_limit_params( $message ) {
+		$params = array();
+
+		// Extract limit if mentioned.
+		if ( preg_match( '/(?:top|first|show|limit)\s+(\d+)/i', $message, $matches ) ) {
+			$params['limit'] = min( (int) $matches[1], 100 );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract days parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_days_params( $message ) {
+		$params = array();
+
+		// Extract days if mentioned.
+		if ( preg_match( '/(?:last|past)\s+(\d+)\s+days?/i', $message, $matches ) ) {
+			$params['days'] = min( (int) $matches[1], 365 );
+		} elseif ( strpos( strtolower( $message ), 'this week' ) !== false ) {
+			$params['days'] = 7;
+		} elseif ( strpos( strtolower( $message ), 'this month' ) !== false ) {
+			$params['days'] = 30;
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract period parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_period_params( $message ) {
+		$message_lower = strtolower( $message );
+		$params        = array( 'period' => 'month' );
+
+		if ( strpos( $message_lower, 'this week' ) !== false || strpos( $message_lower, 'week' ) !== false ) {
+			$params['period'] = 'week';
+		} elseif ( strpos( $message_lower, 'this year' ) !== false || strpos( $message_lower, 'year' ) !== false ) {
+			$params['period'] = 'year';
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract repeat customers parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_repeat_customers_params( $message ) {
+		$params = array(
+			'min_orders' => 2,
+			'limit'      => 20,
+		);
+
+		// Check for minimum orders.
+		if ( preg_match( '/(\d+)\+?\s+orders?/i', $message, $matches ) ) {
+			$params['min_orders'] = max( 2, (int) $matches[1] );
+		}
+
+		// Extract limit.
+		if ( preg_match( '/(?:top|first|show)\s+(\d+)/i', $message, $matches ) ) {
+			$params['limit'] = min( (int) $matches[1], 100 );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract comparison parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_comparison_params( $message ) {
+		$message_lower = strtolower( $message );
+		$params        = array( 'period' => 'week' );
+
+		if ( strpos( $message_lower, 'month' ) !== false ) {
+			$params['period'] = 'month';
+		} elseif ( strpos( $message_lower, 'quarter' ) !== false ) {
+			$params['period'] = 'quarter';
+		} elseif ( strpos( $message_lower, 'year' ) !== false ) {
+			$params['period'] = 'year';
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract product availability parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_product_availability_params( $message ) {
+		$params = array();
+
+		// Try to extract product ID.
+		if ( preg_match( '/product\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['product_id'] = (int) $matches[1];
+		}
+
+		// Try to extract product name (quoted or after keywords).
+		if ( preg_match( '/"([^"]+)"/i', $message, $matches ) ) {
+			$params['product_name'] = $matches[1];
+		} elseif ( preg_match( '/(?:is|are|do\s+you\s+have|check)\s+(.+?)(?:\s+(?:in\s+stock|available)|$)/i', $message, $matches ) ) {
+			// Clean up the extracted name.
+			$name = trim( $matches[1] );
+			$name = preg_replace( '/^(?:the|any|some)\s+/i', '', $name );
+			if ( strlen( $name ) > 2 ) {
+				$params['product_name'] = $name;
+			}
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract related products parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_related_products_params( $message ) {
+		$params = array( 'limit' => 5 );
+
+		// Try to extract product ID.
+		if ( preg_match( '/product\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['product_id'] = (int) $matches[1];
+		}
+
+		// Try to extract category.
+		if ( preg_match( '/(?:in|from|category)\s+([a-zA-Z\s]+?)(?:\s+category)?$/i', $message, $matches ) ) {
+			$params['category'] = trim( $matches[1] );
+		}
+
+		// Extract limit.
+		if ( preg_match( '/(?:show|give|find)\s+(?:me\s+)?(\d+)/i', $message, $matches ) ) {
+			$params['limit'] = min( (int) $matches[1], 20 );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Return empty parameters array.
+	 *
+	 * @param string $message The message (unused but required by extractor interface).
+	 * @return array Empty parameters.
+	 *
+	 * @phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+	 */
+	private function extract_empty_params( $message ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found -- Required by extractor interface.
+		return array();
+	}
+
+	/**
 	 * Extract top products parameters from message.
 	 *
 	 * @param string $message The message.
@@ -946,20 +1578,20 @@ class Intent_Classifier {
 		$message_lower = strtolower( $message );
 
 		$section_map = array(
-			'shipping'    => 'shipping',
-			'tax'         => 'tax',
-			'payment'     => 'payments',
-			'checkout'    => 'payments',
-			'email'       => 'emails',
+			'shipping'     => 'shipping',
+			'tax'          => 'tax',
+			'payment'      => 'payments',
+			'checkout'     => 'payments',
+			'email'        => 'emails',
 			'notification' => 'emails',
-			'account'     => 'accounts',
-			'product'     => 'products',
-			'inventory'   => 'products',
-			'advanced'    => 'advanced',
-			'integration' => 'integration',
-			'api'         => 'advanced',
-			'webhook'     => 'advanced',
-			'assistify'   => 'assistify',
+			'account'      => 'accounts',
+			'product'      => 'products',
+			'inventory'    => 'products',
+			'advanced'     => 'advanced',
+			'integration'  => 'integration',
+			'api'          => 'advanced',
+			'webhook'      => 'advanced',
+			'assistify'    => 'assistify',
 		);
 
 		foreach ( $section_map as $keyword => $section ) {
@@ -1016,6 +1648,111 @@ class Intent_Classifier {
 		// Check for limit.
 		if ( preg_match( '/(?:top|first|last)\s+(\d+)/i', $message, $matches ) ) {
 			$params['limit'] = (int) $matches[1];
+		}
+
+		return $params;
+	}
+
+	// =========================================================================
+	// Additional Extractor Methods for New Abilities
+	// =========================================================================
+
+	/**
+	 * Extract sale products parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_sale_products_params( $message ) {
+		$params = array( 'limit' => 10 );
+
+		// Check for limit.
+		if ( preg_match( '/(?:top|first|show\s+me|list)\s+(\d+)/i', $message, $matches ) ) {
+			$params['limit'] = (int) $matches[1];
+		}
+
+		// Check for category.
+		if ( preg_match( '/(?:in|from|under)\s+(?:the\s+)?(?:category\s+)?["\']?([^"\']+)["\']?\s+category/i', $message, $matches ) ) {
+			$params['category'] = trim( $matches[1] );
+		} elseif ( preg_match( '/(?:category|categories):\s*["\']?([^"\']+)["\']?/i', $message, $matches ) ) {
+			$params['category'] = trim( $matches[1] );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract SKU parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_sku_params( $message ) {
+		$params = array();
+
+		// Extract SKU from various patterns.
+		if ( preg_match( '/sku\s*[:#]?\s*([a-zA-Z0-9_-]+)/i', $message, $matches ) ) {
+			$params['sku'] = trim( $matches[1] );
+		} elseif ( preg_match( '/product\s+(?:code|sku)\s*[:#]?\s*([a-zA-Z0-9_-]+)/i', $message, $matches ) ) {
+			$params['sku'] = trim( $matches[1] );
+		} elseif ( preg_match( '/find\s+(?:by\s+)?sku\s+([a-zA-Z0-9_-]+)/i', $message, $matches ) ) {
+			$params['sku'] = trim( $matches[1] );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract sales by product parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_sales_by_product_params( $message ) {
+		$params = array(
+			'days'  => 30,
+			'limit' => 10,
+		);
+
+		// Check for specific product ID.
+		if ( preg_match( '/product\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['product_id'] = (int) $matches[1];
+		}
+
+		// Check for days.
+		if ( preg_match( '/(?:last|past)\s+(\d+)\s+days?/i', $message, $matches ) ) {
+			$params['days'] = (int) $matches[1];
+		} elseif ( preg_match( '/this\s+week/i', $message ) ) {
+			$params['days'] = 7;
+		} elseif ( preg_match( '/this\s+month/i', $message ) ) {
+			$params['days'] = 30;
+		}
+
+		// Check for limit.
+		if ( preg_match( '/(?:top|first|best)\s+(\d+)/i', $message, $matches ) ) {
+			$params['limit'] = (int) $matches[1];
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract customer lookup parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_customer_lookup_params( $message ) {
+		$params = array();
+
+		// Check for customer ID.
+		if ( preg_match( '/(?:customer|user)\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['customer_id'] = (int) $matches[1];
+		}
+
+		// Check for email.
+		if ( preg_match( '/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i', $message, $matches ) ) {
+			$params['email'] = trim( $matches[1] );
 		}
 
 		return $params;

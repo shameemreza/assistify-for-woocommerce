@@ -248,4 +248,3 @@ class AI_Provider_Factory {
 		return $provider->validate_api_key();
 	}
 }
-

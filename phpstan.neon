@@ -1,0 +1,27 @@
+includes:
+    - /Users/shameemreza/.composer/vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: 2
+    paths:
+        - .
+    excludePaths:
+        analyseAndScan:
+            - vendor (?)
+            - node_modules (?)
+    scanFiles:
+        - /Users/shameemreza/.composer/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+        - /Users/shameemreza/.composer/vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
+        - /Users/shameemreza/.composer/vendor/php-stubs/woocommerce-stubs/woocommerce-packages-stubs.php
+    bootstrapFiles:
+        - /Users/shameemreza/.composer/vendor/php-stubs/wordpress-stubs/wordpress-stubs.php
+        - /Users/shameemreza/.composer/vendor/php-stubs/woocommerce-stubs/woocommerce-stubs.php
+    ignoreErrors:
+        # Constants defined at runtime in main plugin file
+        - '#Constant ASSISTIFY_\w+ not found#'
+        # WordPress constant
+        - '#Constant WP_MEMORY_LIMIT not found#'
+        # WC_Order_Item stub incomplete
+        - '#Call to an undefined method WC_Order_Item::get_total#'
+        # WooCommerce stub incomplete
+        - '#Access to an undefined property WooCommerce::\$payment_gateways#'

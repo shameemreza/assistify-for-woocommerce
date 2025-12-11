@@ -99,7 +99,7 @@ class REST_API_Controller extends \WP_REST_Controller {
 			return array();
 		}
 
-		$sanitized = array();
+		$sanitized     = array();
 		$allowed_roles = array( 'user', 'assistant', 'system' );
 
 		foreach ( $messages as $message ) {
@@ -163,7 +163,7 @@ class REST_API_Controller extends \WP_REST_Controller {
 		$ip_address = $this->get_client_ip();
 
 		// Create rate limit key.
-		$key = $user_id > 0 ? "user_{$user_id}" : "ip_{$ip_address}";
+		$key           = $user_id > 0 ? "user_{$user_id}" : "ip_{$ip_address}";
 		$transient_key = 'assistify_rate_' . md5( $key );
 
 		// Get current count.
@@ -213,4 +213,3 @@ class REST_API_Controller extends \WP_REST_Controller {
 		return trim( $ip );
 	}
 }
-

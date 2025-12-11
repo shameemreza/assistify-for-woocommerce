@@ -1,6 +1,6 @@
 <?php
 /**
- * xAI (Grok) Provider Class.
+ * XAI (Grok) Provider Class.
  *
  * Implements the AI Provider interface for xAI Grok API.
  *
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * xAI (Grok) Provider Class.
+ * XAI (Grok) Provider Class.
  *
  * @since 1.0.0
  */
@@ -53,37 +53,37 @@ class AI_Provider_XAI extends AI_Provider_Abstract {
 	 * @var array
 	 */
 	protected $available_models = array(
-		'grok-3'            => array(
+		'grok-3'           => array(
 			'name'           => 'Grok 3',
 			'context_length' => 131072,
 			'description'    => 'Latest and most capable Grok model.',
 		),
-		'grok-3-fast'       => array(
+		'grok-3-fast'      => array(
 			'name'           => 'Grok 3 Fast',
 			'context_length' => 131072,
 			'description'    => 'Faster variant of Grok 3.',
 		),
-		'grok-3-mini'       => array(
+		'grok-3-mini'      => array(
 			'name'           => 'Grok 3 Mini',
 			'context_length' => 131072,
 			'description'    => 'Lightweight Grok 3 variant.',
 		),
-		'grok-3-mini-fast'  => array(
+		'grok-3-mini-fast' => array(
 			'name'           => 'Grok 3 Mini Fast',
 			'context_length' => 131072,
 			'description'    => 'Fastest Grok 3 variant.',
 		),
-		'grok-2'            => array(
+		'grok-2'           => array(
 			'name'           => 'Grok 2',
 			'context_length' => 131072,
 			'description'    => 'Balanced performance and speed.',
 		),
-		'grok-2-vision'     => array(
+		'grok-2-vision'    => array(
 			'name'           => 'Grok 2 Vision',
 			'context_length' => 32768,
 			'description'    => 'Multimodal model with image understanding.',
 		),
-		'grok-2-mini'       => array(
+		'grok-2-mini'      => array(
 			'name'           => 'Grok 2 Mini',
 			'context_length' => 131072,
 			'description'    => 'Smaller, faster Grok 2.',
@@ -135,7 +135,7 @@ class AI_Provider_XAI extends AI_Provider_Abstract {
 	/**
 	 * Send a chat completion request.
 	 *
-	 * xAI uses OpenAI-compatible API format.
+	 * XAI uses OpenAI-compatible API format.
 	 *
 	 * @since 1.0.0
 	 * @param array $messages Array of message objects with 'role' and 'content'.
@@ -216,4 +216,3 @@ class AI_Provider_XAI extends AI_Provider_Abstract {
 		return 131072;
 	}
 }
-

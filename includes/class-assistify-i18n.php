@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Assistify_i18n {
+class Assistify_I18n {
 
 	/**
 	 * Initialize internationalization.
@@ -42,4 +42,3 @@ class Assistify_i18n {
 		// This hook is intentionally empty but kept for future custom translation needs.
 	}
 }
-

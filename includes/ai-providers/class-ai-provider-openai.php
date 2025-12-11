@@ -53,62 +53,62 @@ class AI_Provider_OpenAI extends AI_Provider_Abstract {
 	 * @var array
 	 */
 	protected $available_models = array(
-		'gpt-4o'           => array(
+		'gpt-4o'        => array(
 			'name'           => 'GPT-4o',
 			'context_length' => 128000,
 			'description'    => 'Most capable multimodal model for complex tasks.',
 		),
-		'gpt-4o-mini'      => array(
+		'gpt-4o-mini'   => array(
 			'name'           => 'GPT-4o Mini',
 			'context_length' => 128000,
 			'description'    => 'Fast and cost-effective for most tasks.',
 		),
-		'gpt-4.1'          => array(
+		'gpt-4.1'       => array(
 			'name'           => 'GPT-4.1',
 			'context_length' => 1047576,
 			'description'    => 'Latest GPT-4.1 with 1M context window.',
 		),
-		'gpt-4.1-mini'     => array(
+		'gpt-4.1-mini'  => array(
 			'name'           => 'GPT-4.1 Mini',
 			'context_length' => 1047576,
 			'description'    => 'Smaller GPT-4.1 variant.',
 		),
-		'gpt-4.1-nano'     => array(
+		'gpt-4.1-nano'  => array(
 			'name'           => 'GPT-4.1 Nano',
 			'context_length' => 1047576,
 			'description'    => 'Fastest GPT-4.1 variant.',
 		),
-		'o1'               => array(
+		'o1'            => array(
 			'name'           => 'o1',
 			'context_length' => 200000,
 			'description'    => 'Advanced reasoning model for complex problems.',
 		),
-		'o1-mini'          => array(
+		'o1-mini'       => array(
 			'name'           => 'o1-mini',
 			'context_length' => 128000,
 			'description'    => 'Faster reasoning model.',
 		),
-		'o1-pro'           => array(
+		'o1-pro'        => array(
 			'name'           => 'o1-pro',
 			'context_length' => 200000,
 			'description'    => 'Most powerful reasoning model.',
 		),
-		'o3-mini'          => array(
+		'o3-mini'       => array(
 			'name'           => 'o3-mini',
 			'context_length' => 200000,
 			'description'    => 'Latest o3 reasoning model.',
 		),
-		'gpt-4-turbo'      => array(
+		'gpt-4-turbo'   => array(
 			'name'           => 'GPT-4 Turbo',
 			'context_length' => 128000,
 			'description'    => 'Powerful model with vision capabilities.',
 		),
-		'gpt-4'            => array(
+		'gpt-4'         => array(
 			'name'           => 'GPT-4',
 			'context_length' => 8192,
 			'description'    => 'Original GPT-4 model.',
 		),
-		'gpt-3.5-turbo'    => array(
+		'gpt-3.5-turbo' => array(
 			'name'           => 'GPT-3.5 Turbo',
 			'context_length' => 16385,
 			'description'    => 'Fast and budget-friendly option.',
@@ -244,4 +244,3 @@ class AI_Provider_OpenAI extends AI_Provider_Abstract {
 		return (int) ceil( strlen( $text ) / 4 );
 	}
 }
-

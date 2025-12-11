@@ -98,4 +98,3 @@ interface AI_Provider_Interface {
 	 */
 	public function get_max_context_length( $model = '' );
 }
-
