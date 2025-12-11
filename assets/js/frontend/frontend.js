@@ -537,6 +537,18 @@
       this.$toggle.attr("aria-expanded", "true");
       this.$widget.addClass("is-open");
 
+      // Build privacy link HTML if URL is available
+      let privacyLinkHtml = "";
+      if (assistifyFrontend.privacyUrl) {
+        privacyLinkHtml = `
+          <p class="assistify-consent-privacy">
+            <a href="${assistifyFrontend.privacyUrl}" target="_blank" rel="noopener noreferrer">
+              ${assistifyFrontend.strings.privacyLink}
+            </a>
+          </p>
+        `;
+      }
+
       const consentHtml = `
         <div class="assistify-consent-modal">
           <div class="assistify-consent-icon">
@@ -546,6 +558,7 @@
           </div>
           <h4>${assistifyFrontend.strings.consentTitle}</h4>
           <p>${assistifyFrontend.strings.consentText}</p>
+          ${privacyLinkHtml}
           <div class="assistify-consent-buttons">
             <button type="button" class="assistify-consent-agree">${assistifyFrontend.strings.consentAgree}</button>
             <button type="button" class="assistify-consent-decline">${assistifyFrontend.strings.consentDecline}</button>

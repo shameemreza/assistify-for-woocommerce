@@ -541,6 +541,20 @@
   line-height: 1.6;
 }
 
+.assistify-consent-privacy {
+  margin: -12px 0 24px;
+}
+
+.assistify-consent-privacy a {
+  color: var(--assistify-primary-color);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.assistify-consent-privacy a:hover {
+  text-decoration: underline;
+}
+
 .assistify-consent-buttons {
   display: flex;
   gap: 12px;
@@ -761,6 +775,10 @@
 
   .assistify-consent-modal p {
     color: #a0a0a0;
+  }
+
+  .assistify-consent-privacy a {
+    color: var(--assistify-primary-color);
   }
 
   .assistify-consent-decline {

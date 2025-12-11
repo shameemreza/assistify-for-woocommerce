@@ -615,8 +615,15 @@ class Assistify_Admin {
 			array(
 				'title' => esc_html__( 'Privacy Settings', 'assistify-for-woocommerce' ),
 				'type'  => 'title',
-				'desc'  => esc_html__( 'Configure privacy and data handling options.', 'assistify-for-woocommerce' ),
+				'desc'  => esc_html__( 'Configure privacy and data handling options. Privacy policy text is automatically added to Settings > Privacy.', 'assistify-for-woocommerce' ),
 				'id'    => 'assistify_privacy_settings',
+			),
+			array(
+				'title'   => esc_html__( 'Show Privacy Link', 'assistify-for-woocommerce' ),
+				'desc'    => esc_html__( 'Display a privacy policy link in the customer chat consent modal.', 'assistify-for-woocommerce' ),
+				'id'      => 'assistify_show_privacy_link',
+				'type'    => 'checkbox',
+				'default' => 'yes',
 			),
 			array(
 				'title'   => esc_html__( 'Remove Data on Uninstall', 'assistify-for-woocommerce' ),

@@ -119,6 +119,10 @@ Yes, you can customize colors, position, welcome messages, and quick questions t
 
 Yes, the AI can respond in the language the customer uses. The plugin interface is translation-ready.
 
+= How do I report bugs or request features? =
+
+Please report bugs and request features on our [GitHub Issues](https://github.com/shameemreza/assistify-for-woocommerce/issues) page.
+
 == Screenshots ==
 
 1. Admin chat interface - Query your store data naturally.

@@ -1440,6 +1440,10 @@ Use a friendly, conversational tone. Format with line breaks for readability.',
 		// Get contact page URL.
 		$contact_page_url = $this->get_contact_page_url();
 
+		// Get privacy policy URL.
+		$privacy_url       = Assistify_Privacy::get_privacy_policy_url();
+		$show_privacy_link = get_option( 'assistify_show_privacy_link', 'yes' ) === 'yes';
+
 		wp_localize_script(
 			'assistify-frontend',
 			'assistifyFrontend',
@@ -1452,6 +1456,7 @@ Use a friendly, conversational tone. Format with line breaks for readability.',
 				'pageContext'    => $page_context,
 				'apiStatus'      => $api_status,
 				'contactPageUrl' => $contact_page_url,
+				'privacyUrl'     => $show_privacy_link && $privacy_url ? esc_url( $privacy_url ) : '',
 				'strings'        => array(
 					'error'          => esc_html__( 'An error occurred. Please try again.', 'assistify-for-woocommerce' ),
 					'loading'        => esc_html__( 'Loading...', 'assistify-for-woocommerce' ),
@@ -1463,6 +1468,7 @@ Use a friendly, conversational tone. Format with line breaks for readability.',
 					'consentText'    => esc_html__( 'This chat is powered by AI. By continuing, you agree that your messages will be processed to provide responses.', 'assistify-for-woocommerce' ),
 					'consentAgree'   => esc_html__( 'I Agree', 'assistify-for-woocommerce' ),
 					'consentDecline' => esc_html__( 'No Thanks', 'assistify-for-woocommerce' ),
+					'privacyLink'    => esc_html__( 'Privacy Policy', 'assistify-for-woocommerce' ),
 					'proactiveMsg'   => __( 'Need any help? I\'m here if you have questions!', 'assistify-for-woocommerce' ),
 					'offlineMsg'     => esc_html__( 'I\'m currently offline. Please contact us directly for assistance.', 'assistify-for-woocommerce' ),
 					'contactLink'    => esc_html__( 'Contact Us', 'assistify-for-woocommerce' ),

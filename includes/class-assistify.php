@@ -64,6 +64,7 @@ final class Assistify {
 		$this->maybe_upgrade();
 		$this->set_locale();
 		$this->init_abilities();
+		$this->init_privacy();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_rest_api();
@@ -159,6 +160,9 @@ final class Assistify {
 		// Load frontend classes (always needed for AJAX handlers).
 		require_once ASSISTIFY_PLUGIN_DIR . 'includes/frontend/class-assistify-frontend.php';
 
+		// Load Privacy/GDPR class.
+		require_once ASSISTIFY_PLUGIN_DIR . 'includes/class-assistify-privacy.php';
+
 		$this->loader = new Assistify_Loader();
 	}
 
@@ -224,6 +228,17 @@ final class Assistify {
 
 		// Initialize the abilities registry singleton.
 		Abilities\Abilities_Registry::instance();
+	}
+
+	/**
+	 * Initialize GDPR/Privacy features.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	private function init_privacy() {
+		$privacy = new Assistify_Privacy();
+		$privacy->init();
 	}
 
 	/**
