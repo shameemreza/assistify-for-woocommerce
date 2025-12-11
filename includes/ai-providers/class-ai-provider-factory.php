@@ -99,20 +99,35 @@ class AI_Provider_Factory {
 	/**
 	 * Get API key for a specific provider.
 	 *
+	 * Checks for provider-specific key first, then falls back to generic key
+	 * if the provider matches the currently selected provider.
+	 *
 	 * @since 1.0.0
 	 * @param string $provider_id Provider ID.
 	 * @return string API key or empty string.
 	 */
 	public static function get_api_key_for_provider( $provider_id ) {
+		// First, try provider-specific key.
 		$option_key = 'assistify_' . $provider_id . '_api_key';
 		$api_key    = get_option( $option_key, '' );
 
-		// Decrypt if needed.
+		// Decrypt if found.
 		if ( ! empty( $api_key ) ) {
-			$api_key = self::decrypt_api_key( $api_key );
+			return self::decrypt_api_key( $api_key );
 		}
 
-		return $api_key;
+		// Fallback: If this provider matches the main selected provider,
+		// use the generic API key (for backwards compatibility and simple setup).
+		$main_provider = get_option( 'assistify_ai_provider', 'openai' );
+
+		if ( $provider_id === $main_provider ) {
+			$generic_key = get_option( 'assistify_api_key', '' );
+			if ( ! empty( $generic_key ) ) {
+				return $generic_key;
+			}
+		}
+
+		return '';
 	}
 
 	/**

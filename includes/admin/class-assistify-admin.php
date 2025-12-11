@@ -76,21 +76,23 @@ class Assistify_Admin {
 			'assistify-admin',
 			'assistifyAdmin',
 			array(
-				'ajaxUrl'          => admin_url( 'admin-ajax.php' ),
-				'nonce'            => wp_create_nonce( 'assistify_admin_nonce' ),
-				'strings'          => array(
+				'ajaxUrl'               => admin_url( 'admin-ajax.php' ),
+				'nonce'                 => wp_create_nonce( 'assistify_admin_nonce' ),
+				'strings'               => array(
 					'error'       => esc_html__( 'Sorry, something went wrong. Please try again.', 'assistify-for-woocommerce' ),
 					'loading'     => esc_html__( 'Loading...', 'assistify-for-woocommerce' ),
 					'placeholder' => esc_html__( 'Ask Ayana anything...', 'assistify-for-woocommerce' ),
 					'openChat'    => esc_html__( 'Chat with Ayana', 'assistify-for-woocommerce' ),
 				),
-				'settings'         => array(
+				'settings'              => array(
 					'chatEnabled'   => get_option( 'assistify_admin_chat_enabled', 'yes' ),
 					'position'      => get_option( 'assistify_chat_position', 'bottom-right' ),
 					'apiConfigured' => $this->is_api_key_configured(),
 				),
-				'modelsByProvider' => $this->get_models_by_provider(),
-				'defaultModels'    => $this->get_default_models(),
+				'modelsByProvider'      => $this->get_models_by_provider(),
+				'defaultModels'         => $this->get_default_models(),
+				'imageModelsByProvider' => $this->get_image_models_by_provider(),
+				'defaultImageModels'    => $this->get_default_image_models(),
 			)
 		);
 	}
@@ -199,47 +201,50 @@ class Assistify_Admin {
 	private function get_models_by_provider() {
 		return array(
 			'openai'    => array(
-				'gpt-4o'        => 'GPT-4o',
-				'gpt-4o-mini'   => 'GPT-4o Mini',
-				'gpt-4.1'       => 'GPT-4.1',
-				'gpt-4.1-mini'  => 'GPT-4.1 Mini',
-				'gpt-4.1-nano'  => 'GPT-4.1 Nano',
-				'o1'            => 'o1',
-				'o1-mini'       => 'o1-mini',
-				'o1-pro'        => 'o1-pro',
-				'o3-mini'       => 'o3-mini',
-				'gpt-4-turbo'   => 'GPT-4 Turbo',
-				'gpt-4'         => 'GPT-4',
-				'gpt-3.5-turbo' => 'GPT-3.5 Turbo',
+				'gpt-5.1'     => 'GPT-5.1',
+				'gpt-5'       => 'GPT-5',
+				'gpt-5-pro'   => 'GPT-5 Pro',
+				'gpt-5-mini'  => 'GPT-5 Mini',
+				'gpt-5-nano'  => 'GPT-5 Nano',
+				'gpt-4.1'     => 'GPT-4.1',
+				'gpt-4o'      => 'GPT-4o',
+				'gpt-4o-mini' => 'GPT-4o Mini',
+				'o3-mini'     => 'o3-mini',
+				'o1'          => 'o1',
+				'o1-mini'     => 'o1-mini',
+				'o1-pro'      => 'o1-pro',
 			),
 			'anthropic' => array(
-				'claude-sonnet-4-20250514'   => 'Claude Sonnet 4',
+				'claude-opus-4-5-20250514'   => 'Claude Opus 4.5',
+				'claude-sonnet-4-5-20250514' => 'Claude Sonnet 4.5',
+				'claude-haiku-4-5-20250514'  => 'Claude Haiku 4.5',
+				'claude-opus-4-1-20250514'   => 'Claude Opus 4.1',
 				'claude-opus-4-20250514'     => 'Claude Opus 4',
-				'claude-3-7-sonnet-20250219' => 'Claude 3.7 Sonnet',
+				'claude-sonnet-4-20250514'   => 'Claude Sonnet 4',
 				'claude-3-5-sonnet-20241022' => 'Claude 3.5 Sonnet',
 				'claude-3-5-haiku-20241022'  => 'Claude 3.5 Haiku',
-				'claude-3-opus-20240229'     => 'Claude 3 Opus',
-				'claude-3-sonnet-20240229'   => 'Claude 3 Sonnet',
 				'claude-3-haiku-20240307'    => 'Claude 3 Haiku',
 			),
 			'google'    => array(
-				'gemini-2.5-pro'            => 'Gemini 2.5 Pro',
-				'gemini-2.5-flash'          => 'Gemini 2.5 Flash',
-				'gemini-2.0-flash'          => 'Gemini 2.0 Flash',
-				'gemini-2.0-flash-lite'     => 'Gemini 2.0 Flash-Lite',
-				'gemini-2.0-flash-thinking' => 'Gemini 2.0 Flash Thinking',
-				'gemini-1.5-pro'            => 'Gemini 1.5 Pro',
-				'gemini-1.5-flash'          => 'Gemini 1.5 Flash',
-				'gemini-1.5-flash-8b'       => 'Gemini 1.5 Flash-8B',
+				'gemini-3-pro-preview'  => 'Gemini 3 Pro',
+				'gemini-2.5-pro'        => 'Gemini 2.5 Pro',
+				'gemini-2.5-flash'      => 'Gemini 2.5 Flash',
+				'gemini-2.5-flash-lite' => 'Gemini 2.5 Flash-Lite',
+				'gemini-2.0-flash'      => 'Gemini 2.0 Flash',
+				'gemini-2.0-flash-lite' => 'Gemini 2.0 Flash-Lite',
+				'gemini-1.5-pro'        => 'Gemini 1.5 Pro',
+				'gemini-1.5-flash'      => 'Gemini 1.5 Flash',
 			),
 			'xai'       => array(
-				'grok-3'           => 'Grok 3',
-				'grok-3-fast'      => 'Grok 3 Fast',
-				'grok-3-mini'      => 'Grok 3 Mini',
-				'grok-3-mini-fast' => 'Grok 3 Mini Fast',
-				'grok-2'           => 'Grok 2',
-				'grok-2-vision'    => 'Grok 2 Vision',
-				'grok-2-mini'      => 'Grok 2 Mini',
+				'grok-4-0709'                 => 'Grok 4',
+				'grok-4-fast-reasoning'       => 'Grok 4 Fast (Reasoning)',
+				'grok-4-fast-non-reasoning'   => 'Grok 4 Fast',
+				'grok-4-1-fast-reasoning'     => 'Grok 4.1 Fast (Reasoning)',
+				'grok-4-1-fast-non-reasoning' => 'Grok 4.1 Fast',
+				'grok-code-fast-1'            => 'Grok Code Fast',
+				'grok-3'                      => 'Grok 3',
+				'grok-3-mini'                 => 'Grok 3 Mini',
+				'grok-2-vision-1212'          => 'Grok 2 Vision',
 			),
 			'deepseek'  => array(
 				'deepseek-chat'     => 'DeepSeek-V3',
@@ -258,9 +263,9 @@ class Assistify_Admin {
 	private function get_default_models() {
 		return array(
 			'openai'    => 'gpt-4o-mini',
-			'anthropic' => 'claude-3-5-sonnet-20241022',
-			'google'    => 'gemini-2.0-flash',
-			'xai'       => 'grok-3-fast',
+			'anthropic' => 'claude-sonnet-4-5-20250514',
+			'google'    => 'gemini-2.5-flash',
+			'xai'       => 'grok-4-fast-non-reasoning',
 			'deepseek'  => 'deepseek-chat',
 		);
 	}
@@ -447,7 +452,7 @@ class Assistify_Admin {
 			array(
 				'title' => esc_html__( 'AI Provider Settings', 'assistify-for-woocommerce' ),
 				'type'  => 'title',
-				'desc'  => esc_html__( 'Configure your AI provider and API settings.', 'assistify-for-woocommerce' ),
+				'desc'  => esc_html__( 'Configure your AI provider and API settings. The same API key works for both text and image generation.', 'assistify-for-woocommerce' ),
 				'id'    => 'assistify_provider_settings',
 			),
 			array(
@@ -467,8 +472,16 @@ class Assistify_Admin {
 				'desc_tip' => true,
 			),
 			array(
-				'title'    => esc_html__( 'Model', 'assistify-for-woocommerce' ),
-				'desc'     => esc_html__( 'Select the AI model to use.', 'assistify-for-woocommerce' ),
+				'title'    => esc_html__( 'API Key', 'assistify-for-woocommerce' ),
+				'desc'     => esc_html__( 'Enter your API key from your selected provider.', 'assistify-for-woocommerce' ),
+				'id'       => 'assistify_api_key',
+				'type'     => 'password',
+				'default'  => '',
+				'desc_tip' => true,
+			),
+			array(
+				'title'    => esc_html__( 'Text Model', 'assistify-for-woocommerce' ),
+				'desc'     => esc_html__( 'Select the AI model for text generation (chat, content).', 'assistify-for-woocommerce' ),
 				'id'       => 'assistify_ai_model',
 				'type'     => 'select',
 				'class'    => 'wc-enhanced-select assistify-model-select',
@@ -477,11 +490,13 @@ class Assistify_Admin {
 				'desc_tip' => true,
 			),
 			array(
-				'title'    => esc_html__( 'API Key', 'assistify-for-woocommerce' ),
-				'desc'     => esc_html__( 'Enter your API key from your selected provider.', 'assistify-for-woocommerce' ),
-				'id'       => 'assistify_api_key',
-				'type'     => 'password',
-				'default'  => '',
+				'title'    => esc_html__( 'Image Model', 'assistify-for-woocommerce' ),
+				'desc'     => esc_html__( 'Select the AI model for image generation.', 'assistify-for-woocommerce' ),
+				'id'       => 'assistify_image_model',
+				'type'     => 'select',
+				'class'    => 'wc-enhanced-select assistify-image-model-select',
+				'default'  => 'gpt-image-1',
+				'options'  => $this->get_all_image_models(),
 				'desc_tip' => true,
 			),
 			array(
@@ -652,6 +667,101 @@ class Assistify_Admin {
 				'id'   => 'assistify_content_settings',
 			),
 
+			// Image Generation Settings (Output Options).
+			array(
+				'title' => esc_html__( 'Image Generation Settings', 'assistify-for-woocommerce' ),
+				'type'  => 'title',
+				'desc'  => esc_html__( 'Configure default image output settings. Image generation is automatically enabled when an Image Model is selected above. Note: Anthropic and DeepSeek do not support image generation.', 'assistify-for-woocommerce' ),
+				'id'    => 'assistify_image_settings',
+			),
+			array(
+				'title'    => esc_html__( 'Default Size', 'assistify-for-woocommerce' ),
+				'desc'     => esc_html__( 'Default image dimensions for generation.', 'assistify-for-woocommerce' ),
+				'id'       => 'assistify_image_size',
+				'type'     => 'select',
+				'class'    => 'wc-enhanced-select',
+				'default'  => '1024x1024',
+				'options'  => array(
+					'1024x1024' => esc_html__( '1024×1024 (Square)', 'assistify-for-woocommerce' ),
+					'1024x1536' => esc_html__( '1024×1536 (Portrait)', 'assistify-for-woocommerce' ),
+					'1536x1024' => esc_html__( '1536×1024 (Landscape)', 'assistify-for-woocommerce' ),
+					'auto'      => esc_html__( 'Auto (Let AI decide)', 'assistify-for-woocommerce' ),
+				),
+				'desc_tip' => true,
+			),
+			array(
+				'title'    => esc_html__( 'Default Quality', 'assistify-for-woocommerce' ),
+				'desc'     => esc_html__( 'Image quality level. Higher quality costs more.', 'assistify-for-woocommerce' ),
+				'id'       => 'assistify_image_quality',
+				'type'     => 'select',
+				'class'    => 'wc-enhanced-select',
+				'default'  => 'auto',
+				'options'  => array(
+					'auto'     => esc_html__( 'Auto (Recommended)', 'assistify-for-woocommerce' ),
+					'standard' => esc_html__( 'Standard', 'assistify-for-woocommerce' ),
+					'hd'       => esc_html__( 'HD (Higher cost)', 'assistify-for-woocommerce' ),
+				),
+				'desc_tip' => true,
+			),
+			array(
+				'title'    => esc_html__( 'Default Style', 'assistify-for-woocommerce' ),
+				'desc'     => esc_html__( 'Image style for generation.', 'assistify-for-woocommerce' ),
+				'id'       => 'assistify_image_style',
+				'type'     => 'select',
+				'class'    => 'wc-enhanced-select',
+				'default'  => 'natural',
+				'options'  => array(
+					'natural' => esc_html__( 'Natural - Realistic photos', 'assistify-for-woocommerce' ),
+					'vivid'   => esc_html__( 'Vivid - More dramatic and artistic', 'assistify-for-woocommerce' ),
+				),
+				'desc_tip' => true,
+			),
+			array(
+				'type' => 'sectionend',
+				'id'   => 'assistify_image_settings',
+			),
+
+			// Background Removal (Remove.bg) Settings.
+			array(
+				'title' => esc_html__( 'Background Removal', 'assistify-for-woocommerce' ),
+				'type'  => 'title',
+				'desc'  => sprintf(
+					/* translators: %s: Link to remove.bg API page */
+					esc_html__( 'Remove image backgrounds using Remove.bg API. Get your API key at %s (50 free API calls/month).', 'assistify-for-woocommerce' ),
+					'<a href="https://www.remove.bg/api#api-key" target="_blank" rel="noopener">remove.bg</a>'
+				),
+				'id'    => 'assistify_removebg_settings',
+			),
+			array(
+				'title'    => esc_html__( 'Remove.bg API Key', 'assistify-for-woocommerce' ),
+				'desc'     => esc_html__( 'Enter your Remove.bg API key for background removal feature.', 'assistify-for-woocommerce' ),
+				'id'       => 'assistify_removebg_api_key',
+				'type'     => 'password',
+				'default'  => '',
+				'desc_tip' => true,
+			),
+			array(
+				'title'    => esc_html__( 'Output Size', 'assistify-for-woocommerce' ),
+				'desc'     => esc_html__( 'Default size for background-removed images.', 'assistify-for-woocommerce' ),
+				'id'       => 'assistify_removebg_size',
+				'type'     => 'select',
+				'class'    => 'wc-enhanced-select',
+				'default'  => 'auto',
+				'options'  => array(
+					'auto'    => esc_html__( 'Auto (Match original)', 'assistify-for-woocommerce' ),
+					'preview' => esc_html__( 'Preview (Up to 500x500)', 'assistify-for-woocommerce' ),
+					'small'   => esc_html__( 'Small (Up to 625x400)', 'assistify-for-woocommerce' ),
+					'regular' => esc_html__( 'Regular (Up to 1500x1000)', 'assistify-for-woocommerce' ),
+					'hd'      => esc_html__( 'HD (Up to 2500x2500)', 'assistify-for-woocommerce' ),
+					'4k'      => esc_html__( '4K (Up to 4096x4096)', 'assistify-for-woocommerce' ),
+				),
+				'desc_tip' => true,
+			),
+			array(
+				'type' => 'sectionend',
+				'id'   => 'assistify_removebg_settings',
+			),
+
 			// Privacy Settings.
 			array(
 				'title' => esc_html__( 'Privacy Settings', 'assistify-for-woocommerce' ),
@@ -677,6 +787,29 @@ class Assistify_Admin {
 				'type' => 'sectionend',
 				'id'   => 'assistify_privacy_settings',
 			),
+
+			// Advanced Settings.
+			array(
+				'title' => esc_html__( 'Advanced Settings', 'assistify-for-woocommerce' ),
+				'type'  => 'title',
+				'desc'  => esc_html__( 'Developer and debugging options.', 'assistify-for-woocommerce' ),
+				'id'    => 'assistify_advanced_settings',
+			),
+			array(
+				'title'   => esc_html__( 'Enable Debug Logging', 'assistify-for-woocommerce' ),
+				'desc'    => sprintf(
+					/* translators: %s: Link to WooCommerce logs */
+					esc_html__( 'Log API requests and errors for troubleshooting. View logs in %s.', 'assistify-for-woocommerce' ),
+					'<a href="' . esc_url( admin_url( 'admin.php?page=wc-status&tab=logs' ) ) . '">' . esc_html__( 'WooCommerce > Status > Logs', 'assistify-for-woocommerce' ) . '</a>'
+				),
+				'id'      => 'assistify_debug_logging',
+				'type'    => 'checkbox',
+				'default' => 'no',
+			),
+			array(
+				'type' => 'sectionend',
+				'id'   => 'assistify_advanced_settings',
+			),
 		);
 
 		return apply_filters( 'assistify_settings', $settings );
@@ -698,6 +831,65 @@ class Assistify_Admin {
 		}
 
 		return $all_models;
+	}
+
+	/**
+	 * Get all available image models as flat array for WooCommerce settings.
+	 *
+	 * @since 1.0.0
+	 * @return array Image models array (flat key => value).
+	 */
+	private function get_all_image_models() {
+		$all_models = array();
+
+		foreach ( $this->get_image_models_by_provider() as $models ) {
+			$all_models = array_merge( $all_models, $models );
+		}
+
+		return $all_models;
+	}
+
+	/**
+	 * Get image models organized by provider.
+	 *
+	 * @since 1.0.0
+	 * @return array Image models by provider.
+	 */
+	private function get_image_models_by_provider() {
+		return array(
+			'openai'    => array(
+				'gpt-image-1'      => 'GPT Image 1 (Recommended)',
+				'gpt-image-1-mini' => 'GPT Image 1 Mini (Faster)',
+				'dall-e-3'         => 'DALL-E 3 (Stable)',
+			),
+			'anthropic' => array(),
+			'google'    => array(
+				'imagen-4.0-generate-001'       => 'Imagen 4.0',
+				'imagen-4.0-ultra-generate-001' => 'Imagen 4.0 Ultra',
+				'imagen-4.0-fast-generate-001'  => 'Imagen 4.0 Fast',
+				'imagen-3.0-generate-002'       => 'Imagen 3.0',
+			),
+			'xai'       => array(
+				'grok-2-image-1212' => 'Grok 2 Image',
+			),
+			'deepseek'  => array(),
+		);
+	}
+
+	/**
+	 * Get default image model for each provider.
+	 *
+	 * @since 1.0.0
+	 * @return array Default image models.
+	 */
+	private function get_default_image_models() {
+		return array(
+			'openai'    => 'gpt-image-1',
+			'anthropic' => '',
+			'google'    => 'imagen-4.0-generate-001',
+			'xai'       => 'grok-2-image-1212',
+			'deepseek'  => '',
+		);
 	}
 
 	/**
@@ -854,20 +1046,38 @@ class Assistify_Admin {
 		$base_prompt = $this->get_admin_system_prompt();
 
 		if ( empty( $store_data ) ) {
-			return $base_prompt;
+			// No data was fetched - add a clear warning to prevent hallucination.
+			$no_data_warning  = "\n\n## ⚠️ NO LIVE DATA AVAILABLE FOR THIS QUERY\n\n";
+			$no_data_warning .= "I could not retrieve specific store data for this question.\n\n";
+			$no_data_warning .= "**YOU MUST:**\n";
+			$no_data_warning .= "1. DO NOT make up or invent any data (orders, coupons, customers, numbers)\n";
+			$no_data_warning .= "2. Tell the user: \"I don't have specific data for this query. Please check the WooCommerce dashboard directly or try asking in a different way.\"\n";
+			$no_data_warning .= "3. Suggest alternative questions you CAN help with, like:\n";
+			$no_data_warning .= "   - \"Show me recent orders\"\n";
+			$no_data_warning .= "   - \"List active coupons\"\n";
+			$no_data_warning .= "   - \"What are my top selling products?\"\n";
+			$no_data_warning .= "   - \"Show low stock products\"\n\n";
+			$no_data_warning .= "**NEVER FABRICATE DATA. If you don't have it, say so clearly.**";
+
+			return $base_prompt . $no_data_warning;
 		}
 
 		// Decode any HTML entities in the data for clean AI processing.
 		$store_data = $this->decode_html_entities_recursive( $store_data );
 
-		$data_context = "\n\n## LIVE STORE DATA (Use this to answer the user's question):\n";
+		$data_context = "\n\n## ✅ LIVE STORE DATA (ONLY use this data to answer):\n";
 
 		foreach ( $store_data as $key => $value ) {
 			$data_context .= "\n### " . ucwords( str_replace( '_', ' ', $key ) ) . ":\n";
 			$data_context .= "```json\n" . wp_json_encode( $value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) . "\n```\n";
 		}
 
-		$data_context .= "\n**IMPORTANT**: Use the above real store data to answer the user's question. Format the response nicely with markdown (use **bold**, lists, tables where appropriate). Do NOT say you cannot access data - you have the data above.";
+		$data_context .= "\n**CRITICAL RULES:**\n";
+		$data_context .= "1. ONLY use the data shown above - do NOT invent or fabricate any information\n";
+		$data_context .= "2. If the user asks for something not in the data above, say \"This specific information was not retrieved. Please try asking differently or check the WooCommerce dashboard.\"\n";
+		$data_context .= "3. Format responses nicely with markdown (bold, lists, etc.)\n";
+		$data_context .= "4. Use the currency symbol from store info for prices\n";
+		$data_context .= '5. If there are no items in a list, say "No [items] found" - do NOT make up items';
 
 		return $base_prompt . $data_context;
 	}

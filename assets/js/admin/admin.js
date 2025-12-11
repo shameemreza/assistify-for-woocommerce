@@ -1354,9 +1354,109 @@
     },
   };
 
+  /**
+   * Assistify Settings - Image Model Filter
+   * Filters the Image Model dropdown based on selected AI Provider.
+   * Uses the main AI Provider setting since image generation shares the same API key.
+   */
+  const AssistifyImageModelFilter = {
+    /**
+     * Initialize
+     */
+    init: function () {
+      // Check if we have the required data
+      if (
+        typeof assistifyAdmin === "undefined" ||
+        !assistifyAdmin.imageModelsByProvider
+      ) {
+        return;
+      }
+
+      // Use main AI provider selector (not a separate image provider)
+      this.$providerSelect = $("#assistify_ai_provider");
+      this.$modelSelect = $("#assistify_image_model");
+
+      // Exit if elements don't exist (not on settings page)
+      if (!this.$providerSelect.length || !this.$modelSelect.length) {
+        return;
+      }
+
+      this.modelsByProvider = assistifyAdmin.imageModelsByProvider;
+      this.defaultModels = assistifyAdmin.defaultImageModels || {};
+
+      this.bindEvents();
+      // Initial filter on page load
+      this.updateModelOptions(this.$providerSelect.val());
+    },
+
+    /**
+     * Bind events
+     */
+    bindEvents: function () {
+      const self = this;
+
+      this.$providerSelect.on("change", function () {
+        self.updateModelOptions($(this).val());
+      });
+    },
+
+    /**
+     * Update model dropdown options based on provider
+     *
+     * @param {string} provider - Selected provider ID
+     */
+    updateModelOptions: function (provider) {
+      const currentModel = this.$modelSelect.val();
+      const models = this.modelsByProvider[provider] || {};
+      let hasCurrentModel = false;
+      const hasModels = Object.keys(models).length > 0;
+
+      // Clear and rebuild options
+      this.$modelSelect.empty();
+
+      if (!hasModels) {
+        // Provider doesn't support image generation
+        this.$modelSelect.append(
+          $("<option></option>")
+            .val("")
+            .text("No image models available for this provider")
+        );
+        this.$modelSelect.prop("disabled", true);
+      } else {
+        this.$modelSelect.prop("disabled", false);
+
+        // Add options for the selected provider
+        $.each(
+          models,
+          function (value, label) {
+            this.$modelSelect.append(
+              $("<option></option>").val(value).text(label)
+            );
+            if (value === currentModel) {
+              hasCurrentModel = true;
+            }
+          }.bind(this)
+        );
+
+        // Select appropriate model
+        if (hasCurrentModel) {
+          this.$modelSelect.val(currentModel);
+        } else if (this.defaultModels[provider]) {
+          this.$modelSelect.val(this.defaultModels[provider]);
+        }
+      }
+
+      // Trigger change for Select2/selectWoo to update UI
+      if ($.fn.selectWoo) {
+        this.$modelSelect.trigger("change.select2");
+      }
+    },
+  };
+
   // Initialize on document ready
   $(document).ready(function () {
     AssistifyAdminChat.init();
     AssistifyModelFilter.init();
+    AssistifyImageModelFilter.init();
   });
 })(jQuery);

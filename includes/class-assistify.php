@@ -150,6 +150,9 @@ final class Assistify {
 		// The class responsible for defining internationalization functionality.
 		require_once ASSISTIFY_PLUGIN_DIR . 'includes/class-assistify-i18n.php';
 
+		// Logger class for debug logging with WooCommerce integration.
+		require_once ASSISTIFY_PLUGIN_DIR . 'includes/class-assistify-logger.php';
+
 		// Load AI Provider classes.
 		$this->load_ai_providers();
 
@@ -192,6 +195,41 @@ final class Assistify {
 
 		// Load factory class.
 		require_once $ai_providers_dir . 'class-ai-provider-factory.php';
+
+		// Load Image Provider classes.
+		$this->load_image_providers();
+	}
+
+	/**
+	 * Load Image Provider classes.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	private function load_image_providers() {
+		$image_providers_dir = ASSISTIFY_PLUGIN_DIR . 'includes/image-providers/';
+
+		// Check if directory exists.
+		if ( ! is_dir( $image_providers_dir ) ) {
+			return;
+		}
+
+		// Load interface first.
+		require_once $image_providers_dir . 'interface-image-provider.php';
+
+		// Load abstract class.
+		require_once $image_providers_dir . 'class-image-provider-abstract.php';
+
+		// Load provider implementations.
+		require_once $image_providers_dir . 'class-image-provider-openai.php';
+		require_once $image_providers_dir . 'class-image-provider-google.php';
+		require_once $image_providers_dir . 'class-image-provider-xai.php';
+
+		// Load factory class.
+		require_once $image_providers_dir . 'class-image-provider-factory.php';
+
+		// Load remove.bg provider for background removal.
+		require_once $image_providers_dir . 'class-removebg-provider.php';
 	}
 
 	/**

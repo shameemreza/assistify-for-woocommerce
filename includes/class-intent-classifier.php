@@ -69,8 +69,13 @@ class Intent_Classifier {
 		);
 
 		$this->intent_patterns['order_list'] = array(
-			'keywords'  => array( 'orders', 'list order', 'show orders', 'all order' ),
-			'patterns'  => array( '/(?:show|list|all|pending|processing|completed|cancelled|on-hold)\s*orders/i' ),
+			'keywords'  => array( 'orders', 'list order', 'show orders', 'all order', 'how many order', 'order count', 'total order' ),
+			'patterns'  => array(
+				'/(?:show|list|all|pending|processing|completed|cancelled|on-hold)\s*orders/i',
+				'/how\s+many\s+(?:total\s+)?orders?/i',
+				'/(?:total|count)\s+(?:of\s+)?orders?/i',
+				'/orders?\s+(?:do\s+)?(?:i|we)\s+have/i',
+			),
 			'ability'   => 'afw/orders/list',
 			'extractor' => 'extract_order_list_params',
 			'priority'  => 5,
@@ -94,8 +99,14 @@ class Intent_Classifier {
 		);
 
 		$this->intent_patterns['product_list'] = array(
-			'keywords'  => array( 'products', 'list product', 'show product', 'all product' ),
-			'patterns'  => array( '/(?:list|show|all|recent)\s*products?/i' ),
+			'keywords'  => array( 'products', 'list product', 'show product', 'all product', 'my product', 'our product', 'created product', 'new product' ),
+			'patterns'  => array(
+				'/(?:list|show|all|recent|my|our)\s*products?/i',
+				'/products?\s+(?:do\s+)?(?:i|we)\s+have/i',
+				'/(?:what|which)\s+products?\s+(?:do\s+)?(?:i|we)\s+have/i',
+				'/(?:created|added|new)\s+products?/i',
+				'/how\s+many\s+products?/i',
+			),
 			'ability'   => 'afw/products/list',
 			'extractor' => 'extract_product_list_params',
 			'priority'  => 5,
@@ -148,8 +159,14 @@ class Intent_Classifier {
 		);
 
 		$this->intent_patterns['customer_list'] = array(
-			'keywords'  => array( 'customers', 'list customer', 'show customer', 'all customer', 'buyer', 'client' ),
-			'patterns'  => array( '/(?:list|show|all|recent)\s*customers?/i', '/\bcustomers?\b/i', '/\bbuyers?\b/i' ),
+			'keywords'  => array( 'customers', 'list customer', 'show customer', 'all customer', 'buyer', 'client', 'my customer', 'our customer' ),
+			'patterns'  => array(
+				'/(?:list|show|all|recent|my|our)\s*customers?/i',
+				'/customers?\s+(?:do\s+)?(?:i|we)\s+have/i',
+				'/(?:what|which|how\s+many)\s+customers?/i',
+				'/\bbuyers?\b/i',
+				'/\bclients?\b/i',
+			),
 			'ability'   => 'afw/customers/list',
 			'extractor' => 'extract_customer_list_params',
 			'priority'  => 5,
@@ -194,12 +211,15 @@ class Intent_Classifier {
 
 		// Daily summary intent.
 		$this->intent_patterns['daily_summary'] = array(
-			'keywords'  => array( 'summary', 'overview', 'today', 'how are we doing', 'store status', 'daily report', 'daily stats' ),
+			'keywords'  => array( 'summary', 'overview', 'today', 'how are we doing', 'store status', 'daily report', 'daily stats', 'dashboard', 'update', 'business' ),
 			'patterns'  => array(
-				'/(?:daily|today\'?s?)\s+(?:summary|overview|report|stats)/i',
-				'/how\s+(?:are\s+we|is\s+(?:the\s+)?store)\s+doing/i',
-				'/store\s+(?:status|overview|summary)/i',
-				'/what\'?s?\s+(?:happening|going\s+on)\s+today/i',
+				'/(?:daily|today\'?s?|store|business)\s+(?:summary|overview|report|stats|update)/i',
+				'/how\s+(?:are\s+we|is\s+(?:the\s+)?(?:store|business))\s+doing/i',
+				'/store\s+(?:status|overview|summary|dashboard)/i',
+				'/what\'?s?\s+(?:happening|going\s+on|new)\s+(?:today|in\s+(?:the\s+)?store)/i',
+				'/give\s+(?:me\s+)?(?:a\s+)?(?:summary|overview|update)/i',
+				'/(?:store|business|sales)\s+(?:performance|update)/i',
+				'/how\s+(?:is|was)\s+(?:today|yesterday|this\s+week)/i',
 			),
 			'ability'   => 'afw/analytics/daily-summary',
 			'extractor' => 'extract_daily_summary_params',
@@ -466,8 +486,16 @@ class Intent_Classifier {
 
 		// Coupon intents.
 		$this->intent_patterns['coupon_list'] = array(
-			'keywords'  => array( 'coupons', 'discount code', 'promo code', 'list coupon', 'show coupon' ),
-			'patterns'  => array( '/(?:list|show|all|active)\s*coupons?/i', '/discount\s*codes?/i', '/promo\s*codes?/i' ),
+			'keywords'  => array( 'coupons', 'coupon', 'discount code', 'promo code', 'list coupon', 'show coupon', 'what coupon', 'my coupon' ),
+			'patterns'  => array(
+				'/(?:list|show|all|active)\s*coupons?/i',
+				'/discount\s*codes?/i',
+				'/promo\s*codes?/i',
+				'/(?:what|which)\s+coupons?\s+(?:do\s+)?(?:i|we)\s+have/i',
+				'/coupons?\s+(?:do\s+)?(?:i|we)\s+have/i',
+				'/(?:my|our)\s+coupons?/i',
+				'/(?:give|share|tell)\s+(?:me\s+)?(?:the\s+)?coupon/i',
+			),
 			'ability'   => 'afw/coupons/list',
 			'extractor' => 'extract_coupon_list_params',
 			'priority'  => 6,
@@ -576,6 +604,116 @@ class Intent_Classifier {
 			'ability'   => 'afw/content/menus',
 			'extractor' => null,
 			'priority'  => 5,
+		);
+
+		// Content categories.
+		$this->intent_patterns['content_categories'] = array(
+			'keywords'  => array( 'categories', 'product categories', 'category list', 'show categories' ),
+			'patterns'  => array(
+				'/(?:list|show|all|what)\s+(?:product\s+)?categories/i',
+				'/product\s+categories/i',
+				'/categories\s+(?:do\s+)?(?:we|i)\s+have/i',
+				'/(?:my|our)\s+categories/i',
+			),
+			'ability'   => 'afw/content/categories',
+			'extractor' => 'extract_content_params',
+			'priority'  => 6,
+		);
+
+		// Content tags.
+		$this->intent_patterns['content_tags'] = array(
+			'keywords'  => array( 'tags', 'product tags', 'tag list', 'show tags' ),
+			'patterns'  => array(
+				'/(?:list|show|all|what)\s+(?:product\s+)?tags/i',
+				'/product\s+tags/i',
+				'/tags\s+(?:do\s+)?(?:we|i)\s+have/i',
+				'/(?:my|our)\s+tags/i',
+			),
+			'ability'   => 'afw/content/tags',
+			'extractor' => 'extract_content_params',
+			'priority'  => 6,
+		);
+
+		// Customer search.
+		$this->intent_patterns['customer_search'] = array(
+			'keywords'  => array( 'search customer', 'find customer', 'look up customer', 'customer named', 'customer email' ),
+			'patterns'  => array(
+				'/search\s+(?:for\s+)?customers?/i',
+				'/find\s+(?:a\s+)?customer/i',
+				'/look\s*up\s+customer/i',
+				'/customer\s+(?:named|called|with\s+email)/i',
+				'/who\s+is\s+customer/i',
+			),
+			'ability'   => 'afw/customers/search',
+			'extractor' => 'extract_customer_search_params',
+			'priority'  => 8,
+		);
+
+		// Customer orders history.
+		$this->intent_patterns['customer_orders'] = array(
+			'keywords'  => array( 'customer order', 'orders from customer', 'order history', 'customer purchase', 'bought by' ),
+			'patterns'  => array(
+				'/orders?\s+(?:from|by|for)\s+customer/i',
+				'/customer\s*#?\s*\d+.*orders?/i',
+				'/(?:order|purchase)\s+history\s+(?:for|of)/i',
+				'/what\s+(?:did|has)\s+customer.*(?:order|buy|purchase)/i',
+				'/(?:orders?|purchases?)\s+(?:made\s+)?by/i',
+			),
+			'ability'   => 'afw/customers/orders',
+			'extractor' => 'extract_customer_orders_params',
+			'priority'  => 8,
+		);
+
+		// Shipping classes.
+		$this->intent_patterns['shipping_classes'] = array(
+			'keywords'  => array( 'shipping class', 'shipping classes', 'freight class', 'delivery class' ),
+			'patterns'  => array(
+				'/shipping\s+class(?:es)?/i',
+				'/(?:list|show|what)\s+shipping\s+class/i',
+				'/(?:freight|delivery)\s+class/i',
+			),
+			'ability'   => 'afw/store/shipping-classes',
+			'extractor' => null,
+			'priority'  => 7,
+		);
+
+		// Tax classes.
+		$this->intent_patterns['tax_classes'] = array(
+			'keywords'  => array( 'tax class', 'tax classes', 'vat class', 'tax type' ),
+			'patterns'  => array(
+				'/tax\s+class(?:es)?/i',
+				'/(?:list|show|what)\s+tax\s+class/i',
+				'/(?:vat|sales\s+tax)\s+class/i',
+			),
+			'ability'   => 'afw/store/tax-classes',
+			'extractor' => null,
+			'priority'  => 7,
+		);
+
+		// URL for customer profile.
+		$this->intent_patterns['url_customer'] = array(
+			'keywords'  => array( 'customer url', 'customer link', 'link to customer', 'customer profile' ),
+			'patterns'  => array(
+				'/(?:url|link)\s+(?:to|for|of)\s+(?:the\s+)?customer/i',
+				'/customer\s+(?:url|link|profile\s+link)/i',
+				'/(?:get|show)\s+(?:the\s+)?customer\s+(?:url|link)/i',
+			),
+			'ability'   => 'afw/urls/customer',
+			'extractor' => 'extract_customer_id',
+			'priority'  => 9,
+		);
+
+		// URL for page.
+		$this->intent_patterns['url_page'] = array(
+			'keywords'  => array( 'page url', 'page link', 'link to page', 'wordpress page' ),
+			'patterns'  => array(
+				'/(?:url|link)\s+(?:to|for|of)\s+(?:the\s+)?page/i',
+				'/page\s+(?:url|link)/i',
+				'/(?:get|show)\s+(?:the\s+)?(?:page\s+)?url\s+(?:for|of)\s+page/i',
+			),
+			'ability'   => 'afw/urls/page',
+			'extractor' => 'extract_page_params',
+			'priority'  => 8,
 		);
 
 		// =====================================================
@@ -1883,6 +2021,90 @@ class Intent_Classifier {
 		// Check for number of tags.
 		if ( preg_match( '/(\d+)\s*tags?/i', $message, $matches ) ) {
 			$params['count'] = (int) $matches[1];
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract customer search parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_customer_search_params( $message ) {
+		$params = array( 'limit' => 10 );
+
+		// Check for email.
+		if ( preg_match( '/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i', $message, $matches ) ) {
+			$params['email'] = trim( $matches[1] );
+		}
+
+		// Check for name in quotes.
+		if ( preg_match( '/["\']([^"\']+)["\']/', $message, $matches ) ) {
+			$params['search'] = trim( $matches[1] );
+		}
+
+		// Check for "named/called X".
+		if ( preg_match( '/(?:named|called)\s+([a-zA-Z\s]+)/i', $message, $matches ) ) {
+			$params['search'] = trim( $matches[1] );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract customer orders parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_customer_orders_params( $message ) {
+		$params = array( 'limit' => 10 );
+
+		// Check for customer ID.
+		if ( preg_match( '/customer\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['customer_id'] = (int) $matches[1];
+		}
+
+		// Check for email.
+		if ( preg_match( '/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i', $message, $matches ) ) {
+			$params['email'] = trim( $matches[1] );
+		}
+
+		// Check for limit.
+		if ( preg_match( '/(?:last|recent|top)\s+(\d+)/i', $message, $matches ) ) {
+			$params['limit'] = min( (int) $matches[1], 50 );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract page parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_page_params( $message ) {
+		$params = array();
+
+		// Check for page ID.
+		if ( preg_match( '/page\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['page_id'] = (int) $matches[1];
+		}
+
+		// Check for quoted page name.
+		if ( preg_match( '/["\']([^"\']+)["\']/', $message, $matches ) ) {
+			$params['page_name'] = trim( $matches[1] );
+		}
+
+		// Check for "page X" or "X page".
+		if ( preg_match( '/(?:page\s+|for\s+(?:the\s+)?page\s+)([a-zA-Z\s-]+)/i', $message, $matches ) ) {
+			$name = trim( $matches[1] );
+			if ( strlen( $name ) > 2 && ! preg_match( '/^(url|link)$/i', $name ) ) {
+				$params['page_name'] = $name;
+			}
 		}
 
 		return $params;

@@ -53,40 +53,54 @@ class AI_Provider_XAI extends AI_Provider_Abstract {
 	 * @var array
 	 */
 	protected $available_models = array(
-		'grok-3'           => array(
+		// Grok 4 Series (Latest).
+		'grok-4-0709'                 => array(
+			'name'           => 'Grok 4',
+			'context_length' => 256000,
+			'description'    => 'Most advanced Grok model.',
+		),
+		'grok-4-fast-reasoning'       => array(
+			'name'           => 'Grok 4 Fast (Reasoning)',
+			'context_length' => 2000000,
+			'description'    => 'Fast Grok 4 with reasoning capabilities.',
+		),
+		'grok-4-fast-non-reasoning'   => array(
+			'name'           => 'Grok 4 Fast',
+			'context_length' => 2000000,
+			'description'    => 'Fastest Grok 4 variant.',
+		),
+		'grok-4-1-fast-reasoning'     => array(
+			'name'           => 'Grok 4.1 Fast (Reasoning)',
+			'context_length' => 2000000,
+			'description'    => 'Latest Grok 4.1 with reasoning.',
+		),
+		'grok-4-1-fast-non-reasoning' => array(
+			'name'           => 'Grok 4.1 Fast',
+			'context_length' => 2000000,
+			'description'    => 'Fastest Grok 4.1 variant.',
+		),
+		// Grok Code.
+		'grok-code-fast-1'            => array(
+			'name'           => 'Grok Code Fast',
+			'context_length' => 256000,
+			'description'    => 'Optimized for code generation.',
+		),
+		// Grok 3 Series.
+		'grok-3'                      => array(
 			'name'           => 'Grok 3',
 			'context_length' => 131072,
-			'description'    => 'Latest and most capable Grok model.',
+			'description'    => 'Capable Grok 3 model.',
 		),
-		'grok-3-fast'      => array(
-			'name'           => 'Grok 3 Fast',
-			'context_length' => 131072,
-			'description'    => 'Faster variant of Grok 3.',
-		),
-		'grok-3-mini'      => array(
+		'grok-3-mini'                 => array(
 			'name'           => 'Grok 3 Mini',
 			'context_length' => 131072,
-			'description'    => 'Lightweight Grok 3 variant.',
+			'description'    => 'Cost-effective Grok 3 variant.',
 		),
-		'grok-3-mini-fast' => array(
-			'name'           => 'Grok 3 Mini Fast',
-			'context_length' => 131072,
-			'description'    => 'Fastest Grok 3 variant.',
-		),
-		'grok-2'           => array(
-			'name'           => 'Grok 2',
-			'context_length' => 131072,
-			'description'    => 'Balanced performance and speed.',
-		),
-		'grok-2-vision'    => array(
+		// Grok 2 Series.
+		'grok-2-vision-1212'          => array(
 			'name'           => 'Grok 2 Vision',
 			'context_length' => 32768,
 			'description'    => 'Multimodal model with image understanding.',
-		),
-		'grok-2-mini'      => array(
-			'name'           => 'Grok 2 Mini',
-			'context_length' => 131072,
-			'description'    => 'Smaller, faster Grok 2.',
 		),
 	);
 
@@ -97,7 +111,7 @@ class AI_Provider_XAI extends AI_Provider_Abstract {
 	 * @return string Default model ID.
 	 */
 	public function get_default_model() {
-		return 'grok-3-fast';
+		return 'grok-4-fast-non-reasoning';
 	}
 
 	/**

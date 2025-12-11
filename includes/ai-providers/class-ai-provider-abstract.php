@@ -10,6 +10,8 @@
 
 namespace Assistify_For_WooCommerce\AI_Providers;
 
+use Assistify_For_WooCommerce\Assistify_Logger;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -214,15 +216,22 @@ abstract class AI_Provider_Abstract implements AI_Provider_Interface {
 			$args['body'] = wp_json_encode( $body );
 		}
 
+		// Log API request for debugging.
+		Assistify_Logger::log_api_request( $this->name, $endpoint, $body );
+
 		$response = wp_remote_request( $url, $args );
 
 		if ( is_wp_error( $response ) ) {
+			Assistify_Logger::error( 'Request failed: ' . $response->get_error_message(), 'content-api' );
 			return $response;
 		}
 
 		$response_code = wp_remote_retrieve_response_code( $response );
 		$response_body = wp_remote_retrieve_body( $response );
 		$decoded_body  = json_decode( $response_body, true );
+
+		// Log API response.
+		Assistify_Logger::log_api_response( $this->name, $response_code, $response_code >= 200 && $response_code < 300 );
 
 		if ( $response_code < 200 || $response_code >= 300 ) {
 			$error_message = isset( $decoded_body['error']['message'] )
@@ -232,6 +241,8 @@ abstract class AI_Provider_Abstract implements AI_Provider_Interface {
 					__( 'API request failed with status code %d.', 'assistify-for-woocommerce' ),
 					$response_code
 				);
+
+			Assistify_Logger::error( 'API error: ' . $error_message, 'content-api', array( 'code' => $response_code ) );
 
 			return new \WP_Error(
 				'assistify_api_error',

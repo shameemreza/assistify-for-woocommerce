@@ -53,45 +53,49 @@ class AI_Provider_Google extends AI_Provider_Abstract {
 	 * @var array
 	 */
 	protected $available_models = array(
-		'gemini-2.5-pro'            => array(
+		// Gemini 3 Series (Latest).
+		'gemini-3-pro-preview'  => array(
+			'name'           => 'Gemini 3 Pro',
+			'context_length' => 1048576,
+			'description'    => 'Latest Gemini with multimodal and image generation.',
+		),
+		// Gemini 2.5 Series.
+		'gemini-2.5-pro'        => array(
 			'name'           => 'Gemini 2.5 Pro',
 			'context_length' => 1048576,
-			'description'    => 'Latest Pro model with enhanced reasoning.',
+			'description'    => 'Pro model with enhanced reasoning.',
 		),
-		'gemini-2.5-flash'          => array(
+		'gemini-2.5-flash'      => array(
 			'name'           => 'Gemini 2.5 Flash',
 			'context_length' => 1048576,
 			'description'    => 'Fast model with adaptive thinking.',
 		),
-		'gemini-2.0-flash'          => array(
+		'gemini-2.5-flash-lite' => array(
+			'name'           => 'Gemini 2.5 Flash-Lite',
+			'context_length' => 1048576,
+			'description'    => 'Most cost-efficient for high-volume tasks.',
+		),
+		// Gemini 2.0 Series.
+		'gemini-2.0-flash'      => array(
 			'name'           => 'Gemini 2.0 Flash',
 			'context_length' => 1048576,
 			'description'    => 'Fast model with 1M context.',
 		),
-		'gemini-2.0-flash-lite'     => array(
+		'gemini-2.0-flash-lite' => array(
 			'name'           => 'Gemini 2.0 Flash-Lite',
 			'context_length' => 1048576,
-			'description'    => 'Cost-efficient for high-volume tasks.',
+			'description'    => 'Cost-efficient for simple tasks.',
 		),
-		'gemini-2.0-flash-thinking' => array(
-			'name'           => 'Gemini 2.0 Flash Thinking',
-			'context_length' => 1048576,
-			'description'    => 'Enhanced reasoning capabilities.',
-		),
-		'gemini-1.5-pro'            => array(
+		// Gemini 1.5 Series.
+		'gemini-1.5-pro'        => array(
 			'name'           => 'Gemini 1.5 Pro',
 			'context_length' => 2097152,
 			'description'    => 'Most capable with 2M context window.',
 		),
-		'gemini-1.5-flash'          => array(
+		'gemini-1.5-flash'      => array(
 			'name'           => 'Gemini 1.5 Flash',
 			'context_length' => 1048576,
 			'description'    => 'Fast and efficient with 1M context.',
-		),
-		'gemini-1.5-flash-8b'       => array(
-			'name'           => 'Gemini 1.5 Flash-8B',
-			'context_length' => 1048576,
-			'description'    => 'Lightweight, high-volume tasks.',
 		),
 	);
 
@@ -102,7 +106,7 @@ class AI_Provider_Google extends AI_Provider_Abstract {
 	 * @return string Default model ID.
 	 */
 	public function get_default_model() {
-		return 'gemini-2.0-flash';
+		return 'gemini-2.5-flash';
 	}
 
 	/**

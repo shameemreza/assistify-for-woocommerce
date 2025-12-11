@@ -399,29 +399,37 @@ class REST_Chat_Controller extends REST_API_Controller {
 		$store_name = get_bloginfo( 'name' );
 		$currency   = get_woocommerce_currency();
 
-		$prompt = sprintf(
-			/* translators: %1$s: Store name, %2$s: Currency code. */
-			__(
-				'You are an AI assistant for %1$s, a WooCommerce store. You help store administrators manage their store efficiently.
+		// Get real store context using abilities.
+		$store_context = $this->get_admin_store_context();
 
-Your capabilities include:
-- Providing information about orders, products, and customers
-- Helping with store analytics and insights
-- Assisting with content generation for products
-- Offering recommendations for store improvements
+		$prompt = sprintf(
+			/* translators: %1$s: Store name, %2$s: Currency code, %3$s: Store context data. */
+			__(
+				'You are an AI assistant for %1$s, a WooCommerce store. You help store administrators by providing ACCURATE information based ONLY on the actual store data provided below.
 
 Store currency: %2$s
 
-Guidelines:
-- Be concise and professional
-- Always prioritize accuracy over speed
-- If you don\'t know something, say so
-- Never make up order numbers or customer information
-- Format responses clearly with line breaks for readability',
+CRITICAL RULES:
+- ONLY use the data provided below. DO NOT make up or hallucinate any information.
+- If asked about something not in the provided data, say "I don\'t have that information in my current context. Please check the WooCommerce dashboard directly."
+- NEVER invent order numbers, coupon codes, customer names, or any other data.
+- If the data section is empty, tell the user the data could not be retrieved.
+- Be concise and professional.
+- Format responses clearly with line breaks for readability.
+
+=== CURRENT STORE DATA ===
+%3$s
+=== END OF STORE DATA ===
+
+When answering questions:
+1. First check if the relevant data is available above
+2. If yes, provide the accurate information from the data
+3. If no, clearly state you don\'t have that specific information',
 				'assistify-for-woocommerce'
 			),
 			$store_name,
-			$currency
+			$currency,
+			$store_context
 		);
 
 		/**
@@ -434,6 +442,119 @@ Guidelines:
 	}
 
 	/**
+	 * Get real store context for admin chat.
+	 *
+	 * Fetches actual store data using the abilities registry.
+	 *
+	 * @since 1.0.0
+	 * @return string Formatted store context.
+	 */
+	private function get_admin_store_context() {
+		$context_parts = array();
+
+		// Get abilities registry.
+		$abilities = \Assistify_For_WooCommerce\Abilities\Abilities_Registry::instance();
+
+		// Recent orders summary.
+		$recent_orders = $abilities->execute( 'afw/orders/list', array( 'limit' => 10 ) );
+		if ( ! is_wp_error( $recent_orders ) && ! empty( $recent_orders ) ) {
+			$context_parts[] = 'RECENT ORDERS (Last 10):';
+			foreach ( $recent_orders as $order ) {
+				$context_parts[] = sprintf(
+					'- Order #%s: %s - %s (%s) - Customer: %s',
+					$order['number'] ?? $order['id'],
+					$order['status_label'] ?? $order['status'],
+					$order['total'] ?? 'N/A',
+					$order['date_created'] ?? 'N/A',
+					$order['customer']['name'] ?? 'Guest'
+				);
+			}
+			$context_parts[] = '';
+		} else {
+			$context_parts[] = "RECENT ORDERS: No orders found or unable to retrieve.\n";
+		}
+
+		// Low stock products.
+		$low_stock = $abilities->execute(
+			'afw/products/low-stock',
+			array(
+				'threshold' => 5,
+				'limit'     => 10,
+			)
+		);
+		if ( ! is_wp_error( $low_stock ) && ! empty( $low_stock ) ) {
+			$context_parts[] = 'LOW STOCK PRODUCTS (threshold: 5):';
+			foreach ( $low_stock as $product ) {
+				$context_parts[] = sprintf(
+					'- %s (SKU: %s): %d in stock',
+					$product['name'] ?? 'Unknown',
+					$product['sku'] ?? 'N/A',
+					$product['stock_quantity'] ?? 0
+				);
+			}
+			$context_parts[] = '';
+		}
+
+		// Active coupons.
+		$coupons = $abilities->execute(
+			'afw/coupons/list',
+			array(
+				'status' => 'publish',
+				'limit'  => 10,
+			)
+		);
+		if ( ! is_wp_error( $coupons ) && ! empty( $coupons ) ) {
+			$context_parts[] = 'ACTIVE COUPONS:';
+			foreach ( $coupons as $coupon ) {
+				$expiry          = ! empty( $coupon['expiry_date'] ) ? $coupon['expiry_date'] : 'No expiry';
+				$context_parts[] = sprintf(
+					'- Code: %s - %s %s (Used: %d times, Expiry: %s)',
+					$coupon['code'] ?? 'N/A',
+					$coupon['amount'] ?? 'N/A',
+					$coupon['discount_type_label'] ?? '',
+					$coupon['usage_count'] ?? 0,
+					$expiry
+				);
+			}
+			$context_parts[] = '';
+		} else {
+			$context_parts[] = "ACTIVE COUPONS: No coupons found or unable to retrieve.\n";
+		}
+
+		// Recent products.
+		$recent_products = $abilities->execute( 'afw/products/list', array( 'limit' => 5 ) );
+		if ( ! is_wp_error( $recent_products ) && ! empty( $recent_products ) ) {
+			$context_parts[] = 'RECENT PRODUCTS (Last 5):';
+			foreach ( $recent_products as $product ) {
+				$context_parts[] = sprintf(
+					'- %s: %s (%s)',
+					$product['name'] ?? 'Unknown',
+					$product['price_html'] ?? $product['price'] ?? 'N/A',
+					$product['stock_status_label'] ?? $product['stock_status'] ?? 'N/A'
+				);
+			}
+			$context_parts[] = '';
+		}
+
+		// Store analytics summary.
+		$analytics = $abilities->execute( 'afw/analytics/daily-summary', array( 'days' => 7 ) );
+		if ( ! is_wp_error( $analytics ) && ! empty( $analytics ) ) {
+			$context_parts[] = 'STORE ANALYTICS (Last 7 days):';
+			$context_parts[] = sprintf( '- Total Revenue: %s', $analytics['total_sales_formatted'] ?? $analytics['total_sales'] ?? 'N/A' );
+			$context_parts[] = sprintf( '- Orders: %d', $analytics['total_orders'] ?? 0 );
+			$context_parts[] = sprintf( '- Average Order Value: %s', $analytics['average_order_value_formatted'] ?? $analytics['average_order_value'] ?? 'N/A' );
+			$context_parts[] = sprintf( '- New Customers: %d', $analytics['new_customers'] ?? 0 );
+			$context_parts[] = '';
+		}
+
+		if ( empty( $context_parts ) ) {
+			return 'Unable to retrieve store data. The user should check the WooCommerce dashboard directly.';
+		}
+
+		return implode( "\n", $context_parts );
+	}
+
+	/**
 	 * Get system prompt for customer context.
 	 *
 	 * @since 1.0.0
@@ -442,26 +563,35 @@ Guidelines:
 	private function get_customer_system_prompt() {
 		$store_name = get_bloginfo( 'name' );
 
+		// Get real customer context.
+		$customer_context = $this->get_customer_store_context();
+
 		$prompt = sprintf(
-			/* translators: %s: Store name. */
+			/* translators: %1$s: Store name, %2$s: Customer context data. */
 			__(
-				'You are a friendly customer support assistant for %s.
+				'You are a friendly customer support assistant for %1$s.
 
-Your capabilities include:
-- Answering questions about products
-- Helping customers track their orders
-- Providing information about shipping and returns
-- Assisting with general store inquiries
+CRITICAL RULES:
+- ONLY use the data provided below. DO NOT make up or hallucinate any information.
+- If asked about something not in the provided data, say "I don\'t have that specific information. Please contact our support team or check your account."
+- NEVER invent order numbers, tracking numbers, product details, or coupon codes.
+- Be friendly, helpful, and concise.
+- If you can\'t help with something, suggest contacting human support.
+- Never share sensitive customer information.
+- Don\'t process payments or make account changes.
 
-Guidelines:
-- Be friendly, helpful, and concise
-- If you can\'t help with something, suggest contacting human support
-- Never share sensitive customer information
-- Don\'t process payments or make account changes
-- Keep responses brief and easy to understand',
+=== STORE INFORMATION ===
+%2$s
+=== END OF STORE INFORMATION ===
+
+When answering questions:
+1. First check if the relevant data is available above
+2. If yes, provide the accurate information
+3. If no, politely explain you don\'t have that information and suggest alternatives',
 				'assistify-for-woocommerce'
 			),
-			$store_name
+			$store_name,
+			$customer_context
 		);
 
 		/**
@@ -471,5 +601,103 @@ Guidelines:
 		 * @param string $prompt The system prompt.
 		 */
 		return apply_filters( 'assistify_customer_system_prompt', $prompt );
+	}
+
+	/**
+	 * Get real store context for customer chat.
+	 *
+	 * Fetches customer-specific data and public store information.
+	 *
+	 * @since 1.0.0
+	 * @return string Formatted customer context.
+	 */
+	private function get_customer_store_context() {
+		$context_parts = array();
+		$user_id       = get_current_user_id();
+
+		// Get abilities registry.
+		$abilities = \Assistify_For_WooCommerce\Abilities\Abilities_Registry::instance();
+
+		// Store information.
+		$store_settings = $abilities->execute( 'afw/store/settings', array() );
+		if ( ! is_wp_error( $store_settings ) && ! empty( $store_settings ) ) {
+			$context_parts[] = 'STORE INFORMATION:';
+			if ( ! empty( $store_settings['store_address'] ) ) {
+				$context_parts[] = '- Location: ' . wp_strip_all_tags( $store_settings['store_address'] );
+			}
+			$context_parts[] = '- Currency: ' . ( $store_settings['currency'] ?? get_woocommerce_currency() );
+			$context_parts[] = '';
+		}
+
+		// Available public coupons.
+		$public_coupons = $abilities->execute( 'afw/coupons/available', array( 'limit' => 5 ) );
+		if ( ! is_wp_error( $public_coupons ) && ! empty( $public_coupons ) ) {
+			$context_parts[] = 'AVAILABLE PROMOTIONS:';
+			foreach ( $public_coupons as $coupon ) {
+				$expiry          = ! empty( $coupon['expiry_date'] ) ? " (expires: {$coupon['expiry_date']})" : '';
+				$context_parts[] = sprintf(
+					'- Use code %s for %s%s',
+					$coupon['code'] ?? 'N/A',
+					$coupon['description'] ?? $coupon['discount_description'] ?? 'discount',
+					$expiry
+				);
+			}
+			$context_parts[] = '';
+		}
+
+		// If customer is logged in, show their orders.
+		if ( $user_id > 0 ) {
+			$my_orders = $abilities->execute(
+				'afw/customers/orders',
+				array(
+					'customer_id' => $user_id,
+					'limit'       => 5,
+				)
+			);
+			if ( ! is_wp_error( $my_orders ) && ! empty( $my_orders ) ) {
+				$context_parts[] = 'YOUR RECENT ORDERS:';
+				foreach ( $my_orders as $order ) {
+					$tracking_info = '';
+					if ( ! empty( $order['tracking'] ) ) {
+						$tracking_info = ' - Tracking: ' . ( $order['tracking']['tracking_number'] ?? 'Available' );
+					}
+					$context_parts[] = sprintf(
+						'- Order #%s: %s - %s (%s)%s',
+						$order['number'] ?? $order['id'],
+						$order['status_label'] ?? $order['status'],
+						$order['total'] ?? 'N/A',
+						$order['date_created'] ?? 'N/A',
+						$tracking_info
+					);
+				}
+				$context_parts[] = '';
+			} else {
+				$context_parts[] = "YOUR ORDERS: No orders found in your account.\n";
+			}
+		} else {
+			$context_parts[] = "CUSTOMER STATUS: Guest (not logged in). To view order history, please log in.\n";
+		}
+
+		// Featured/popular products.
+		$featured = $abilities->execute( 'afw/products/featured', array( 'limit' => 5 ) );
+		if ( ! is_wp_error( $featured ) && ! empty( $featured ) ) {
+			$context_parts[] = 'FEATURED PRODUCTS:';
+			foreach ( $featured as $product ) {
+				$context_parts[] = sprintf(
+					'- %s: %s',
+					$product['name'] ?? 'Unknown',
+					$product['price_html'] ?? $product['price'] ?? 'N/A'
+				);
+			}
+			$context_parts[] = '';
+		}
+
+		// Contact information.
+		$store_email     = get_option( 'woocommerce_email_from_address', get_option( 'admin_email' ) );
+		$context_parts[] = 'CONTACT SUPPORT:';
+		$context_parts[] = '- Email: ' . $store_email;
+		$context_parts[] = '- For urgent issues, contact human support directly.';
+
+		return implode( "\n", $context_parts );
 	}
 }

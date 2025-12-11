@@ -53,65 +53,68 @@ class AI_Provider_OpenAI extends AI_Provider_Abstract {
 	 * @var array
 	 */
 	protected $available_models = array(
-		'gpt-4o'        => array(
+		// GPT-5 Series (Latest).
+		'gpt-5.1'     => array(
+			'name'           => 'GPT-5.1',
+			'context_length' => 1048576,
+			'description'    => 'Latest and most capable GPT model with 1M context.',
+		),
+		'gpt-5'       => array(
+			'name'           => 'GPT-5',
+			'context_length' => 256000,
+			'description'    => 'Most powerful general-purpose model.',
+		),
+		'gpt-5-pro'   => array(
+			'name'           => 'GPT-5 Pro',
+			'context_length' => 256000,
+			'description'    => 'Professional tier with extended capabilities.',
+		),
+		'gpt-5-mini'  => array(
+			'name'           => 'GPT-5 Mini',
+			'context_length' => 256000,
+			'description'    => 'Cost-effective GPT-5 variant.',
+		),
+		'gpt-5-nano'  => array(
+			'name'           => 'GPT-5 Nano',
+			'context_length' => 128000,
+			'description'    => 'Fastest GPT-5 variant for simple tasks.',
+		),
+		// GPT-4 Series.
+		'gpt-4.1'     => array(
+			'name'           => 'GPT-4.1',
+			'context_length' => 1048576,
+			'description'    => 'GPT-4.1 with 1M context window.',
+		),
+		'gpt-4o'      => array(
 			'name'           => 'GPT-4o',
 			'context_length' => 128000,
-			'description'    => 'Most capable multimodal model for complex tasks.',
+			'description'    => 'Multimodal model for complex tasks.',
 		),
-		'gpt-4o-mini'   => array(
+		'gpt-4o-mini' => array(
 			'name'           => 'GPT-4o Mini',
 			'context_length' => 128000,
 			'description'    => 'Fast and cost-effective for most tasks.',
 		),
-		'gpt-4.1'       => array(
-			'name'           => 'GPT-4.1',
-			'context_length' => 1047576,
-			'description'    => 'Latest GPT-4.1 with 1M context window.',
-		),
-		'gpt-4.1-mini'  => array(
-			'name'           => 'GPT-4.1 Mini',
-			'context_length' => 1047576,
-			'description'    => 'Smaller GPT-4.1 variant.',
-		),
-		'gpt-4.1-nano'  => array(
-			'name'           => 'GPT-4.1 Nano',
-			'context_length' => 1047576,
-			'description'    => 'Fastest GPT-4.1 variant.',
-		),
-		'o1'            => array(
-			'name'           => 'o1',
-			'context_length' => 200000,
-			'description'    => 'Advanced reasoning model for complex problems.',
-		),
-		'o1-mini'       => array(
-			'name'           => 'o1-mini',
-			'context_length' => 128000,
-			'description'    => 'Faster reasoning model.',
-		),
-		'o1-pro'        => array(
-			'name'           => 'o1-pro',
-			'context_length' => 200000,
-			'description'    => 'Most powerful reasoning model.',
-		),
-		'o3-mini'       => array(
+		// Reasoning Models.
+		'o3-mini'     => array(
 			'name'           => 'o3-mini',
 			'context_length' => 200000,
 			'description'    => 'Latest o3 reasoning model.',
 		),
-		'gpt-4-turbo'   => array(
-			'name'           => 'GPT-4 Turbo',
+		'o1'          => array(
+			'name'           => 'o1',
+			'context_length' => 200000,
+			'description'    => 'Advanced reasoning for complex problems.',
+		),
+		'o1-mini'     => array(
+			'name'           => 'o1-mini',
 			'context_length' => 128000,
-			'description'    => 'Powerful model with vision capabilities.',
+			'description'    => 'Faster reasoning model.',
 		),
-		'gpt-4'         => array(
-			'name'           => 'GPT-4',
-			'context_length' => 8192,
-			'description'    => 'Original GPT-4 model.',
-		),
-		'gpt-3.5-turbo' => array(
-			'name'           => 'GPT-3.5 Turbo',
-			'context_length' => 16385,
-			'description'    => 'Fast and budget-friendly option.',
+		'o1-pro'      => array(
+			'name'           => 'o1-pro',
+			'context_length' => 200000,
+			'description'    => 'Most powerful reasoning model.',
 		),
 	);
 
@@ -122,7 +125,7 @@ class AI_Provider_OpenAI extends AI_Provider_Abstract {
 	 * @return string Default model ID.
 	 */
 	public function get_default_model() {
-		return 'gpt-4o-mini';
+		return 'gpt-4o';
 	}
 
 	/**

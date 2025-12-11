@@ -61,21 +61,39 @@ class AI_Provider_Anthropic extends AI_Provider_Abstract {
 	 * @var array
 	 */
 	protected $available_models = array(
-		'claude-sonnet-4-20250514'   => array(
-			'name'           => 'Claude Sonnet 4',
+		// Claude 4.5 Series (Latest).
+		'claude-opus-4-5-20250514'   => array(
+			'name'           => 'Claude Opus 4.5',
 			'context_length' => 200000,
-			'description'    => 'Latest Sonnet model, excellent for complex tasks.',
+			'description'    => 'Most advanced Claude model with superior reasoning.',
+		),
+		'claude-sonnet-4-5-20250514' => array(
+			'name'           => 'Claude Sonnet 4.5',
+			'context_length' => 200000,
+			'description'    => 'Excellent balance of intelligence and speed.',
+		),
+		'claude-haiku-4-5-20250514'  => array(
+			'name'           => 'Claude Haiku 4.5',
+			'context_length' => 200000,
+			'description'    => 'Fast and cost-effective for simple tasks.',
+		),
+		// Claude 4 Series.
+		'claude-opus-4-1-20250514'   => array(
+			'name'           => 'Claude Opus 4.1',
+			'context_length' => 200000,
+			'description'    => 'Enhanced Opus with extended thinking.',
 		),
 		'claude-opus-4-20250514'     => array(
 			'name'           => 'Claude Opus 4',
 			'context_length' => 200000,
 			'description'    => 'Most powerful Claude 4 model.',
 		),
-		'claude-3-7-sonnet-20250219' => array(
-			'name'           => 'Claude 3.7 Sonnet',
+		'claude-sonnet-4-20250514'   => array(
+			'name'           => 'Claude Sonnet 4',
 			'context_length' => 200000,
-			'description'    => 'Extended thinking with hybrid reasoning.',
+			'description'    => 'Excellent for complex tasks.',
 		),
+		// Claude 3.5 Series.
 		'claude-3-5-sonnet-20241022' => array(
 			'name'           => 'Claude 3.5 Sonnet',
 			'context_length' => 200000,
@@ -86,16 +104,7 @@ class AI_Provider_Anthropic extends AI_Provider_Abstract {
 			'context_length' => 200000,
 			'description'    => 'Fastest model, cost-effective option.',
 		),
-		'claude-3-opus-20240229'     => array(
-			'name'           => 'Claude 3 Opus',
-			'context_length' => 200000,
-			'description'    => 'Most powerful Claude 3 model.',
-		),
-		'claude-3-sonnet-20240229'   => array(
-			'name'           => 'Claude 3 Sonnet',
-			'context_length' => 200000,
-			'description'    => 'Balanced Claude 3 model.',
-		),
+		// Claude 3 Series.
 		'claude-3-haiku-20240307'    => array(
 			'name'           => 'Claude 3 Haiku',
 			'context_length' => 200000,
@@ -110,7 +119,7 @@ class AI_Provider_Anthropic extends AI_Provider_Abstract {
 	 * @return string Default model ID.
 	 */
 	public function get_default_model() {
-		return 'claude-3-5-sonnet-20241022';
+		return 'claude-sonnet-4-5-20250514';
 	}
 
 	/**

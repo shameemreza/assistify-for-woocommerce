@@ -10,7 +10,14 @@
 (function (wp) {
   const { registerPlugin } = wp.plugins;
   const { PluginDocumentSettingPanel } = wp.editPost;
-  const { Button, TextareaControl, Spinner } = wp.components;
+  const {
+    Button,
+    TextareaControl,
+    Spinner,
+    SelectControl,
+    CheckboxControl,
+    Modal,
+  } = wp.components;
   const { useSelect, useDispatch } = wp.data;
   const { __, sprintf } = wp.i18n;
   const { useState } = wp.element;
@@ -19,7 +26,13 @@
 
   // Get config from localized script.
   const config = window.assistifyEditor || {};
-  const { ajaxUrl, nonce, strings = {}, settings = {} } = config;
+  const {
+    ajaxUrl,
+    nonce,
+    strings = {},
+    settings = {},
+    imageSettings = {},
+  } = config;
 
   /**
    * Main Assistify Panel Component.
@@ -32,6 +45,20 @@
     const [options, setOptions] = useState([]);
     const [error, setError] = useState(null);
     const [copiedIndex, setCopiedIndex] = useState(null);
+
+    // Image modal state.
+    const [showImageModal, setShowImageModal] = useState(false);
+    const [imagePrompt, setImagePrompt] = useState("");
+    const [imageSize, setImageSize] = useState(
+      imageSettings.size || "1024x1024"
+    );
+    const [imageStyle, setImageStyle] = useState(
+      imageSettings.style || "natural"
+    );
+    const [setAsFeatured, setSetAsFeatured] = useState(true);
+    const [generatedImages, setGeneratedImages] = useState([]);
+    const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+    const [imageError, setImageError] = useState(null);
 
     const tone = settings.defaultTone || "professional";
     const length = settings.defaultLength || 600;
@@ -56,11 +83,23 @@
      * Handle generate button click.
      */
     function handleGenerate(type) {
-      // Image generation coming soon.
+      // Image generation opens modal.
       if (type === "featured_image") {
-        window.alert(
-          __("Image generation coming soon!", "assistify-for-woocommerce")
-        );
+        // Check if image generation is supported.
+        if (imageSettings.enabled !== "yes") {
+          var providerName = imageSettings.provider
+            ? imageSettings.provider.charAt(0).toUpperCase() +
+              imageSettings.provider.slice(1)
+            : "Your current provider";
+          setError(
+            providerName +
+              " does not support image generation. Please select OpenAI, Google, or xAI as your AI provider, and choose an image model in settings."
+          );
+          return;
+        }
+        setShowImageModal(true);
+        setImageError(null);
+        setGeneratedImages([]);
         return;
       }
 
@@ -131,6 +170,50 @@
     }
 
     /**
+     * Generate image via AJAX.
+     */
+    function doGenerateImage() {
+      setIsGeneratingImage(true);
+      setImageError(null);
+      setGeneratedImages([]);
+
+      const formData = new FormData();
+      formData.append("action", "assistify_generate_image");
+      formData.append("nonce", nonce);
+      formData.append("image_action", "featured_image");
+      formData.append("prompt", imagePrompt);
+      formData.append("post_id", postId);
+      formData.append("size", imageSize);
+      formData.append("style", imageStyle);
+      formData.append("set_featured", setAsFeatured ? "true" : "false");
+
+      fetch(ajaxUrl, {
+        method: "POST",
+        body: formData,
+      })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (result) {
+          setIsGeneratingImage(false);
+          if (result.success && result.data.images) {
+            setGeneratedImages(result.data.images);
+          } else {
+            setImageError(
+              result.data?.message ||
+                __("Error generating image.", "assistify-for-woocommerce")
+            );
+          }
+        })
+        .catch(function () {
+          setIsGeneratingImage(false);
+          setImageError(
+            __("Error generating image.", "assistify-for-woocommerce")
+          );
+        });
+    }
+
+    /**
      * Copy to clipboard.
      */
     function copyToClipboard(text, index) {
@@ -192,6 +275,16 @@
       doGenerate(generationType, instructions);
     }
 
+    /**
+     * Close image modal.
+     */
+    function closeImageModal() {
+      setShowImageModal(false);
+      setImagePrompt("");
+      setGeneratedImages([]);
+      setImageError(null);
+    }
+
     // Check if type needs copy button.
     var needsCopyButton =
       generationType === "meta_description" || generationType === "excerpt";
@@ -235,6 +328,7 @@
       {
         type: "featured_image",
         label: __("Generate Image", "assistify-for-woocommerce"),
+        icon: "format-image",
       },
     ];
 
@@ -461,6 +555,236 @@
               __("Close", "assistify-for-woocommerce")
             )
           )
+        )
+      );
+    }
+
+    // Image Modal.
+    if (showImageModal) {
+      panelContent.push(
+        el(
+          Modal,
+          {
+            key: "imageModal",
+            title: __("Generate AI Image", "assistify-for-woocommerce"),
+            onRequestClose: closeImageModal,
+            style: { maxWidth: "500px" },
+          },
+          // Modal content.
+          generatedImages.length === 0 && !isGeneratingImage
+            ? el(
+                "div",
+                { style: { padding: "0" } },
+                el(TextareaControl, {
+                  label: __("Image Description", "assistify-for-woocommerce"),
+                  value: imagePrompt,
+                  onChange: setImagePrompt,
+                  placeholder: __(
+                    "Describe the image you want, or leave empty to generate from post content...",
+                    "assistify-for-woocommerce"
+                  ),
+                  rows: 3,
+                }),
+                el(
+                  "div",
+                  {
+                    style: {
+                      display: "flex",
+                      gap: "12px",
+                      marginBottom: "16px",
+                    },
+                  },
+                  el(
+                    "div",
+                    { style: { flex: 1 } },
+                    el(SelectControl, {
+                      label: __("Size", "assistify-for-woocommerce"),
+                      value: imageSize,
+                      options: [
+                        { label: "1024×1024 (Square)", value: "1024x1024" },
+                        { label: "1024×1536 (Portrait)", value: "1024x1536" },
+                        { label: "1536×1024 (Landscape)", value: "1536x1024" },
+                      ],
+                      onChange: setImageSize,
+                    })
+                  ),
+                  el(
+                    "div",
+                    { style: { flex: 1 } },
+                    el(SelectControl, {
+                      label: __("Style", "assistify-for-woocommerce"),
+                      value: imageStyle,
+                      options: [
+                        { label: "Natural (Realistic)", value: "natural" },
+                        { label: "Vivid (Artistic)", value: "vivid" },
+                      ],
+                      onChange: setImageStyle,
+                    })
+                  )
+                ),
+                el(CheckboxControl, {
+                  label: __(
+                    "Set as featured image",
+                    "assistify-for-woocommerce"
+                  ),
+                  checked: setAsFeatured,
+                  onChange: setSetAsFeatured,
+                }),
+                imageError &&
+                  el(
+                    "div",
+                    {
+                      style: {
+                        marginTop: "12px",
+                        padding: "8px",
+                        background: "#fcf0f1",
+                        borderLeft: "4px solid #d63638",
+                        color: "#d63638",
+                      },
+                    },
+                    imageError
+                  ),
+                el(
+                  "div",
+                  {
+                    style: {
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      gap: "8px",
+                      marginTop: "16px",
+                    },
+                  },
+                  el(
+                    Button,
+                    { variant: "secondary", onClick: closeImageModal },
+                    __("Cancel", "assistify-for-woocommerce")
+                  ),
+                  el(
+                    Button,
+                    { variant: "primary", onClick: doGenerateImage },
+                    __("Generate Image", "assistify-for-woocommerce")
+                  )
+                )
+              )
+            : null,
+          // Loading.
+          isGeneratingImage
+            ? el(
+                "div",
+                { style: { textAlign: "center", padding: "40px 20px" } },
+                el(Spinner, { style: { width: 40, height: 40 } }),
+                el(
+                  "p",
+                  { style: { marginTop: "16px", color: "#666" } },
+                  __(
+                    "Generating image... This may take up to 30 seconds.",
+                    "assistify-for-woocommerce"
+                  )
+                )
+              )
+            : null,
+          // Generated images.
+          generatedImages.length > 0
+            ? el(
+                "div",
+                null,
+                el(
+                  "div",
+                  {
+                    style: {
+                      display: "grid",
+                      gridTemplateColumns:
+                        "repeat(auto-fill, minmax(150px, 1fr))",
+                      gap: "15px",
+                      marginBottom: "16px",
+                    },
+                  },
+                  generatedImages.map(function (img, idx) {
+                    return el(
+                      "div",
+                      {
+                        key: idx,
+                        style: {
+                          border: "1px solid #ddd",
+                          borderRadius: "6px",
+                          overflow: "hidden",
+                        },
+                      },
+                      el("img", {
+                        src: img.thumbnail,
+                        alt: "Generated " + (idx + 1),
+                        style: {
+                          width: "100%",
+                          height: "150px",
+                          objectFit: "cover",
+                        },
+                      }),
+                      el(
+                        "div",
+                        {
+                          style: {
+                            padding: "8px",
+                            display: "flex",
+                            justifyContent: "center",
+                          },
+                        },
+                        el(
+                          Button,
+                          {
+                            variant: "secondary",
+                            isSmall: true,
+                            href: img.full,
+                            target: "_blank",
+                          },
+                          __("View Full", "assistify-for-woocommerce")
+                        )
+                      )
+                    );
+                  })
+                ),
+                el(
+                  "div",
+                  {
+                    style: {
+                      background: "#d4edda",
+                      color: "#155724",
+                      padding: "12px",
+                      borderRadius: "4px",
+                      marginBottom: "16px",
+                    },
+                  },
+                  __(
+                    "Image(s) generated and added to Media Library!",
+                    "assistify-for-woocommerce"
+                  )
+                ),
+                el(
+                  "div",
+                  {
+                    style: {
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      gap: "8px",
+                    },
+                  },
+                  el(
+                    Button,
+                    {
+                      variant: "secondary",
+                      onClick: function () {
+                        setGeneratedImages([]);
+                      },
+                    },
+                    __("Generate More", "assistify-for-woocommerce")
+                  ),
+                  el(
+                    Button,
+                    { variant: "primary", onClick: closeImageModal },
+                    __("Done", "assistify-for-woocommerce")
+                  )
+                )
+              )
+            : null
         )
       );
     }
