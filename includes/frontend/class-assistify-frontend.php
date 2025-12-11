@@ -9,6 +9,7 @@
 namespace Assistify_For_WooCommerce\Frontend;
 
 use Assistify_For_WooCommerce\AI_Providers\AI_Provider_Factory;
+use Assistify_For_WooCommerce\Assistify_Privacy;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
