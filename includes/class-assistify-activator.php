@@ -154,7 +154,9 @@ class Assistify_Activator {
 			'assistify_rate_limit_customer'      => 20,
 			'assistify_rate_limit_guest'         => 5,
 			'assistify_chat_position'            => 'bottom-right',
-			'assistify_primary_color'            => '#7F54B3',
+			'assistify_primary_color'            => '#6861F2',
+			'assistify_content_default_length'   => 600,
+			'assistify_content_default_tone'     => 'professional',
 		);
 
 		foreach ( $defaults as $key => $value ) {

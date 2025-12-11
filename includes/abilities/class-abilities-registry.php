@@ -2126,6 +2126,185 @@ class Abilities_Registry {
 				'capability'  => 'manage_woocommerce',
 			)
 		);
+
+		// ========================================
+		// Content Generation Abilities (Sprint 4.1)
+		// ========================================
+
+		// Generate product title.
+		$this->register(
+			'afw/content/product-title',
+			array(
+				'name'        => __( 'Generate Product Title', 'assistify-for-woocommerce' ),
+				'description' => __( 'Generate an SEO-optimized product title using AI.', 'assistify-for-woocommerce' ),
+				'category'    => 'content',
+				'callback'    => array( $this, 'ability_content_product_title' ),
+				'parameters'  => array(
+					'product_id'   => array(
+						'type'        => 'integer',
+						'description' => __( 'Product ID to generate title for.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'product_name' => array(
+						'type'        => 'string',
+						'description' => __( 'Current product name or basic description.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'keywords'     => array(
+						'type'        => 'string',
+						'description' => __( 'Keywords to include in the title.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'tone'         => array(
+						'type'        => 'string',
+						'description' => __( 'Tone: professional, casual, luxury, playful.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 'professional',
+					),
+					'apply'        => array(
+						'type'        => 'boolean',
+						'description' => __( 'Whether to apply the generated title to the product.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => false,
+					),
+				),
+				'capability'  => 'edit_products',
+			)
+		);
+
+		// Generate product description.
+		$this->register(
+			'afw/content/product-description',
+			array(
+				'name'        => __( 'Generate Product Description', 'assistify-for-woocommerce' ),
+				'description' => __( 'Generate a full SEO-optimized product description using AI.', 'assistify-for-woocommerce' ),
+				'category'    => 'content',
+				'callback'    => array( $this, 'ability_content_product_description' ),
+				'parameters'  => array(
+					'product_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'Product ID to generate description for.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+					'keywords'   => array(
+						'type'        => 'string',
+						'description' => __( 'Keywords to include.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'tone'       => array(
+						'type'        => 'string',
+						'description' => __( 'Tone: professional, casual, luxury, playful.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 'professional',
+					),
+					'length'     => array(
+						'type'        => 'string',
+						'description' => __( 'Length: short, medium, long.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 'medium',
+					),
+					'apply'      => array(
+						'type'        => 'boolean',
+						'description' => __( 'Whether to apply the generated description to the product.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => false,
+					),
+				),
+				'capability'  => 'edit_products',
+			)
+		);
+
+		// Generate short description.
+		$this->register(
+			'afw/content/short-description',
+			array(
+				'name'        => __( 'Generate Short Description', 'assistify-for-woocommerce' ),
+				'description' => __( 'Generate a compelling short description (2-3 sentences) using AI.', 'assistify-for-woocommerce' ),
+				'category'    => 'content',
+				'callback'    => array( $this, 'ability_content_short_description' ),
+				'parameters'  => array(
+					'product_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'Product ID to generate short description for.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+					'tone'       => array(
+						'type'        => 'string',
+						'description' => __( 'Tone: professional, casual, luxury, playful.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 'professional',
+					),
+					'apply'      => array(
+						'type'        => 'boolean',
+						'description' => __( 'Whether to apply the generated short description to the product.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => false,
+					),
+				),
+				'capability'  => 'edit_products',
+			)
+		);
+
+		// Generate SEO meta description.
+		$this->register(
+			'afw/content/meta-description',
+			array(
+				'name'        => __( 'Generate Meta Description', 'assistify-for-woocommerce' ),
+				'description' => __( 'Generate an SEO meta description (155-160 chars) for Yoast/RankMath.', 'assistify-for-woocommerce' ),
+				'category'    => 'content',
+				'callback'    => array( $this, 'ability_content_meta_description' ),
+				'parameters'  => array(
+					'product_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'Product ID to generate meta description for.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+					'keywords'   => array(
+						'type'        => 'string',
+						'description' => __( 'Focus keywords for SEO.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'apply'      => array(
+						'type'        => 'boolean',
+						'description' => __( 'Whether to apply to Yoast/RankMath meta.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => false,
+					),
+				),
+				'capability'  => 'edit_products',
+			)
+		);
+
+		// Generate product tags.
+		$this->register(
+			'afw/content/product-tags',
+			array(
+				'name'        => __( 'Generate Product Tags', 'assistify-for-woocommerce' ),
+				'description' => __( 'Generate relevant product tags using AI.', 'assistify-for-woocommerce' ),
+				'category'    => 'content',
+				'callback'    => array( $this, 'ability_content_product_tags' ),
+				'parameters'  => array(
+					'product_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'Product ID to generate tags for.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+					'count'      => array(
+						'type'        => 'integer',
+						'description' => __( 'Number of tags to generate.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 5,
+					),
+					'apply'      => array(
+						'type'        => 'boolean',
+						'description' => __( 'Whether to apply the generated tags to the product.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => false,
+					),
+				),
+				'capability'  => 'edit_products',
+			)
+		);
 	}
 
 	/**
@@ -7836,5 +8015,613 @@ class Abilities_Registry {
 		$result['edit_url'] = admin_url( 'user-edit.php?user_id=' . $customer_id );
 
 		return $result;
+	}
+
+	// ========================================
+	// Content Generation Ability Callbacks
+	// ========================================
+
+	/**
+	 * Generate product title using AI.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|\WP_Error Generated content.
+	 */
+	public function ability_content_product_title( $params ) {
+		$product_id   = isset( $params['product_id'] ) ? absint( $params['product_id'] ) : 0;
+		$product_name = isset( $params['product_name'] ) ? sanitize_text_field( $params['product_name'] ) : '';
+		$keywords     = isset( $params['keywords'] ) ? sanitize_text_field( $params['keywords'] ) : '';
+		// Use settings default if not specified.
+		$default_tone = get_option( 'assistify_content_default_tone', 'professional' );
+		$tone         = isset( $params['tone'] ) ? sanitize_text_field( $params['tone'] ) : $default_tone;
+		$apply        = isset( $params['apply'] ) ? (bool) $params['apply'] : false;
+
+		// Get product data if ID provided.
+		$product = null;
+		if ( $product_id ) {
+			$product = wc_get_product( $product_id );
+			if ( ! $product ) {
+				return new \WP_Error( 'product_not_found', __( 'Product not found.', 'assistify-for-woocommerce' ) );
+			}
+			$product_name = ! empty( $product_name ) ? $product_name : $product->get_name();
+		}
+
+		if ( empty( $product_name ) ) {
+			return new \WP_Error( 'missing_param', __( 'Product ID or product name is required.', 'assistify-for-woocommerce' ) );
+		}
+
+		// Build context for AI.
+		$context = $this->build_product_context_for_content( $product );
+
+		// Generate title using AI.
+		$prompt = $this->build_content_prompt(
+			'product_title',
+			array(
+				'product_name' => $product_name,
+				'keywords'     => $keywords,
+				'tone'         => $tone,
+				'context'      => $context,
+			)
+		);
+
+		$generated = $this->generate_content_with_ai( $prompt );
+
+		if ( is_wp_error( $generated ) ) {
+			return $generated;
+		}
+
+		$result = array(
+			'success'   => true,
+			'type'      => 'product_title',
+			'generated' => $generated,
+			'applied'   => false,
+		);
+
+		// Apply if requested and product exists.
+		if ( $apply && $product ) {
+			$product->set_name( $generated );
+			$product->save();
+			$result['applied']  = true;
+			$result['edit_url'] = admin_url( 'post.php?post=' . $product_id . '&action=edit' );
+		} elseif ( $product ) {
+			$result['edit_url'] = admin_url( 'post.php?post=' . $product_id . '&action=edit' );
+			$result['tip']      = __( 'Use apply: true to save this title to the product.', 'assistify-for-woocommerce' );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Generate product description using AI.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|\WP_Error Generated content.
+	 */
+	public function ability_content_product_description( $params ) {
+		$product_id = isset( $params['product_id'] ) ? absint( $params['product_id'] ) : 0;
+		$keywords   = isset( $params['keywords'] ) ? sanitize_text_field( $params['keywords'] ) : '';
+		// Use settings defaults if not specified.
+		$default_tone   = get_option( 'assistify_content_default_tone', 'professional' );
+		$default_length = get_option( 'assistify_content_default_length', 600 );
+		$tone           = isset( $params['tone'] ) ? sanitize_text_field( $params['tone'] ) : $default_tone;
+		$length         = isset( $params['length'] ) ? sanitize_text_field( $params['length'] ) : $default_length;
+		$apply          = isset( $params['apply'] ) ? (bool) $params['apply'] : false;
+
+		if ( ! $product_id ) {
+			return new \WP_Error( 'missing_param', __( 'Product ID is required.', 'assistify-for-woocommerce' ) );
+		}
+
+		$product = wc_get_product( $product_id );
+		if ( ! $product ) {
+			return new \WP_Error( 'product_not_found', __( 'Product not found.', 'assistify-for-woocommerce' ) );
+		}
+
+		// Build context for AI.
+		$context = $this->build_product_context_for_content( $product );
+
+		// Generate description using AI.
+		$prompt = $this->build_content_prompt(
+			'product_description',
+			array(
+				'product_name' => $product->get_name(),
+				'keywords'     => $keywords,
+				'tone'         => $tone,
+				'length'       => $length,
+				'context'      => $context,
+			)
+		);
+
+		$generated = $this->generate_content_with_ai( $prompt );
+
+		if ( is_wp_error( $generated ) ) {
+			return $generated;
+		}
+
+		$result = array(
+			'success'      => true,
+			'type'         => 'product_description',
+			'product_id'   => $product_id,
+			'product_name' => $product->get_name(),
+			'generated'    => $generated,
+			'applied'      => false,
+			'edit_url'     => admin_url( 'post.php?post=' . $product_id . '&action=edit' ),
+		);
+
+		// Apply if requested.
+		if ( $apply ) {
+			$product->set_description( $generated );
+			$product->save();
+			$result['applied'] = true;
+		} else {
+			$result['tip'] = __( 'Use apply: true to save this description to the product.', 'assistify-for-woocommerce' );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Generate short description using AI.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|\WP_Error Generated content.
+	 */
+	public function ability_content_short_description( $params ) {
+		$product_id = isset( $params['product_id'] ) ? absint( $params['product_id'] ) : 0;
+		// Use settings default if not specified.
+		$default_tone = get_option( 'assistify_content_default_tone', 'professional' );
+		$tone         = isset( $params['tone'] ) ? sanitize_text_field( $params['tone'] ) : $default_tone;
+		$apply        = isset( $params['apply'] ) ? (bool) $params['apply'] : false;
+
+		if ( ! $product_id ) {
+			return new \WP_Error( 'missing_param', __( 'Product ID is required.', 'assistify-for-woocommerce' ) );
+		}
+
+		$product = wc_get_product( $product_id );
+		if ( ! $product ) {
+			return new \WP_Error( 'product_not_found', __( 'Product not found.', 'assistify-for-woocommerce' ) );
+		}
+
+		// Build context for AI.
+		$context = $this->build_product_context_for_content( $product );
+
+		// Generate short description using AI.
+		$prompt = $this->build_content_prompt(
+			'short_description',
+			array(
+				'product_name' => $product->get_name(),
+				'tone'         => $tone,
+				'context'      => $context,
+			)
+		);
+
+		$generated = $this->generate_content_with_ai( $prompt );
+
+		if ( is_wp_error( $generated ) ) {
+			return $generated;
+		}
+
+		$result = array(
+			'success'      => true,
+			'type'         => 'short_description',
+			'product_id'   => $product_id,
+			'product_name' => $product->get_name(),
+			'generated'    => $generated,
+			'applied'      => false,
+			'edit_url'     => admin_url( 'post.php?post=' . $product_id . '&action=edit' ),
+		);
+
+		// Apply if requested.
+		if ( $apply ) {
+			$product->set_short_description( $generated );
+			$product->save();
+			$result['applied'] = true;
+		} else {
+			$result['tip'] = __( 'Use apply: true to save this short description to the product.', 'assistify-for-woocommerce' );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Generate SEO meta description using AI.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|\WP_Error Generated content.
+	 */
+	public function ability_content_meta_description( $params ) {
+		$product_id = isset( $params['product_id'] ) ? absint( $params['product_id'] ) : 0;
+		$keywords   = isset( $params['keywords'] ) ? sanitize_text_field( $params['keywords'] ) : '';
+		$apply      = isset( $params['apply'] ) ? (bool) $params['apply'] : false;
+
+		if ( ! $product_id ) {
+			return new \WP_Error( 'missing_param', __( 'Product ID is required.', 'assistify-for-woocommerce' ) );
+		}
+
+		$product = wc_get_product( $product_id );
+		if ( ! $product ) {
+			return new \WP_Error( 'product_not_found', __( 'Product not found.', 'assistify-for-woocommerce' ) );
+		}
+
+		// Build context for AI.
+		$context = $this->build_product_context_for_content( $product );
+
+		// Generate meta description using AI.
+		$prompt = $this->build_content_prompt(
+			'meta_description',
+			array(
+				'product_name' => $product->get_name(),
+				'keywords'     => $keywords,
+				'context'      => $context,
+			)
+		);
+
+		$generated = $this->generate_content_with_ai( $prompt );
+
+		if ( is_wp_error( $generated ) ) {
+			return $generated;
+		}
+
+		$result = array(
+			'success'      => true,
+			'type'         => 'meta_description',
+			'product_id'   => $product_id,
+			'product_name' => $product->get_name(),
+			'generated'    => $generated,
+			'char_count'   => strlen( $generated ),
+			'applied'      => false,
+			'edit_url'     => admin_url( 'post.php?post=' . $product_id . '&action=edit' ),
+		);
+
+		// Apply if requested - check for Yoast or RankMath.
+		if ( $apply ) {
+			$applied_to = array();
+
+			// Yoast SEO.
+			if ( defined( 'WPSEO_VERSION' ) ) {
+				update_post_meta( $product_id, '_yoast_wpseo_metadesc', $generated );
+				$applied_to[] = 'Yoast SEO';
+			}
+
+			// RankMath.
+			if ( class_exists( 'RankMath' ) ) {
+				update_post_meta( $product_id, 'rank_math_description', $generated );
+				$applied_to[] = 'RankMath';
+			}
+
+			// All in One SEO.
+			if ( class_exists( 'AIOSEO\\Plugin\\AIOSEO' ) ) {
+				update_post_meta( $product_id, '_aioseo_description', $generated );
+				$applied_to[] = 'All in One SEO';
+			}
+
+			if ( ! empty( $applied_to ) ) {
+				$result['applied']    = true;
+				$result['applied_to'] = $applied_to;
+			} else {
+				$result['applied'] = false;
+				$result['warning'] = __( 'No SEO plugin detected. Install Yoast SEO or RankMath to apply meta descriptions.', 'assistify-for-woocommerce' );
+			}
+		} else {
+			$result['tip'] = __( 'Use apply: true to save to Yoast SEO or RankMath.', 'assistify-for-woocommerce' );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Generate product tags using AI.
+	 *
+	 * @since 1.0.0
+	 * @param array $params Parameters.
+	 * @return array|\WP_Error Generated content.
+	 */
+	public function ability_content_product_tags( $params ) {
+		$product_id = isset( $params['product_id'] ) ? absint( $params['product_id'] ) : 0;
+		$count      = isset( $params['count'] ) ? absint( $params['count'] ) : 5;
+		$apply      = isset( $params['apply'] ) ? (bool) $params['apply'] : false;
+
+		if ( ! $product_id ) {
+			return new \WP_Error( 'missing_param', __( 'Product ID is required.', 'assistify-for-woocommerce' ) );
+		}
+
+		$product = wc_get_product( $product_id );
+		if ( ! $product ) {
+			return new \WP_Error( 'product_not_found', __( 'Product not found.', 'assistify-for-woocommerce' ) );
+		}
+
+		// Build context for AI.
+		$context = $this->build_product_context_for_content( $product );
+
+		// Generate tags using AI.
+		$prompt = $this->build_content_prompt(
+			'product_tags',
+			array(
+				'product_name' => $product->get_name(),
+				'count'        => $count,
+				'context'      => $context,
+			)
+		);
+
+		$generated = $this->generate_content_with_ai( $prompt );
+
+		if ( is_wp_error( $generated ) ) {
+			return $generated;
+		}
+
+		// Parse tags from response (comma-separated).
+		$tags = array_map( 'trim', explode( ',', $generated ) );
+		$tags = array_filter( $tags );
+		$tags = array_slice( $tags, 0, $count );
+
+		$result = array(
+			'success'      => true,
+			'type'         => 'product_tags',
+			'product_id'   => $product_id,
+			'product_name' => $product->get_name(),
+			'generated'    => $tags,
+			'count'        => count( $tags ),
+			'applied'      => false,
+			'edit_url'     => admin_url( 'post.php?post=' . $product_id . '&action=edit' ),
+		);
+
+		// Apply if requested.
+		if ( $apply ) {
+			wp_set_object_terms( $product_id, $tags, 'product_tag', true );
+			$result['applied'] = true;
+		} else {
+			$result['tip'] = __( 'Use apply: true to add these tags to the product.', 'assistify-for-woocommerce' );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Build product context for content generation.
+	 *
+	 * @since 1.0.0
+	 * @param \WC_Product|null $product Product object.
+	 * @return array Product context.
+	 */
+	private function build_product_context_for_content( $product ) {
+		if ( ! $product ) {
+			return array();
+		}
+
+		$context = array(
+			'name'               => $product->get_name(),
+			'sku'                => $product->get_sku(),
+			'type'               => $product->get_type(),
+			'price'              => $product->get_price(),
+			'regular_price'      => $product->get_regular_price(),
+			'sale_price'         => $product->get_sale_price(),
+			'current_short_desc' => $product->get_short_description(),
+		);
+
+		// Get categories.
+		$categories = wp_get_post_terms( $product->get_id(), 'product_cat', array( 'fields' => 'names' ) );
+		if ( ! is_wp_error( $categories ) ) {
+			$context['categories'] = implode( ', ', $categories );
+		}
+
+		// Get existing tags.
+		$tags = wp_get_post_terms( $product->get_id(), 'product_tag', array( 'fields' => 'names' ) );
+		if ( ! is_wp_error( $tags ) ) {
+			$context['existing_tags'] = implode( ', ', $tags );
+		}
+
+		// Get attributes.
+		$attributes = $product->get_attributes();
+		if ( ! empty( $attributes ) ) {
+			$attr_strings = array();
+			foreach ( $attributes as $attr ) {
+				if ( is_a( $attr, 'WC_Product_Attribute' ) ) {
+					$attr_strings[] = $attr->get_name() . ': ' . implode( ', ', $attr->get_options() );
+				}
+			}
+			$context['attributes'] = implode( '; ', $attr_strings );
+		}
+
+		// Stock status.
+		$context['in_stock'] = $product->is_in_stock();
+
+		return $context;
+	}
+
+	/**
+	 * Build prompt for content generation.
+	 *
+	 * @since 1.0.0
+	 * @param string $type    Content type.
+	 * @param array  $params  Parameters.
+	 * @return string Prompt for AI.
+	 */
+	private function build_content_prompt( $type, $params ) {
+		$store_name = get_bloginfo( 'name' );
+		$tone       = isset( $params['tone'] ) ? $params['tone'] : 'professional';
+		$context    = isset( $params['context'] ) ? $params['context'] : array();
+
+		$tone_instructions = array(
+			'professional' => 'Use a professional, trustworthy tone. Focus on features and benefits.',
+			'casual'       => 'Use a friendly, conversational tone. Be approachable and relatable.',
+			'luxury'       => 'Use an elegant, sophisticated tone. Emphasize quality and exclusivity.',
+			'playful'      => 'Use a fun, energetic tone. Be creative and engaging.',
+		);
+
+		$tone_instruction = isset( $tone_instructions[ $tone ] ) ? $tone_instructions[ $tone ] : $tone_instructions['professional'];
+
+		// Build context string.
+		$context_str = '';
+		if ( ! empty( $context ) ) {
+			$context_str = "\n\nProduct Information:\n";
+			foreach ( $context as $key => $value ) {
+				if ( ! empty( $value ) && 'current_short_desc' !== $key ) {
+					$context_str .= '- ' . ucwords( str_replace( '_', ' ', $key ) ) . ': ' . $value . "\n";
+				}
+			}
+		}
+
+		$prompts = array(
+			'product_title'       => sprintf(
+				"Generate an SEO-optimized product title for an e-commerce store.\n\n" .
+				"Store: %s\n" .
+				"Current Name: %s\n" .
+				'%s' .
+				"%s\n\n" .
+				"Requirements:\n" .
+				"- Create a compelling, click-worthy title\n" .
+				"- Include relevant keywords naturally\n" .
+				"- Keep it under 60 characters for SEO\n" .
+				"- %s\n\n" .
+				'Return ONLY the product title, nothing else.',
+				$store_name,
+				$params['product_name'],
+				! empty( $params['keywords'] ) ? 'Keywords to include: ' . $params['keywords'] . "\n" : '',
+				$context_str,
+				$tone_instruction
+			),
+
+			'product_description' => sprintf(
+				"Generate a full SEO-optimized product description for an e-commerce store.\n\n" .
+				"Store: %s\n" .
+				"Product: %s\n" .
+				'%s' .
+				"%s\n\n" .
+				"Requirements:\n" .
+				"- Write approximately %s words\n" .
+				"- Include features and benefits\n" .
+				"- Use bullet points for key features\n" .
+				"- Include a compelling opening and call-to-action\n" .
+				"- Optimize for SEO with natural keyword usage\n" .
+				"- Write naturally like a human, no robotic language\n" .
+				"- NO emojis, NO em dashes\n" .
+				"- %s\n\n" .
+				'Return ONLY the product description in HTML format (use <p>, <ul>, <li>, <strong> tags).',
+				$store_name,
+				$params['product_name'],
+				! empty( $params['keywords'] ) ? 'Keywords to include: ' . $params['keywords'] . "\n" : '',
+				$context_str,
+				is_numeric( $params['length'] ) ? $params['length'] : 600,
+				$tone_instruction
+			),
+
+			'short_description'   => sprintf(
+				"Generate a compelling short description for an e-commerce product.\n\n" .
+				"Store: %s\n" .
+				"Product: %s\n" .
+				"%s\n\n" .
+				"Requirements:\n" .
+				"- Write exactly 2-3 sentences\n" .
+				"- Highlight the key benefit or unique selling point\n" .
+				"- Create urgency or desire\n" .
+				"- Keep it under 150 characters\n" .
+				"- %s\n\n" .
+				'Return ONLY the short description, nothing else.',
+				$store_name,
+				$params['product_name'],
+				$context_str,
+				$tone_instruction
+			),
+
+			'meta_description'    => sprintf(
+				"Generate an SEO meta description for a product page.\n\n" .
+				"Store: %s\n" .
+				"Product: %s\n" .
+				'%s' .
+				"%s\n\n" .
+				"Requirements:\n" .
+				"- EXACTLY 150-160 characters (this is critical for SEO)\n" .
+				"- Include primary keyword naturally\n" .
+				"- Include a call-to-action\n" .
+				"- Make it compelling for search results\n\n" .
+				'Return ONLY the meta description, nothing else.',
+				$store_name,
+				$params['product_name'],
+				! empty( $params['keywords'] ) ? 'Focus Keywords: ' . $params['keywords'] . "\n" : '',
+				$context_str
+			),
+
+			'product_tags'        => sprintf(
+				"Generate relevant product tags for an e-commerce product.\n\n" .
+				"Store: %s\n" .
+				"Product: %s\n" .
+				"%s\n\n" .
+				"Requirements:\n" .
+				"- Generate exactly %d tags\n" .
+				"- Tags should be relevant search terms\n" .
+				"- Include a mix of specific and broader terms\n" .
+				"- Each tag should be 1-3 words\n" .
+				"- Make them SEO-friendly\n\n" .
+				'Return ONLY the tags as a comma-separated list, nothing else.',
+				$store_name,
+				$params['product_name'],
+				$context_str,
+				$params['count']
+			),
+		);
+
+		return isset( $prompts[ $type ] ) ? $prompts[ $type ] : '';
+	}
+
+	/**
+	 * Generate content using AI provider.
+	 *
+	 * @since 1.0.0
+	 * @param string $prompt Prompt for AI.
+	 * @return string|\WP_Error Generated content or error.
+	 */
+	private function generate_content_with_ai( $prompt ) {
+		$api_key  = get_option( 'assistify_api_key', '' );
+		$provider = get_option( 'assistify_ai_provider', 'openai' );
+		$model    = get_option( 'assistify_ai_model', '' );
+
+		if ( empty( $api_key ) ) {
+			return new \WP_Error( 'no_api_key', __( 'AI API key is not configured.', 'assistify-for-woocommerce' ) );
+		}
+
+		try {
+			$ai_provider = \Assistify_For_WooCommerce\AI_Providers\AI_Provider_Factory::create( $provider, $api_key );
+
+			$messages = array(
+				array(
+					'role'    => 'system',
+					'content' => 'You are a professional e-commerce copywriter. Generate high-quality, SEO-optimized content. Follow the requirements exactly. Return ONLY the requested content with no explanations or additional text.',
+				),
+				array(
+					'role'    => 'user',
+					'content' => $prompt,
+				),
+			);
+
+			$options = array(
+				'temperature' => 0.7,
+				'max_tokens'  => 1000,
+			);
+
+			if ( ! empty( $model ) ) {
+				$options['model'] = $model;
+			}
+
+			$response = $ai_provider->chat( $messages, $options );
+
+			if ( is_wp_error( $response ) ) {
+				return $response;
+			}
+
+			// Clean up the response.
+			$content = trim( $response );
+
+			// Remove any markdown code blocks if present.
+			$content = preg_replace( '/^```html?\n?/i', '', $content );
+			$content = preg_replace( '/\n?```$/i', '', $content );
+
+			return $content;
+
+		} catch ( \Exception $e ) {
+			return new \WP_Error( 'ai_error', $e->getMessage() );
+		}
 	}
 }

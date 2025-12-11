@@ -1,0 +1,134 @@
+/**
+ * Assistify AI Editor Styles.
+ *
+ * @package Assistify_For_WooCommerce
+ * @since   1.0.0
+ */
+
+/* ==========================================================================
+   Block Editor Sidebar Panel (React)
+   ========================================================================== */
+
+.assistify-generate-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.assistify-generate-btn .components-spinner {
+  margin-right: 8px;
+}
+
+/* ==========================================================================
+   Sidebar Meta Box (Classic Editor / WooCommerce)
+   ========================================================================== */
+
+.assistify-sidebar-panel .description {
+  color: #757575;
+  font-size: 12px;
+}
+
+.assistify-sidebar-panel p > .button {
+  margin-bottom: 0;
+}
+
+/* Instructions panel - hidden by default */
+#assistify-instructions {
+  display: none;
+  margin: 12px 0;
+  padding: 12px;
+  background: #f0f0f1;
+  border-left: 4px solid #2271b1;
+}
+
+#assistify-instructions p:first-child {
+  margin-top: 0;
+}
+
+#assistify-instructions p:last-child {
+  margin-bottom: 0;
+}
+
+/* Preview panel - hidden by default */
+#assistify-preview {
+  display: none;
+  margin: 12px 0;
+  padding: 12px;
+  background: #f0f6fc;
+  border-left: 4px solid #2271b1;
+}
+
+#assistify-preview p:first-child {
+  margin-top: 0;
+}
+
+#assistify-preview p:last-child {
+  margin-bottom: 0;
+}
+
+/* Options container - scrollable */
+#assistify-options {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Loading - hidden by default */
+#assistify-loading {
+  display: none;
+  margin: 12px 0;
+}
+
+#assistify-loading .spinner {
+  float: none;
+}
+
+/* Individual option */
+.assistify-option {
+  margin-bottom: 10px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #c3c4c7;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.5;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.assistify-option:hover {
+  border-color: #2271b1;
+  background: #f0f6fc;
+}
+
+/* Option buttons row */
+.assistify-option-buttons {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.assistify-option-buttons .button {
+  margin-right: 5px;
+}
+
+/* ==========================================================================
+   Image Generation Buttons (Product Image & Gallery)
+   ========================================================================== */
+
+/* Product image button */
+#postimagediv .assistify-featured-image-btn {
+  margin-top: 5px;
+}
+
+/* Product gallery button */
+#woocommerce-product-images .assistify-gallery-btn {
+  margin-top: 5px;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media screen and (max-width: 782px) {
+  .assistify-sidebar-panel p > .button {
+    width: 100%;
+  }
+}

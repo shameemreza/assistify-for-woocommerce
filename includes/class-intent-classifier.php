@@ -750,6 +750,80 @@ class Intent_Classifier {
 			'priority'  => 8,
 		);
 
+		// ========================================
+		// Content Generation Intents (Sprint 4.1)
+		// ========================================
+
+		// Generate product title.
+		$this->intent_patterns['content_product_title'] = array(
+			'keywords'  => array( 'generate title', 'create title', 'write title', 'product title', 'new title', 'better title' ),
+			'patterns'  => array(
+				'/(?:generate|create|write|make)\s+(?:a\s+)?(?:product\s+)?title/i',
+				'/(?:new|better|seo|optimized)\s+(?:product\s+)?title/i',
+				'/title\s+(?:for|of)\s+(?:product|item)/i',
+				'/product\s+(?:#?\d+|id\s*\d+).*?title/i',
+			),
+			'ability'   => 'afw/content/product-title',
+			'extractor' => 'extract_content_generation_params',
+			'priority'  => 9,
+		);
+
+		// Generate product description.
+		$this->intent_patterns['content_product_description'] = array(
+			'keywords'  => array( 'generate description', 'create description', 'write description', 'product description', 'new description' ),
+			'patterns'  => array(
+				'/(?:generate|create|write|make)\s+(?:a\s+)?(?:product\s+)?description/i',
+				'/(?:new|better|seo|optimized|full)\s+(?:product\s+)?description/i',
+				'/description\s+(?:for|of)\s+(?:product|item)/i',
+				'/product\s+(?:#?\d+|id\s*\d+).*?description/i',
+			),
+			'ability'   => 'afw/content/product-description',
+			'extractor' => 'extract_content_generation_params',
+			'priority'  => 9,
+		);
+
+		// Generate short description.
+		$this->intent_patterns['content_short_description'] = array(
+			'keywords'  => array( 'short description', 'excerpt', 'summary', 'brief description' ),
+			'patterns'  => array(
+				'/(?:generate|create|write|make)\s+(?:a\s+)?short\s+description/i',
+				'/short\s+description\s+(?:for|of)/i',
+				'/(?:product|item)\s+(?:excerpt|summary)/i',
+				'/brief\s+description/i',
+			),
+			'ability'   => 'afw/content/short-description',
+			'extractor' => 'extract_content_generation_params',
+			'priority'  => 9,
+		);
+
+		// Generate meta description.
+		$this->intent_patterns['content_meta_description'] = array(
+			'keywords'  => array( 'meta description', 'seo description', 'search description', 'yoast', 'rankmath' ),
+			'patterns'  => array(
+				'/(?:generate|create|write|make)\s+(?:a\s+)?meta\s+description/i',
+				'/(?:seo|search|google)\s+description/i',
+				'/meta\s+(?:desc|description)\s+(?:for|of)/i',
+				'/(?:yoast|rankmath|seo)\s+(?:meta\s+)?description/i',
+			),
+			'ability'   => 'afw/content/meta-description',
+			'extractor' => 'extract_content_generation_params',
+			'priority'  => 9,
+		);
+
+		// Generate product tags.
+		$this->intent_patterns['content_product_tags'] = array(
+			'keywords'  => array( 'generate tags', 'create tags', 'product tags', 'suggest tags', 'new tags' ),
+			'patterns'  => array(
+				'/(?:generate|create|suggest|make)\s+(?:product\s+)?tags/i',
+				'/(?:new|better|seo)\s+tags\s+(?:for|of)/i',
+				'/tags\s+(?:for|of)\s+(?:product|item)/i',
+				'/product\s+(?:#?\d+|id\s*\d+).*?tags/i',
+			),
+			'ability'   => 'afw/content/product-tags',
+			'extractor' => 'extract_content_generation_params',
+			'priority'  => 9,
+		);
+
 		/**
 		 * Filter intent patterns to allow customization.
 		 *
@@ -1753,6 +1827,62 @@ class Intent_Classifier {
 		// Check for email.
 		if ( preg_match( '/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i', $message, $matches ) ) {
 			$params['email'] = trim( $matches[1] );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract content generation parameters from message.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_content_generation_params( $message ) {
+		$params = array();
+
+		// Check for product ID.
+		if ( preg_match( '/product\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['product_id'] = (int) $matches[1];
+		} elseif ( preg_match( '/(?:id|ID)\s*[:=]?\s*(\d+)/i', $message, $matches ) ) {
+			$params['product_id'] = (int) $matches[1];
+		} elseif ( preg_match( '/\b(\d{2,})\b/', $message, $matches ) ) {
+			// Assume 2+ digit number could be product ID if no other context.
+			$params['product_id'] = (int) $matches[1];
+		}
+
+		// Check for tone.
+		$tones         = array( 'professional', 'casual', 'luxury', 'playful' );
+		$message_lower = strtolower( $message );
+		foreach ( $tones as $tone ) {
+			if ( strpos( $message_lower, $tone ) !== false ) {
+				$params['tone'] = $tone;
+				break;
+			}
+		}
+
+		// Check for length (for descriptions).
+		if ( preg_match( '/\b(short|brief|concise)\b/i', $message ) ) {
+			$params['length'] = 'short';
+		} elseif ( preg_match( '/\b(long|detailed|comprehensive)\b/i', $message ) ) {
+			$params['length'] = 'long';
+		} elseif ( preg_match( '/\b(medium|standard)\b/i', $message ) ) {
+			$params['length'] = 'medium';
+		}
+
+		// Check for keywords.
+		if ( preg_match( '/keywords?[:=]?\s*["\']?([^"\']+)["\']?/i', $message, $matches ) ) {
+			$params['keywords'] = trim( $matches[1] );
+		}
+
+		// Check for apply flag.
+		if ( preg_match( '/\b(?:apply|save|update)\b/i', $message ) ) {
+			$params['apply'] = true;
+		}
+
+		// Check for number of tags.
+		if ( preg_match( '/(\d+)\s*tags?/i', $message, $matches ) ) {
+			$params['count'] = (int) $matches[1];
 		}
 
 		return $params;

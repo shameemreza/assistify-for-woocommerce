@@ -9,8 +9,8 @@
 
 /* CSS Variables */
 :root {
-  --assistify-primary-color: #7f54b3;
-  --assistify-primary-dark: #674399;
+  --assistify-primary-color: #6861f2;
+  --assistify-primary-dark: #5650d9;
   --assistify-bg-light: #f8f9fa;
   --assistify-border-color: #e0e0e0;
   --assistify-text-color: #333;
@@ -67,6 +67,7 @@
 .assistify-chat-toggle:hover {
   transform: scale(1.05);
   box-shadow: var(--assistify-shadow-hover);
+  background: var(--assistify-primary-dark);
 }
 
 .assistify-chat-toggle:focus {
@@ -78,7 +79,6 @@
   width: 28px;
   height: 28px;
   color: #fff;
-  transition: transform var(--assistify-transition);
 }
 
 .assistify-chat-icon,
@@ -141,13 +141,16 @@
   flex-direction: column;
   overflow: hidden;
   opacity: 0;
+  visibility: hidden;
   transform: translateY(20px) scale(0.95);
-  transition: opacity var(--assistify-transition),
-    transform var(--assistify-transition);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .assistify-chat-widget.is-open .assistify-chat-container {
   opacity: 1;
+  visibility: visible;
   transform: translateY(0) scale(1);
 }
 
@@ -159,8 +162,9 @@
   left: 0;
 }
 
+/* Hidden state handled by opacity/visibility transitions */
 .assistify-chat-container[hidden] {
-  display: none;
+  display: flex; /* Keep display but use opacity/visibility for animation */
 }
 
 /* Chat Header */
@@ -174,6 +178,12 @@
   flex-shrink: 0;
 }
 
+.assistify-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .assistify-chat-title {
   margin: 0;
   font-size: 16px;
@@ -181,75 +191,61 @@
   color: #fff;
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-direction: row;
+  gap: 6px;
+  line-height: 1.2;
 }
 
-/* Online status dot - shown dynamically via JS */
+.assistify-header-subtitle {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+}
+
+/* Online status dot */
 .assistify-status-dot {
-  width: 10px;
-  height: 10px;
-  background: #4caf50;
-  border-radius: 50%;
   display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
   flex-shrink: 0;
-  order: 2; /* Move to right side */
-  margin-left: auto;
-  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.4);
-  animation: assistifyStatusPulse 2s ease-in-out infinite;
 }
 
-/* Red/offline status */
+.assistify-status-dot.is-online {
+  background: #4ade80;
+  box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.3);
+}
+
 .assistify-status-dot.is-offline {
-  background: #f44336;
-  box-shadow: 0 0 0 2px rgba(244, 67, 54, 0.4);
-  animation: assistifyStatusPulseRed 2s ease-in-out infinite;
+  background: #9ca3af;
+  box-shadow: 0 0 0 2px rgba(156, 163, 175, 0.3);
 }
 
-@keyframes assistifyStatusPulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.2);
-  }
-}
-
-@keyframes assistifyStatusPulseRed {
-  0%,
-  100% {
-    box-shadow: 0 0 0 2px rgba(244, 67, 54, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 0 4px rgba(244, 67, 54, 0.2);
-  }
-}
-
-.assistify-chat-minimize {
-  background: transparent;
+/* Close Button */
+.assistify-chat-close {
+  background: rgba(255, 255, 255, 0.1);
   border: none;
   color: #fff;
   cursor: pointer;
-  font-size: 24px;
-  line-height: 1;
-  padding: 0;
-  width: 28px;
-  height: 28px;
+  padding: 4px 10px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
   transition: background var(--assistify-transition);
 }
 
-.assistify-chat-minimize:hover {
+.assistify-chat-close:hover {
   background: rgba(255, 255, 255, 0.2);
 }
 
-.assistify-chat-minimize:focus {
-  outline: 2px solid #fff;
+.assistify-chat-close:focus {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
   outline-offset: 2px;
+}
+
+.assistify-chat-close svg {
+  width: 18px;
+  height: 18px;
 }
 
 /* Chat Messages */

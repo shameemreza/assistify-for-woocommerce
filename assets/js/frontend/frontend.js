@@ -78,7 +78,7 @@
       this.$messages = this.$widget.find(".assistify-chat-messages");
       this.$form = $("#assistify-chat-form");
       this.$input = $("#assistify-chat-input");
-      this.$minimize = this.$widget.find(".assistify-chat-minimize");
+      this.$closeBtn = this.$widget.find(".assistify-chat-close");
       this.$header = this.$widget.find(".assistify-chat-header");
       this.$title = this.$widget.find(".assistify-chat-title");
 
@@ -113,7 +113,7 @@
       // Set CSS custom property for primary color
       document.documentElement.style.setProperty(
         "--assistify-primary-color",
-        assistifyFrontend.settings.primaryColor || "#7f54b3"
+        assistifyFrontend.settings.primaryColor || "#6861f2"
       );
 
       // Sound settings
@@ -137,8 +137,8 @@
         self.resetIdleTimer();
       });
 
-      // Minimize chat
-      this.$minimize.on("click", function () {
+      // Close chat
+      this.$closeBtn.on("click", function () {
         self.closeChat();
       });
 
@@ -159,7 +159,7 @@
 
       // Keyboard events
       $(document).on("keydown", function (e) {
-        if (e.key === "Escape" && !self.$container.prop("hidden")) {
+        if (e.key === "Escape" && self.$widget.hasClass("is-open")) {
           self.closeChat();
         }
       });
@@ -299,13 +299,15 @@
      */
     autoOpenChat: function () {
       // Show the chat (will show consent if not consented, or welcome if consented)
-      this.$container.prop("hidden", false);
+      this.$container.removeAttr("hidden");
       this.$toggle.attr("aria-expanded", "true");
-      this.$widget.addClass("is-open");
+      // Small delay to allow CSS transition to work
+      requestAnimationFrame(() => {
+        this.$widget.addClass("is-open");
+      });
 
       if (this.hasConsented) {
         // Already consented - show contextual proactive message
-        this.updateHeaderTitle();
         if (this.$messages.children(".assistify-message").length === 0) {
           const proactiveMsg = this.getContextualProactiveMessage();
           this.addMessage("assistant", proactiveMsg, false, true);
@@ -345,12 +347,12 @@
      * Toggle chat open/closed
      */
     toggleChat: function () {
-      const isHidden = this.$container.prop("hidden");
+      const isOpen = this.$widget.hasClass("is-open");
 
-      if (isHidden) {
-        this.openChat();
-      } else {
+      if (isOpen) {
         this.closeChat();
+      } else {
+        this.openChat();
       }
     },
 
@@ -364,12 +366,12 @@
         return;
       }
 
-      this.$container.prop("hidden", false);
+      this.$container.removeAttr("hidden");
       this.$toggle.attr("aria-expanded", "true");
-      this.$widget.addClass("is-open");
-
-      // Update header title with assistant name
-      this.updateHeaderTitle();
+      // Small delay to allow CSS transition to work
+      requestAnimationFrame(() => {
+        this.$widget.addClass("is-open");
+      });
 
       this.$input.focus();
 
@@ -383,25 +385,17 @@
     },
 
     /**
-     * Update header title after consent
-     */
-    updateHeaderTitle: function () {
-      const assistantName = assistifyFrontend.strings.assistantName || "Ayana";
-      const statusClass = this.isApiOnline ? "" : "is-offline";
-      this.$title.html(
-        `${this.escapeHtml(
-          assistantName
-        )}<span class="assistify-status-dot ${statusClass}"></span>`
-      );
-    },
-
-    /**
      * Close chat
      */
     closeChat: function () {
-      this.$container.prop("hidden", true);
-      this.$toggle.attr("aria-expanded", "false");
       this.$widget.removeClass("is-open");
+      this.$toggle.attr("aria-expanded", "false");
+      // Wait for animation to complete before hiding
+      setTimeout(() => {
+        if (!this.$widget.hasClass("is-open")) {
+          this.$container.attr("hidden", "");
+        }
+      }, 300);
     },
 
     /**
@@ -533,9 +527,12 @@
      * Show consent dialog
      */
     showConsent: function () {
-      this.$container.prop("hidden", false);
+      this.$container.removeAttr("hidden");
       this.$toggle.attr("aria-expanded", "true");
-      this.$widget.addClass("is-open");
+      // Small delay to allow CSS transition to work
+      requestAnimationFrame(() => {
+        this.$widget.addClass("is-open");
+      });
 
       // Build privacy link HTML if URL is available
       let privacyLinkHtml = "";
@@ -575,7 +572,6 @@
         self.setConsent(true);
         self.hasConsented = true;
         self.$messages.empty();
-        self.updateHeaderTitle();
         self.showWelcome();
         self.$input.focus();
       });

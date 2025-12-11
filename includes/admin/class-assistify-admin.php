@@ -555,7 +555,7 @@ class Assistify_Admin {
 				'desc'     => esc_html__( 'Main color for the chat widget.', 'assistify-for-woocommerce' ),
 				'id'       => 'assistify_primary_color',
 				'type'     => 'color',
-				'default'  => '#7F54B3',
+				'default'  => '#6861F2',
 				'desc_tip' => true,
 			),
 			array(
@@ -609,6 +609,47 @@ class Assistify_Admin {
 			array(
 				'type' => 'sectionend',
 				'id'   => 'assistify_customer_chat_settings',
+			),
+
+			// Content Generation Settings.
+			array(
+				'title' => esc_html__( 'Content Generation Settings', 'assistify-for-woocommerce' ),
+				'type'  => 'title',
+				'desc'  => esc_html__( 'Configure defaults for AI-powered content generation.', 'assistify-for-woocommerce' ),
+				'id'    => 'assistify_content_settings',
+			),
+			array(
+				'title'    => esc_html__( 'Default Tone', 'assistify-for-woocommerce' ),
+				'desc'     => esc_html__( 'Default writing style for generated content.', 'assistify-for-woocommerce' ),
+				'id'       => 'assistify_content_default_tone',
+				'type'     => 'select',
+				'class'    => 'wc-enhanced-select',
+				'default'  => 'professional',
+				'options'  => array(
+					'professional' => esc_html__( 'Professional - Trustworthy and feature-focused', 'assistify-for-woocommerce' ),
+					'casual'       => esc_html__( 'Casual - Friendly and conversational', 'assistify-for-woocommerce' ),
+					'luxury'       => esc_html__( 'Luxury - Elegant and sophisticated', 'assistify-for-woocommerce' ),
+					'playful'      => esc_html__( 'Playful - Fun and energetic', 'assistify-for-woocommerce' ),
+				),
+				'desc_tip' => true,
+			),
+			array(
+				'title'             => esc_html__( 'Content Length (Words)', 'assistify-for-woocommerce' ),
+				'desc'              => esc_html__( 'Target word count for generated content (product descriptions, post content, page content).', 'assistify-for-woocommerce' ),
+				'id'                => 'assistify_content_default_length',
+				'type'              => 'number',
+				'default'           => '600',
+				'placeholder'       => '600',
+				'custom_attributes' => array(
+					'min'  => '50',
+					'max'  => '5000',
+					'step' => '50',
+				),
+				'desc_tip'          => true,
+			),
+			array(
+				'type' => 'sectionend',
+				'id'   => 'assistify_content_settings',
 			),
 
 			// Privacy Settings.
@@ -875,6 +916,7 @@ class Assistify_Admin {
 - **Customers**: Look up info, purchase history, lifetime value
 - **Analytics**: Sales reports, revenue, top products, geographic sales, AOV
 - **Coupons**: List coupons, check usage stats, view available codes
+- **Content Generation**: Generate product titles, descriptions, short descriptions, meta descriptions, tags
 
 ## Store Info:
 - Currency: %3$s (%4$s)
@@ -892,6 +934,17 @@ class Assistify_Admin {
 When showing coupons, ALWAYS display the coupon code prominently like this:
 - **Code**: `COUPONCODE` (in backticks for easy copying)
 - Then show discount amount, expiry, usage stats
+
+## Content Generation:
+When generating content for products:
+- **Product Title**: SEO-optimized, under 60 characters
+- **Product Description**: Full HTML with features and benefits, customizable length (short/medium/long)
+- **Short Description**: 2-3 compelling sentences
+- **Meta Description**: Exactly 150-160 characters for SEO (Yoast/RankMath)
+- **Product Tags**: Comma-separated relevant keywords
+
+Options: tone (professional/casual/luxury/playful), keywords, apply (true to save)
+Example: "Generate a professional description for product 123 with keywords: organic, handmade"
 
 ## Tone:
 Friendly, helpful, and efficient. Keep responses focused.',

@@ -65,6 +65,7 @@ final class Assistify {
 		$this->set_locale();
 		$this->init_abilities();
 		$this->init_privacy();
+		$this->init_editor();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_rest_api();
@@ -155,6 +156,7 @@ final class Assistify {
 		// Load admin classes.
 		if ( is_admin() ) {
 			require_once ASSISTIFY_PLUGIN_DIR . 'includes/admin/class-assistify-admin.php';
+			require_once ASSISTIFY_PLUGIN_DIR . 'includes/editor/class-assistify-editor.php';
 		}
 
 		// Load frontend classes (always needed for AJAX handlers).
@@ -239,6 +241,18 @@ final class Assistify {
 	private function init_privacy() {
 		$privacy = new Assistify_Privacy();
 		$privacy->init();
+	}
+
+	/**
+	 * Initialize Editor integration.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	private function init_editor() {
+		if ( is_admin() ) {
+			Editor\Assistify_Editor::instance();
+		}
 	}
 
 	/**

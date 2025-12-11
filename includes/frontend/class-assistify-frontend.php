@@ -1476,7 +1476,7 @@ Use a friendly, conversational tone. Format with line breaks for readability.',
 				),
 				'settings'       => array(
 					'position'        => get_option( 'assistify_chat_position', 'bottom-right' ),
-					'primaryColor'    => get_option( 'assistify_primary_color', '#7F54B3' ),
+					'primaryColor'    => get_option( 'assistify_primary_color', '#6861F2' ),
 					'autoOpenDelay'   => absint( get_option( 'assistify_auto_open_delay', 90 ) ), // Seconds.
 					'autoOpenEnabled' => get_option( 'assistify_auto_open_enabled', 'no' ) === 'yes',
 					'soundEnabled'    => get_option( 'assistify_sound_enabled', 'yes' ) === 'yes',
@@ -1645,13 +1645,21 @@ Use a friendly, conversational tone. Format with line breaks for readability.',
 			<!-- Chat container -->
 			<div id="assistify-chat-container" class="assistify-chat-container" hidden>
 				<div class="assistify-chat-header">
-					<h3 class="assistify-chat-title"><?php esc_html_e( 'Chat with us', 'assistify-for-woocommerce' ); ?></h3>
+					<div class="assistify-header-content">
+						<h3 class="assistify-chat-title">
+							<?php echo esc_html( get_option( 'assistify_assistant_name', 'Ayana' ) ); ?>
+							<span class="assistify-status-dot is-online" title="<?php esc_attr_e( 'Online', 'assistify-for-woocommerce' ); ?>"></span>
+						</h3>
+						<span class="assistify-header-subtitle"><?php esc_html_e( 'AI Assistant', 'assistify-for-woocommerce' ); ?></span>
+					</div>
 					<button 
 						type="button" 
-						class="assistify-chat-minimize" 
-						aria-label="<?php esc_attr_e( 'Minimize chat', 'assistify-for-woocommerce' ); ?>"
+						class="assistify-chat-close" 
+						aria-label="<?php esc_attr_e( 'Close chat', 'assistify-for-woocommerce' ); ?>"
 					>
-						<span aria-hidden="true">−</span>
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+							<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+						</svg>
 					</button>
 				</div>
 

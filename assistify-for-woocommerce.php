@@ -231,8 +231,44 @@ function assistify_init() {
 
 	// Initialize the plugin.
 	Assistify_For_WooCommerce\Assistify::instance();
+
+	// Run migrations on admin init.
+	add_action( 'admin_init', 'assistify_run_migrations' );
 }
 add_action( 'plugins_loaded', 'assistify_init' );
+
+/**
+ * Run database migrations and option updates.
+ *
+ * @since 1.0.0
+ * @return void
+ */
+function assistify_run_migrations() {
+	$migration_version = get_option( 'assistify_migration_version', '0' );
+
+	// Migration 1.0.1: Update brand color and set content defaults.
+	if ( version_compare( $migration_version, '1.0.1', '<' ) ) {
+		// Update primary color from old WooCommerce purple to Assistify indigo.
+		$current_color = get_option( 'assistify_primary_color' );
+		if ( empty( $current_color ) || '#7F54B3' === strtoupper( $current_color ) || '#7f54b3' === strtolower( $current_color ) ) {
+			update_option( 'assistify_primary_color', '#6861F2' );
+		}
+
+		// Set default content length if not set or empty.
+		$content_length = get_option( 'assistify_content_default_length' );
+		if ( false === $content_length || '' === $content_length ) {
+			update_option( 'assistify_content_default_length', '600' );
+		}
+
+		// Set default content tone if not set.
+		$content_tone = get_option( 'assistify_content_default_tone' );
+		if ( false === $content_tone || '' === $content_tone ) {
+			update_option( 'assistify_content_default_tone', 'professional' );
+		}
+
+		update_option( 'assistify_migration_version', '1.0.1' );
+	}
+}
 
 /**
  * Activation hook.

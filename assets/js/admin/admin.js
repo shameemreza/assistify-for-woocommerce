@@ -349,15 +349,22 @@
           <button type="button" class="assistify-admin-chat-toggle" aria-expanded="false" aria-label="${
             assistifyAdmin.strings.openChat || "Chat with Ayana"
           }">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l4.93-1.36C8.42 21.5 10.15 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.57 0-3.05-.43-4.32-1.18l-.31-.18-3.22.89.89-3.22-.18-.31C4.43 15.05 4 13.57 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z"/>
-            </svg>
+            <span class="assistify-chat-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12c0 1.85.5 3.58 1.36 5.07L2 22l4.93-1.36C8.42 21.5 10.15 22 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2zm0 18c-1.57 0-3.05-.43-4.32-1.18l-.31-.18-3.22.89.89-3.22-.18-.31C4.43 15.05 4 13.57 4 12c0-4.41 3.59-8 8-8s8 3.59 8 8-3.59 8-8 8z"/>
+              </svg>
+            </span>
+            <span class="assistify-close-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+              </svg>
+            </span>
           </button>
           <span class="assistify-keyboard-hint">Press <kbd>Ctrl</kbd>+<kbd>/</kbd></span>
           <div class="assistify-admin-chat-container">
             <div class="assistify-admin-chat-header">
               <div class="assistify-header-content">
-                <h3>Ayana<span class="assistify-status-dot ${
+                <h3>Assistify<span class="assistify-status-dot ${
                   assistifyAdmin.settings.apiConfigured
                     ? "is-online"
                     : "is-offline"
@@ -366,7 +373,7 @@
           ? "Connected"
           : "API key not configured"
       }"></span></h3>
-                <span class="assistify-header-subtitle">Your AI Assistant</span>
+                <span class="assistify-header-subtitle">Store Intelligence</span>
               </div>
               <button type="button" class="assistify-admin-chat-close" aria-label="Close chat">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -526,8 +533,11 @@
      * Open chat
      */
     openChat: function () {
-      this.$container.addClass("is-open");
       this.$toggle.attr("aria-expanded", "true");
+      // Small delay to allow CSS transition to work
+      requestAnimationFrame(() => {
+        this.$container.addClass("is-open");
+      });
       this.$input.focus();
       // Scroll to bottom when opening chat
       setTimeout(() => this.scrollToBottom(), 100);

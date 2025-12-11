@@ -9,9 +9,9 @@
    CSS Variables
    ========================================================================== */
 :root {
-  --assistify-primary: #7f54b3;
-  --assistify-primary-dark: #674399;
-  --assistify-primary-light: #9b71d3;
+  --assistify-primary: #6861f2;
+  --assistify-primary-dark: #5650d9;
+  --assistify-primary-light: #8882f5;
   --assistify-success: #46b450;
   --assistify-warning: #ffb900;
   --assistify-error: #dc3232;
@@ -137,8 +137,9 @@
 }
 
 .assistify-admin-chat-toggle:hover {
-  transform: scale(1.08);
-  box-shadow: 0 8px 24px rgba(127, 84, 179, 0.4);
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(104, 97, 242, 0.4);
+  background: var(--assistify-primary-dark);
 }
 
 .assistify-admin-chat-toggle:focus {
@@ -152,6 +153,26 @@
   height: 28px;
 }
 
+/* Toggle Icon States */
+.assistify-chat-icon,
+.assistify-close-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.assistify-close-icon {
+  display: none;
+}
+
+.assistify-admin-chat-toggle[aria-expanded="true"] .assistify-chat-icon {
+  display: none;
+}
+
+.assistify-admin-chat-toggle[aria-expanded="true"] .assistify-close-icon {
+  display: flex;
+}
+
 /* Chat Container */
 .assistify-admin-chat-container {
   position: absolute;
@@ -162,19 +183,21 @@
   background: var(--assistify-white);
   border-radius: var(--assistify-radius);
   box-shadow: var(--assistify-shadow-lg);
-  display: none;
+  display: flex;
   flex-direction: column;
   overflow: hidden;
   border: 1px solid var(--assistify-border-light);
   opacity: 0;
+  visibility: hidden;
   transform: translateY(20px) scale(0.95);
-  transition: opacity var(--assistify-transition),
-    transform var(--assistify-transition);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .assistify-admin-chat-container.is-open {
-  display: flex;
   opacity: 1;
+  visibility: visible;
   transform: translateY(0) scale(1);
 }
 
