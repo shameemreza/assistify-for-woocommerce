@@ -159,6 +159,7 @@ final class Assistify {
 		// Load admin classes.
 		if ( is_admin() ) {
 			require_once ASSISTIFY_PLUGIN_DIR . 'includes/admin/class-assistify-admin.php';
+			require_once ASSISTIFY_PLUGIN_DIR . 'includes/admin/class-admin-tools.php';
 			require_once ASSISTIFY_PLUGIN_DIR . 'includes/editor/class-assistify-editor.php';
 		}
 
@@ -347,6 +348,10 @@ final class Assistify {
 
 		// AJAX handler for testing API key.
 		$this->loader->add_action( 'wp_ajax_assistify_test_api_key', $plugin_admin, 'handle_test_api_key' );
+
+		// AJAX handlers for action confirmation.
+		$this->loader->add_action( 'wp_ajax_assistify_confirm_action', $plugin_admin, 'handle_confirm_action' );
+		$this->loader->add_action( 'wp_ajax_assistify_cancel_action', $plugin_admin, 'handle_cancel_action' );
 	}
 
 	/**

@@ -258,6 +258,173 @@ class AI_Provider_Anthropic extends AI_Provider_Abstract {
 	}
 
 	/**
+	 * Chat with function/tool calling support.
+	 *
+	 * @since 1.0.0
+	 * @param array $messages Conversation messages.
+	 * @param array $tools    Available tools in OpenAI format (will be converted).
+	 * @param array $options  Optional parameters.
+	 * @return array|\WP_Error Response with tool_calls or content.
+	 */
+	public function chat_with_tools( array $messages, array $tools, array $options = array() ) {
+		if ( ! $this->is_configured() ) {
+			return new \WP_Error(
+				'assistify_not_configured',
+				__( 'Anthropic provider is not configured. Please add your API key.', 'assistify-for-woocommerce' )
+			);
+		}
+
+		$options = $this->merge_options( $options );
+
+		// Convert OpenAI tool format to Anthropic format.
+		$anthropic_tools = array();
+		foreach ( $tools as $tool ) {
+			if ( isset( $tool['function'] ) ) {
+				$anthropic_tools[] = array(
+					'name'         => $tool['function']['name'],
+					'description'  => $tool['function']['description'],
+					'input_schema' => $tool['function']['parameters'],
+				);
+			}
+		}
+
+		// Build messages for Anthropic.
+		$system_prompt = '';
+		$api_messages  = array();
+
+		foreach ( $messages as $message ) {
+			if ( 'system' === $message['role'] ) {
+				$system_prompt = $message['content'];
+			} elseif ( 'tool' === $message['role'] ) {
+				// Convert tool result to Anthropic format.
+				$api_messages[] = array(
+					'role'    => 'user',
+					'content' => array(
+						array(
+							'type'        => 'tool_result',
+							'tool_use_id' => $message['tool_call_id'],
+							'content'     => $message['content'],
+						),
+					),
+				);
+			} elseif ( 'assistant' === $message['role'] && isset( $message['tool_calls'] ) ) {
+				// Convert assistant tool calls to Anthropic format.
+				$content = array();
+				foreach ( $message['tool_calls'] as $tool_call ) {
+					$content[] = array(
+						'type'  => 'tool_use',
+						'id'    => $tool_call['id'],
+						'name'  => $tool_call['function']['name'],
+						'input' => json_decode( $tool_call['function']['arguments'], true ) ?? array(),
+					);
+				}
+				$api_messages[] = array(
+					'role'    => 'assistant',
+					'content' => $content,
+				);
+			} else {
+				$api_messages[] = array(
+					'role'    => $message['role'],
+					'content' => $message['content'],
+				);
+			}
+		}
+
+		// Add system prompt from options.
+		if ( isset( $options['system_prompt'] ) && ! empty( $options['system_prompt'] ) ) {
+			$system_prompt = $options['system_prompt'];
+		}
+
+		$body = array(
+			'model'      => isset( $options['model'] ) ? $options['model'] : $this->model,
+			'messages'   => $api_messages,
+			'tools'      => $anthropic_tools,
+			'max_tokens' => (int) $options['max_tokens'],
+		);
+
+		if ( ! empty( $system_prompt ) ) {
+			$body['system'] = $system_prompt;
+		}
+
+		if ( isset( $options['temperature'] ) ) {
+			$body['temperature'] = (float) $options['temperature'];
+		}
+
+		$response = $this->make_request( 'messages', $body );
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		// Check for tool use in response.
+		$tool_calls   = array();
+		$text_content = '';
+
+		if ( isset( $response['content'] ) && is_array( $response['content'] ) ) {
+			foreach ( $response['content'] as $block ) {
+				if ( 'tool_use' === ( $block['type'] ?? '' ) ) {
+					// Convert to OpenAI format for compatibility.
+					$tool_calls[] = array(
+						'id'       => $block['id'],
+						'type'     => 'function',
+						'function' => array(
+							'name'      => $block['name'],
+							'arguments' => wp_json_encode( $block['input'] ?? array() ),
+						),
+					);
+				} elseif ( 'text' === ( $block['type'] ?? '' ) ) {
+					$text_content .= $block['text'];
+				}
+			}
+		}
+
+		// Build usage array.
+		$usage = array(
+			'prompt_tokens'     => $response['usage']['input_tokens'] ?? 0,
+			'completion_tokens' => $response['usage']['output_tokens'] ?? 0,
+			'total_tokens'      => ( $response['usage']['input_tokens'] ?? 0 ) + ( $response['usage']['output_tokens'] ?? 0 ),
+		);
+
+		if ( ! empty( $tool_calls ) ) {
+			// Build assistant message in OpenAI format for conversation continuity.
+			$assistant_message = array(
+				'role'       => 'assistant',
+				'content'    => $text_content,
+				'tool_calls' => $tool_calls,
+			);
+
+			return array(
+				'type'       => 'tool_calls',
+				'tool_calls' => $tool_calls,
+				'message'    => $assistant_message,
+				'usage'      => $usage,
+				'model'      => $response['model'] ?? $body['model'],
+			);
+		}
+
+		// Regular content response.
+		return array(
+			'type'    => 'content',
+			'content' => $text_content,
+			'usage'   => $usage,
+			'model'   => $response['model'] ?? $body['model'],
+		);
+	}
+
+	/**
+	 * Continue a conversation after tool execution.
+	 *
+	 * @since 1.0.0
+	 * @param array $messages Updated messages including tool results.
+	 * @param array $tools    Available tools.
+	 * @param array $options  Optional parameters.
+	 * @return array|\WP_Error Response.
+	 */
+	public function continue_with_tool_results( array $messages, array $tools, array $options = array() ) {
+		return $this->chat_with_tools( $messages, $tools, $options );
+	}
+
+	/**
 	 * Get the maximum context length for a model.
 	 *
 	 * @since 1.0.0

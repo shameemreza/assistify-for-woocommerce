@@ -133,19 +133,19 @@ abstract class AI_Provider_Abstract implements AI_Provider_Interface {
 	/**
 	 * Get the stored API key from options.
 	 *
+	 * Uses the AI_Provider_Factory which handles encryption/decryption.
+	 *
 	 * @since 1.0.0
 	 * @return string The decrypted API key or empty string.
 	 */
 	protected function get_stored_api_key() {
-		$encrypted_key = get_option( 'assistify_api_key', '' );
-
-		if ( empty( $encrypted_key ) ) {
-			return '';
+		// Use the factory which handles encrypted key retrieval.
+		if ( class_exists( '\Assistify_For_WooCommerce\AI_Providers\AI_Provider_Factory' ) ) {
+			return \Assistify_For_WooCommerce\AI_Providers\AI_Provider_Factory::get_api_key_for_provider( $this->get_id() );
 		}
 
-		// For now, return as-is. In production, implement proper decryption.
-		// TODO: Implement encryption/decryption using wp_salt().
-		return $encrypted_key;
+		// Fallback to direct option (legacy, unencrypted).
+		return get_option( 'assistify_api_key', '' );
 	}
 
 	/**

@@ -962,6 +962,120 @@ class Intent_Classifier {
 			'priority'  => 9,
 		);
 
+		// ========================================
+		// ACTION Intents (Require Confirmation)
+		// ========================================
+
+		// Update order status (ACTION).
+		$this->intent_patterns['action_update_order_status'] = array(
+			'keywords'  => array( 'update order', 'change order', 'mark order', 'set order', 'order to processing', 'order to completed', 'order to shipped' ),
+			'patterns'  => array(
+				'/(?:update|change|set|mark)\s+order\s*#?\s*(\d+)\s+(?:to|as|status)\s+(\w+)/i',
+				'/order\s*#?\s*(\d+)\s+(?:to|as)\s+(?:processing|completed|shipped|on-hold|cancelled|refunded)/i',
+				'/mark\s+order\s*#?\s*(\d+)\s+(?:as\s+)?(\w+)/i',
+				'/(?:ship|complete|cancel)\s+order\s*#?\s*(\d+)/i',
+			),
+			'ability'   => 'afw/orders/update-status',
+			'extractor' => 'extract_order_status_update_params',
+			'priority'  => 15,
+			'is_action' => true,
+		);
+
+		// Process refund (ACTION).
+		$this->intent_patterns['action_refund_order'] = array(
+			'keywords'  => array( 'refund order', 'process refund', 'issue refund', 'give refund', 'refund customer' ),
+			'patterns'  => array(
+				'/refund\s+order\s*#?\s*(\d+)/i',
+				'/(?:process|issue|give)\s+(?:a\s+)?refund\s+(?:for\s+)?order\s*#?\s*(\d+)/i',
+				'/refund\s+\$?(\d+(?:\.\d{2})?)\s+(?:from|for|to)\s+order\s*#?\s*(\d+)/i',
+			),
+			'ability'   => 'afw/orders/refund',
+			'extractor' => 'extract_refund_params',
+			'priority'  => 15,
+			'is_action' => true,
+		);
+
+		// Create product (ACTION).
+		$this->intent_patterns['action_create_product'] = array(
+			'keywords'  => array( 'create product', 'add product', 'new product', 'make product' ),
+			'patterns'  => array(
+				'/(?:create|add|make)\s+(?:a\s+)?(?:new\s+)?product\s+(?:called|named)\s+["\']?(.+?)["\']?$/i',
+				'/(?:create|add)\s+(?:a\s+)?(?:new\s+)?product/i',
+				'/new\s+product\s+["\']?(.+?)["\']?/i',
+			),
+			'ability'   => 'afw/products/create',
+			'extractor' => 'extract_create_product_params',
+			'priority'  => 15,
+			'is_action' => true,
+		);
+
+		// Update product (ACTION).
+		$this->intent_patterns['action_update_product'] = array(
+			'keywords'  => array( 'update product', 'change product', 'edit product', 'modify product', 'set price', 'change price' ),
+			'patterns'  => array(
+				'/(?:update|change|edit|modify)\s+product\s*#?\s*(\d+)/i',
+				'/(?:set|change)\s+(?:the\s+)?price\s+(?:of\s+)?product\s*#?\s*(\d+)\s+to\s+\$?(\d+(?:\.\d{2})?)/i',
+				'/product\s*#?\s*(\d+)\s+price\s+(?:to|=)\s+\$?(\d+(?:\.\d{2})?)/i',
+			),
+			'ability'   => 'afw/products/update',
+			'extractor' => 'extract_update_product_params',
+			'priority'  => 15,
+			'is_action' => true,
+		);
+
+		// Create coupon (ACTION).
+		$this->intent_patterns['action_create_coupon'] = array(
+			'keywords'  => array( 'create coupon', 'add coupon', 'new coupon', 'make coupon', 'generate coupon' ),
+			'patterns'  => array(
+				'/(?:create|add|make|generate)\s+(?:a\s+)?(?:new\s+)?coupon\s+(?:code\s+)?["\']?([A-Za-z0-9_-]+)["\']?/i',
+				'/(?:create|add)\s+(?:a\s+)?(?:new\s+)?coupon/i',
+				'/(?:new\s+)?coupon\s+(?:for|with)\s+(\d+)\s*%?\s+(?:off|discount)/i',
+			),
+			'ability'   => 'afw/coupons/create',
+			'extractor' => 'extract_create_coupon_params',
+			'priority'  => 15,
+			'is_action' => true,
+		);
+
+		// Update coupon (ACTION).
+		$this->intent_patterns['action_update_coupon'] = array(
+			'keywords'  => array( 'update coupon', 'change coupon', 'edit coupon', 'modify coupon' ),
+			'patterns'  => array(
+				'/(?:update|change|edit|modify)\s+coupon\s+(?:code\s+)?["\']?([A-Za-z0-9_-]+)["\']?/i',
+				'/(?:set|change)\s+coupon\s+["\']?([A-Za-z0-9_-]+)["\']?\s+(?:to|discount)\s+(\d+)/i',
+			),
+			'ability'   => 'afw/coupons/update',
+			'extractor' => 'extract_update_coupon_params',
+			'priority'  => 15,
+			'is_action' => true,
+		);
+
+		// Delete coupon (ACTION).
+		$this->intent_patterns['action_delete_coupon'] = array(
+			'keywords'  => array( 'delete coupon', 'remove coupon', 'trash coupon' ),
+			'patterns'  => array(
+				'/(?:delete|remove|trash)\s+coupon\s+(?:code\s+)?["\']?([A-Za-z0-9_-]+)["\']?/i',
+				'/(?:delete|remove)\s+coupon\s*#?\s*(\d+)/i',
+			),
+			'ability'   => 'afw/coupons/delete',
+			'extractor' => 'extract_delete_coupon_params',
+			'priority'  => 15,
+			'is_action' => true,
+		);
+
+		// Add order note (ACTION).
+		$this->intent_patterns['action_add_order_note'] = array(
+			'keywords'  => array( 'add note', 'order note', 'note to order' ),
+			'patterns'  => array(
+				'/add\s+(?:a\s+)?note\s+to\s+order\s*#?\s*(\d+)/i',
+				'/order\s*#?\s*(\d+)\s+note[:]\s*["\']?(.+?)["\']?$/i',
+			),
+			'ability'   => 'afw/orders/add-note',
+			'extractor' => 'extract_order_note_params',
+			'priority'  => 15,
+			'is_action' => true,
+		);
+
 		/**
 		 * Filter intent patterns to allow customization.
 		 *
@@ -1032,9 +1146,12 @@ class Intent_Classifier {
 	/**
 	 * Execute abilities based on classified intents.
 	 *
+	 * Actions that require confirmation will return a confirmation request
+	 * instead of executing immediately.
+	 *
 	 * @since 1.0.0
 	 * @param string $message The user message.
-	 * @return array Array of ability results.
+	 * @return array Array of ability results or action confirmation requests.
 	 */
 	public function execute_matching_abilities( $message ) {
 		$matches  = $this->classify( $message );
@@ -1053,15 +1170,240 @@ class Intent_Classifier {
 				continue;
 			}
 
-			$result = $registry->execute( $match['ability'], $match['params'] );
+			// Check if this is an ACTION that requires confirmation.
+			$is_action = isset( $this->intent_patterns[ $match['intent'] ]['is_action'] )
+						&& true === $this->intent_patterns[ $match['intent'] ]['is_action'];
 
-			if ( ! is_wp_error( $result ) ) {
-				$results[ $match['intent'] ] = $result;
-				$executed[]                  = $match['ability'];
+			if ( $is_action ) {
+				// Return confirmation request instead of executing.
+				$confirmation = $this->build_action_confirmation( $match, $registry );
+				if ( ! empty( $confirmation ) ) {
+					$results['pending_action'] = $confirmation;
+					// Only one action at a time.
+					break;
+				}
+			} else {
+				// Regular read-only ability - execute immediately.
+				$result = $registry->execute( $match['ability'], $match['params'] );
+
+				if ( ! is_wp_error( $result ) ) {
+					$results[ $match['intent'] ] = $result;
+					$executed[]                  = $match['ability'];
+				}
 			}
 		}
 
 		return $results;
+	}
+
+	/**
+	 * Build an action confirmation request.
+	 *
+	 * @since 1.0.0
+	 * @param array                        $matched_intent The matched intent.
+	 * @param Abilities\Abilities_Registry $registry       The abilities registry.
+	 * @return array Confirmation data or empty if action is invalid.
+	 */
+	private function build_action_confirmation( $matched_intent, $registry ) {
+		$ability_info = $registry->get_ability( $matched_intent['ability'] );
+
+		if ( empty( $ability_info ) ) {
+			return array();
+		}
+
+		// Build human-readable preview of what will happen.
+		$preview = $this->build_action_preview( $matched_intent, $ability_info );
+
+		// Generate unique confirmation token.
+		$confirmation_token = wp_generate_password( 32, false );
+
+		// Store pending action in transient (expires in 5 minutes).
+		$pending_action = array(
+			'ability'   => $matched_intent['ability'],
+			'params'    => $matched_intent['params'],
+			'preview'   => $preview,
+			'timestamp' => time(),
+		);
+
+		set_transient(
+			'assistify_pending_action_' . $confirmation_token,
+			$pending_action,
+			5 * MINUTE_IN_SECONDS
+		);
+
+		return array(
+			'requires_confirmation' => true,
+			'action_name'           => $ability_info['name'] ?? $matched_intent['ability'],
+			'action_description'    => $ability_info['description'] ?? '',
+			'preview'               => $preview,
+			'confirmation_token'    => $confirmation_token,
+			'is_destructive'        => $this->is_destructive_action( $matched_intent['ability'] ),
+		);
+	}
+
+	/**
+	 * Build a human-readable preview of what an action will do.
+	 *
+	 * @since 1.0.0
+	 * @param array $matched_intent The matched intent.
+	 * @param array $ability_info   The ability information.
+	 * @return string Human-readable preview.
+	 */
+	private function build_action_preview( $matched_intent, $ability_info ) {
+		$params = $matched_intent['params'];
+
+		switch ( $matched_intent['ability'] ) {
+			case 'afw/orders/update-status':
+				$order_id = $params['order_id'] ?? '?';
+				$status   = $params['status'] ?? '?';
+				return sprintf(
+					/* translators: %1$s: order ID, %2$s: new status */
+					__( 'Change Order #%1$s status to "%2$s"', 'assistify-for-woocommerce' ),
+					$order_id,
+					ucfirst( $status )
+				);
+
+			case 'afw/orders/refund':
+				$order_id = $params['order_id'] ?? '?';
+				$amount   = isset( $params['amount'] ) ? wc_price( $params['amount'] ) : __( 'full amount', 'assistify-for-woocommerce' );
+				return sprintf(
+					/* translators: %1$s: amount, %2$s: order ID */
+					__( 'Refund %1$s from Order #%2$s', 'assistify-for-woocommerce' ),
+					$amount,
+					$order_id
+				);
+
+			case 'afw/products/create':
+				$name = $params['name'] ?? __( 'New Product', 'assistify-for-woocommerce' );
+				return sprintf(
+					/* translators: %s: product name */
+					__( 'Create new product: "%s"', 'assistify-for-woocommerce' ),
+					$name
+				);
+
+			case 'afw/products/update':
+				$product_id = $params['product_id'] ?? '?';
+				$changes    = array();
+				if ( isset( $params['price'] ) ) {
+					/* translators: %s: formatted price */
+					$changes[] = sprintf( __( 'price to %s', 'assistify-for-woocommerce' ), wc_price( $params['price'] ) );
+				}
+				if ( isset( $params['stock_quantity'] ) ) {
+					/* translators: %d: stock quantity */
+					$changes[] = sprintf( __( 'stock to %d', 'assistify-for-woocommerce' ), $params['stock_quantity'] );
+				}
+				if ( isset( $params['status'] ) ) {
+					/* translators: %s: product status */
+					$changes[] = sprintf( __( 'status to %s', 'assistify-for-woocommerce' ), $params['status'] );
+				}
+				$changes_str = ! empty( $changes ) ? implode( ', ', $changes ) : __( 'details', 'assistify-for-woocommerce' );
+				return sprintf(
+					/* translators: %1$s: product ID, %2$s: changes list */
+					__( 'Update Product #%1$s: %2$s', 'assistify-for-woocommerce' ),
+					$product_id,
+					$changes_str
+				);
+
+			case 'afw/coupons/create':
+				$code   = $params['code'] ?? __( 'NEW_COUPON', 'assistify-for-woocommerce' );
+				$amount = $params['amount'] ?? '?';
+				$type   = $params['discount_type'] ?? 'percent';
+				$suffix = 'percent' === $type ? '%' : '';
+				return sprintf(
+					/* translators: %1$s: coupon code, %2$s: discount amount, %3$s: suffix (% or empty) */
+					__( 'Create coupon "%1$s" for %2$s%3$s off', 'assistify-for-woocommerce' ),
+					$code,
+					$amount,
+					$suffix
+				);
+
+			case 'afw/coupons/update':
+				$coupon_id = $params['coupon_id'] ?? '?';
+				return sprintf(
+					/* translators: %s: coupon ID */
+					__( 'Update Coupon #%s', 'assistify-for-woocommerce' ),
+					$coupon_id
+				);
+
+			case 'afw/coupons/delete':
+				$coupon_id = $params['coupon_id'] ?? '?';
+				$force     = ! empty( $params['force'] );
+				$action    = $force ? __( 'Permanently delete', 'assistify-for-woocommerce' ) : __( 'Move to trash', 'assistify-for-woocommerce' );
+				return sprintf(
+					/* translators: %1$s: action (delete/trash), %2$s: coupon ID */
+					__( '%1$s Coupon #%2$s', 'assistify-for-woocommerce' ),
+					$action,
+					$coupon_id
+				);
+
+			case 'afw/orders/add-note':
+				$order_id = $params['order_id'] ?? '?';
+				return sprintf(
+					/* translators: %s: order ID */
+					__( 'Add note to Order #%s', 'assistify-for-woocommerce' ),
+					$order_id
+				);
+
+			default:
+				return $ability_info['description'] ?? __( 'Perform action', 'assistify-for-woocommerce' );
+		}
+	}
+
+	/**
+	 * Check if an action is destructive (requires double confirmation).
+	 *
+	 * @since 1.0.0
+	 * @param string $ability The ability name.
+	 * @return bool True if destructive.
+	 */
+	private function is_destructive_action( $ability ) {
+		$destructive_actions = array(
+			'afw/orders/refund',
+			'afw/coupons/delete',
+			'afw/products/delete',
+		);
+
+		return in_array( $ability, $destructive_actions, true );
+	}
+
+	/**
+	 * Execute a confirmed action.
+	 *
+	 * @since 1.0.0
+	 * @param string $confirmation_token The confirmation token.
+	 * @return array|\WP_Error Result or error.
+	 */
+	public function execute_confirmed_action( $confirmation_token ) {
+		$transient_key  = 'assistify_pending_action_' . $confirmation_token;
+		$pending_action = get_transient( $transient_key );
+
+		if ( empty( $pending_action ) ) {
+			return new \WP_Error(
+				'action_expired',
+				__( 'This action has expired. Please try again.', 'assistify-for-woocommerce' )
+			);
+		}
+
+		// Delete the transient to prevent re-use.
+		delete_transient( $transient_key );
+
+		// Execute the action.
+		$registry = Abilities\Abilities_Registry::instance();
+		$result   = $registry->execute( $pending_action['ability'], $pending_action['params'] );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		return array(
+			'success' => true,
+			'message' => sprintf(
+				/* translators: %s: action preview */
+				__( 'Action completed: %s', 'assistify-for-woocommerce' ),
+				$pending_action['preview']
+			),
+			'result'  => $result,
+		);
 	}
 
 	/**
@@ -2106,6 +2448,267 @@ class Intent_Classifier {
 				$params['page_name'] = $name;
 			}
 		}
+
+		return $params;
+	}
+
+	// ==========================================================================
+	// ACTION Parameter Extractors
+	// ==========================================================================
+
+	/**
+	 * Extract order status update parameters.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_order_status_update_params( $message ) {
+		$params = array();
+
+		// Extract order ID.
+		if ( preg_match( '/order\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['order_id'] = (int) $matches[1];
+		}
+
+		// Extract status.
+		$status_map = array(
+			'processing' => 'processing',
+			'completed'  => 'completed',
+			'complete'   => 'completed',
+			'shipped'    => 'completed',
+			'on-hold'    => 'on-hold',
+			'on hold'    => 'on-hold',
+			'hold'       => 'on-hold',
+			'pending'    => 'pending',
+			'cancelled'  => 'cancelled',
+			'cancel'     => 'cancelled',
+			'refunded'   => 'refunded',
+			'failed'     => 'failed',
+		);
+
+		$message_lower = strtolower( $message );
+		foreach ( $status_map as $keyword => $status ) {
+			if ( strpos( $message_lower, $keyword ) !== false ) {
+				$params['status'] = $status;
+				break;
+			}
+		}
+
+		// Also check regex patterns.
+		if ( empty( $params['status'] ) && preg_match( '/(?:to|as|status)\s+(\w+)/i', $message, $matches ) ) {
+			$status_key = strtolower( $matches[1] );
+			if ( isset( $status_map[ $status_key ] ) ) {
+				$params['status'] = $status_map[ $status_key ];
+			}
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract refund parameters.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_refund_params( $message ) {
+		$params = array();
+
+		// Extract order ID.
+		if ( preg_match( '/order\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['order_id'] = (int) $matches[1];
+		}
+
+		// Extract amount if specified.
+		if ( preg_match( '/\$?(\d+(?:\.\d{2})?)\s*(?:refund|from|for)/i', $message, $matches ) ) {
+			$params['amount'] = (float) $matches[1];
+		} elseif ( preg_match( '/refund\s*\$?(\d+(?:\.\d{2})?)/i', $message, $matches ) ) {
+			$params['amount'] = (float) $matches[1];
+		}
+
+		// Check for reason.
+		if ( preg_match( '/(?:reason|because|for)[:\s]+["\']?([^"\']+)["\']?$/i', $message, $matches ) ) {
+			$params['reason'] = trim( $matches[1] );
+		}
+
+		// Default restock to true.
+		$params['restock_items'] = true;
+
+		return $params;
+	}
+
+	/**
+	 * Extract create product parameters.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_create_product_params( $message ) {
+		$params = array();
+
+		// Extract product name.
+		if ( preg_match( '/(?:called|named|:)\s*["\']?([^"\']+?)["\']?(?:\s+(?:at|for|with|price)|$)/i', $message, $matches ) ) {
+			$params['name'] = trim( $matches[1] );
+		} elseif ( preg_match( '/product\s+["\']([^"\']+)["\']/', $message, $matches ) ) {
+			$params['name'] = trim( $matches[1] );
+		}
+
+		// Extract price if mentioned.
+		if ( preg_match( '/(?:price|at|for)\s*\$?(\d+(?:\.\d{2})?)/i', $message, $matches ) ) {
+			$params['regular_price'] = (string) $matches[1];
+		}
+
+		// Default to draft status for safety.
+		$params['status'] = 'draft';
+
+		return $params;
+	}
+
+	/**
+	 * Extract update product parameters.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_update_product_params( $message ) {
+		$params = array();
+
+		// Extract product ID.
+		if ( preg_match( '/product\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['product_id'] = (int) $matches[1];
+		}
+
+		// Extract new price.
+		if ( preg_match( '/(?:price|to)\s*\$?(\d+(?:\.\d{2})?)/i', $message, $matches ) ) {
+			$params['price'] = (string) $matches[1];
+		}
+
+		// Extract stock quantity.
+		if ( preg_match( '/stock\s*(?:to|=|:)?\s*(\d+)/i', $message, $matches ) ) {
+			$params['stock_quantity'] = (int) $matches[1];
+		}
+
+		// Extract status.
+		if ( preg_match( '/(?:status|set)\s+(?:to\s+)?(publish|draft|pending|private)/i', $message, $matches ) ) {
+			$params['status'] = strtolower( $matches[1] );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract create coupon parameters.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_create_coupon_params( $message ) {
+		$params = array();
+
+		// Extract coupon code.
+		if ( preg_match( '/(?:code|coupon)\s*[:\s]*["\']?([A-Za-z0-9_-]+)["\']?/i', $message, $matches ) ) {
+			$params['code'] = strtoupper( trim( $matches[1] ) );
+		}
+
+		// Extract discount amount and type.
+		if ( preg_match( '/(\d+(?:\.\d{2})?)\s*%/i', $message, $matches ) ) {
+			$params['amount']        = (string) $matches[1];
+			$params['discount_type'] = 'percent';
+		} elseif ( preg_match( '/\$(\d+(?:\.\d{2})?)/i', $message, $matches ) ) {
+			$params['amount']        = (string) $matches[1];
+			$params['discount_type'] = 'fixed_cart';
+		} elseif ( preg_match( '/(\d+(?:\.\d{2})?)\s*(?:off|discount)/i', $message, $matches ) ) {
+			$params['amount']        = (string) $matches[1];
+			$params['discount_type'] = 'percent'; // Default to percent if no symbol.
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract update coupon parameters.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_update_coupon_params( $message ) {
+		$params = array();
+
+		// Try to get coupon by ID.
+		if ( preg_match( '/coupon\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['coupon_id'] = (int) $matches[1];
+		}
+
+		// Try to get coupon by code.
+		if ( preg_match( '/coupon\s+(?:code\s+)?["\']?([A-Za-z0-9_-]+)["\']?/i', $message, $matches ) ) {
+			// Look up coupon ID by code.
+			$code   = strtoupper( trim( $matches[1] ) );
+			$coupon = new \WC_Coupon( $code );
+			if ( $coupon->get_id() > 0 ) {
+				$params['coupon_id'] = $coupon->get_id();
+			}
+		}
+
+		// Extract new amount.
+		if ( preg_match( '/(?:to|=|:)\s*(\d+(?:\.\d{2})?)\s*%?/i', $message, $matches ) ) {
+			$params['amount'] = (string) $matches[1];
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract delete coupon parameters.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_delete_coupon_params( $message ) {
+		$params = array();
+
+		// Try to get coupon by ID.
+		if ( preg_match( '/coupon\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['coupon_id'] = (int) $matches[1];
+		}
+
+		// Try to get coupon by code.
+		if ( preg_match( '/coupon\s+(?:code\s+)?["\']?([A-Za-z0-9_-]+)["\']?/i', $message, $matches ) ) {
+			$code   = strtoupper( trim( $matches[1] ) );
+			$coupon = new \WC_Coupon( $code );
+			if ( $coupon->get_id() > 0 ) {
+				$params['coupon_id'] = $coupon->get_id();
+			}
+		}
+
+		// Check for permanent deletion.
+		$params['force'] = (bool) preg_match( '/(?:permanent|forever|complete)/i', $message );
+
+		return $params;
+	}
+
+	/**
+	 * Extract order note parameters.
+	 *
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_order_note_params( $message ) {
+		$params = array();
+
+		// Extract order ID.
+		if ( preg_match( '/order\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['order_id'] = (int) $matches[1];
+		}
+
+		// Extract note content.
+		if ( preg_match( '/note[:\s]+["\']?(.+?)["\']?$/i', $message, $matches ) ) {
+			$params['note'] = trim( $matches[1] );
+		} elseif ( preg_match( '/["\']([^"\']+)["\']/', $message, $matches ) ) {
+			$params['note'] = trim( $matches[1] );
+		}
+
+		// Check if customer should be notified.
+		$params['is_customer_note'] = (bool) preg_match( '/(?:notify|email|customer)/i', $message );
 
 		return $params;
 	}

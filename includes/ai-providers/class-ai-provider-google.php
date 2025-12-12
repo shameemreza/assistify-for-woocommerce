@@ -300,6 +300,216 @@ class AI_Provider_Google extends AI_Provider_Abstract {
 	}
 
 	/**
+	 * Chat with function/tool calling support.
+	 *
+	 * Google Gemini uses function_declarations format.
+	 *
+	 * @since 1.0.0
+	 * @param array $messages Conversation messages.
+	 * @param array $tools    Available tools in OpenAI format (will be converted).
+	 * @param array $options  Optional parameters.
+	 * @return array|\WP_Error Response with tool_calls or content.
+	 */
+	public function chat_with_tools( array $messages, array $tools, array $options = array() ) {
+		if ( ! $this->is_configured() ) {
+			return new \WP_Error(
+				'assistify_not_configured',
+				__( 'Google Gemini provider is not configured. Please add your API key.', 'assistify-for-woocommerce' )
+			);
+		}
+
+		$options = $this->merge_options( $options );
+		$model   = isset( $options['model'] ) ? $options['model'] : $this->model;
+
+		// Convert OpenAI tool format to Gemini function_declarations.
+		$function_declarations = array();
+		foreach ( $tools as $tool ) {
+			if ( isset( $tool['function'] ) ) {
+				$func_decl = array(
+					'name'        => $tool['function']['name'],
+					'description' => $tool['function']['description'],
+				);
+
+				// Convert parameters (handle empty properties object).
+				if ( isset( $tool['function']['parameters'] ) ) {
+					$params = $tool['function']['parameters'];
+					// Convert stdClass to empty object for Gemini.
+					if ( isset( $params['properties'] ) && $params['properties'] instanceof \stdClass ) {
+						$params['properties'] = new \stdClass();
+					}
+					$func_decl['parameters'] = $params;
+				}
+
+				$function_declarations[] = $func_decl;
+			}
+		}
+
+		// Convert messages to Gemini format.
+		$contents           = array();
+		$system_instruction = '';
+
+		foreach ( $messages as $message ) {
+			if ( 'system' === $message['role'] ) {
+				$system_instruction = $message['content'];
+				continue;
+			}
+
+			if ( 'tool' === $message['role'] ) {
+				// Convert tool result to Gemini format.
+				$contents[] = array(
+					'role'  => 'function',
+					'parts' => array(
+						array(
+							'functionResponse' => array(
+								'name'     => $message['tool_call_id'] ?? 'function_result',
+								'response' => array(
+									'result' => $message['content'],
+								),
+							),
+						),
+					),
+				);
+				continue;
+			}
+
+			if ( 'assistant' === $message['role'] && isset( $message['tool_calls'] ) ) {
+				// Convert assistant tool calls to Gemini format.
+				$parts = array();
+				foreach ( $message['tool_calls'] as $tool_call ) {
+					$parts[] = array(
+						'functionCall' => array(
+							'name' => $tool_call['function']['name'],
+							'args' => json_decode( $tool_call['function']['arguments'], true ) ?? array(),
+						),
+					);
+				}
+				$contents[] = array(
+					'role'  => 'model',
+					'parts' => $parts,
+				);
+				continue;
+			}
+
+			$role       = 'user' === $message['role'] ? 'user' : 'model';
+			$contents[] = array(
+				'role'  => $role,
+				'parts' => array(
+					array( 'text' => $message['content'] ),
+				),
+			);
+		}
+
+		// Add system prompt from options.
+		if ( isset( $options['system_prompt'] ) && ! empty( $options['system_prompt'] ) ) {
+			$system_instruction = $options['system_prompt'];
+		}
+
+		$body = array(
+			'contents'         => $contents,
+			'tools'            => array(
+				array(
+					'function_declarations' => $function_declarations,
+				),
+			),
+			'generationConfig' => array(
+				'maxOutputTokens' => (int) $options['max_tokens'],
+				'temperature'     => (float) $options['temperature'],
+			),
+		);
+
+		if ( ! empty( $system_instruction ) ) {
+			$body['systemInstruction'] = array(
+				'parts' => array(
+					array( 'text' => $system_instruction ),
+				),
+			);
+		}
+
+		\Assistify_For_WooCommerce\Assistify_Logger::debug(
+			'Google Gemini chat_with_tools request',
+			'google',
+			array(
+				'model'       => $model,
+				'tools_count' => count( $function_declarations ),
+			)
+		);
+
+		$endpoint = "models/{$model}:generateContent";
+		$response = $this->make_request( $endpoint, $body );
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		// Log usage.
+		$usage = array(
+			'prompt_tokens'     => $response['usageMetadata']['promptTokenCount'] ?? 0,
+			'completion_tokens' => $response['usageMetadata']['candidatesTokenCount'] ?? 0,
+			'total_tokens'      => $response['usageMetadata']['totalTokenCount'] ?? 0,
+		);
+		$this->log_usage( $usage );
+
+		// Check for function calls in response.
+		$parts = $response['candidates'][0]['content']['parts'] ?? array();
+
+		$tool_calls   = array();
+		$text_content = '';
+
+		foreach ( $parts as $part ) {
+			if ( isset( $part['functionCall'] ) ) {
+				// Convert to OpenAI format for compatibility.
+				$tool_calls[] = array(
+					'id'       => 'call_' . wp_generate_password( 24, false ),
+					'type'     => 'function',
+					'function' => array(
+						'name'      => $part['functionCall']['name'],
+						'arguments' => wp_json_encode( $part['functionCall']['args'] ?? array() ),
+					),
+				);
+			} elseif ( isset( $part['text'] ) ) {
+				$text_content .= $part['text'];
+			}
+		}
+
+		if ( ! empty( $tool_calls ) ) {
+			// Build assistant message in OpenAI format for conversation continuity.
+			$assistant_message = array(
+				'role'       => 'assistant',
+				'content'    => $text_content,
+				'tool_calls' => $tool_calls,
+			);
+
+			return array(
+				'type'       => 'tool_calls',
+				'tool_calls' => $tool_calls,
+				'message'    => $assistant_message,
+				'usage'      => $usage,
+				'model'      => $model,
+			);
+		}
+
+		return array(
+			'type'    => 'content',
+			'content' => $text_content,
+			'usage'   => $usage,
+			'model'   => $model,
+		);
+	}
+
+	/**
+	 * Continue a conversation after tool execution.
+	 *
+	 * @since 1.0.0
+	 * @param array $messages Updated messages including tool results.
+	 * @param array $tools    Available tools.
+	 * @param array $options  Optional parameters.
+	 * @return array|\WP_Error Response.
+	 */
+	public function continue_with_tool_results( array $messages, array $tools, array $options = array() ) {
+		return $this->chat_with_tools( $messages, $tools, $options );
+	}
+
+	/**
 	 * Get the maximum context length for a model.
 	 *
 	 * @since 1.0.0

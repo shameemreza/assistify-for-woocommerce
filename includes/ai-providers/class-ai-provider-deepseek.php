@@ -177,6 +177,101 @@ class AI_Provider_DeepSeek extends AI_Provider_Abstract {
 	}
 
 	/**
+	 * Chat with function/tool calling support.
+	 *
+	 * DeepSeek supports OpenAI-compatible function calling.
+	 *
+	 * @since 1.0.0
+	 * @param array $messages Conversation messages.
+	 * @param array $tools    Available tools in OpenAI format.
+	 * @param array $options  Optional parameters.
+	 * @return array|\WP_Error Response with tool_calls or content.
+	 */
+	public function chat_with_tools( array $messages, array $tools, array $options = array() ) {
+		if ( ! $this->is_configured() ) {
+			return new \WP_Error(
+				'assistify_not_configured',
+				__( 'DeepSeek provider is not configured. Please add your API key.', 'assistify-for-woocommerce' )
+			);
+		}
+
+		$options = $this->merge_options( $options );
+
+		$body = array(
+			'model'       => isset( $options['model'] ) ? $options['model'] : $this->model,
+			'messages'    => $messages,
+			'tools'       => $tools,
+			'tool_choice' => 'auto',
+			'temperature' => (float) $options['temperature'],
+			'max_tokens'  => (int) $options['max_tokens'],
+		);
+
+		// Add system prompt.
+		if ( isset( $options['system_prompt'] ) ) {
+			array_unshift(
+				$body['messages'],
+				array(
+					'role'    => 'system',
+					'content' => $options['system_prompt'],
+				)
+			);
+		}
+
+		\Assistify_For_WooCommerce\Assistify_Logger::debug(
+			'DeepSeek chat_with_tools request',
+			'deepseek',
+			array(
+				'model'       => $body['model'],
+				'tools_count' => count( $tools ),
+			)
+		);
+
+		$response = $this->make_request( 'chat/completions', $body );
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		// Log usage.
+		if ( isset( $response['usage'] ) ) {
+			$this->log_usage( $response['usage'] );
+		}
+
+		// Check for tool calls.
+		$message = $response['choices'][0]['message'] ?? array();
+
+		if ( isset( $message['tool_calls'] ) && ! empty( $message['tool_calls'] ) ) {
+			return array(
+				'type'       => 'tool_calls',
+				'tool_calls' => $message['tool_calls'],
+				'message'    => $message,
+				'usage'      => isset( $response['usage'] ) ? $response['usage'] : array(),
+				'model'      => isset( $response['model'] ) ? $response['model'] : $body['model'],
+			);
+		}
+
+		return array(
+			'type'    => 'content',
+			'content' => $message['content'] ?? '',
+			'usage'   => isset( $response['usage'] ) ? $response['usage'] : array(),
+			'model'   => isset( $response['model'] ) ? $response['model'] : $body['model'],
+		);
+	}
+
+	/**
+	 * Continue a conversation after tool execution.
+	 *
+	 * @since 1.0.0
+	 * @param array $messages Updated messages including tool results.
+	 * @param array $tools    Available tools.
+	 * @param array $options  Optional parameters.
+	 * @return array|\WP_Error Response.
+	 */
+	public function continue_with_tool_results( array $messages, array $tools, array $options = array() ) {
+		return $this->chat_with_tools( $messages, $tools, $options );
+	}
+
+	/**
 	 * Get the maximum context length for a model.
 	 *
 	 * @since 1.0.0

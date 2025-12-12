@@ -586,8 +586,13 @@
           this.hideTypingIndicator();
 
           if (response.success) {
-            // Stream the response for better UX
-            this.streamResponse(response.data.message);
+            // Check if this is an action requiring confirmation
+            if (response.data.pending_action) {
+              this.showActionConfirmation(response.data);
+            } else {
+              // Stream the response for better UX
+              this.streamResponse(response.data.message);
+            }
           } else {
             this.$input.prop("disabled", false);
             this.$send.prop("disabled", false);
@@ -742,6 +747,168 @@
 
       // Refresh sessions list to include this session
       this.loadSessions();
+    },
+
+    /**
+     * Show action confirmation UI with confirm/cancel buttons.
+     *
+     * @param {Object} data - Response data with pending action info.
+     */
+    showActionConfirmation: function (data) {
+      const time = new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+
+      const messageId =
+        "msg_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5);
+
+      // Parse the message for display
+      const parsedContent = MarkdownParser.parse(data.message);
+
+      // Build confirmation buttons
+      const destructiveClass = data.is_destructive
+        ? "assistify-btn-destructive"
+        : "";
+      const confirmText = data.is_destructive ? "Yes, proceed" : "Confirm";
+
+      const buttonsHtml = `
+        <div class="assistify-action-buttons" data-token="${data.confirmation_token}">
+          <button type="button" class="assistify-btn assistify-btn-confirm ${destructiveClass}">
+            ${confirmText}
+          </button>
+          <button type="button" class="assistify-btn assistify-btn-cancel">
+            Cancel
+          </button>
+        </div>
+      `;
+
+      // Create message container
+      const messageHtml = `
+        <div class="assistify-message assistify-message-assistant assistify-message-action" id="${messageId}">
+          <div class="assistify-message-content">${parsedContent}</div>
+          ${buttonsHtml}
+          <div class="assistify-message-footer">
+            <span class="assistify-message-time">${time}</span>
+          </div>
+        </div>
+      `;
+
+      this.$messages.append(messageHtml);
+      this.scrollToBottom();
+
+      // Store the token for later use
+      this.pendingActionToken = data.confirmation_token;
+
+      // Re-enable input
+      this.$input.prop("disabled", false);
+      this.$send.prop("disabled", false);
+
+      // Bind button events
+      const self = this;
+      const $message = $("#" + messageId);
+
+      $message.find(".assistify-btn-confirm").on("click", function () {
+        self.confirmAction(data.confirmation_token, $message);
+      });
+
+      $message.find(".assistify-btn-cancel").on("click", function () {
+        self.cancelAction(data.confirmation_token, $message);
+      });
+    },
+
+    /**
+     * Confirm and execute a pending action.
+     *
+     * @param {string} token - Confirmation token.
+     * @param {jQuery} $message - The message element.
+     */
+    confirmAction: function (token, $message) {
+      // Disable buttons while processing
+      $message
+        .find(".assistify-action-buttons")
+        .html('<span class="assistify-action-processing">Processing...</span>');
+
+      const self = this;
+
+      $.ajax({
+        url: assistifyAdmin.ajaxUrl,
+        type: "POST",
+        data: {
+          action: "assistify_confirm_action",
+          nonce: assistifyAdmin.nonce,
+          confirmation_token: token,
+          session_id: this.sessionId,
+        },
+        success: function (response) {
+          // Remove the action buttons
+          $message
+            .find(".assistify-action-buttons, .assistify-action-processing")
+            .remove();
+          $message.removeClass("assistify-message-action");
+
+          if (response.success) {
+            // Add success message
+            self.addMessage("assistant", response.data.message, true, false);
+          } else {
+            self.addMessage(
+              "assistant",
+              "❌ " + (response.data.message || "Action failed."),
+              false,
+              true
+            );
+          }
+        },
+        error: function () {
+          $message
+            .find(".assistify-action-buttons, .assistify-action-processing")
+            .remove();
+          self.addMessage(
+            "assistant",
+            "❌ Failed to execute action. Please try again.",
+            false,
+            true
+          );
+        },
+      });
+    },
+
+    /**
+     * Cancel a pending action.
+     *
+     * @param {string} token - Confirmation token.
+     * @param {jQuery} $message - The message element.
+     */
+    cancelAction: function (token, $message) {
+      const self = this;
+
+      $.ajax({
+        url: assistifyAdmin.ajaxUrl,
+        type: "POST",
+        data: {
+          action: "assistify_cancel_action",
+          nonce: assistifyAdmin.nonce,
+          confirmation_token: token,
+          session_id: this.sessionId,
+        },
+        success: function (response) {
+          // Remove the action buttons
+          $message.find(".assistify-action-buttons").remove();
+          $message.removeClass("assistify-message-action");
+
+          // Update message to show cancelled
+          $message
+            .find(".assistify-message-content")
+            .html(
+              MarkdownParser.parse(
+                "~~Action cancelled.~~ Is there anything else I can help you with?"
+              )
+            );
+        },
+        error: function () {
+          $message.find(".assistify-action-buttons").remove();
+        },
+      });
     },
 
     /**

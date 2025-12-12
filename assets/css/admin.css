@@ -653,6 +653,83 @@
 }
 
 /* ==========================================================================
+   Action Confirmation Buttons
+   ========================================================================== */
+.assistify-message-action {
+  border-left: 3px solid var(--assistify-warning);
+}
+
+.assistify-action-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--assistify-border-light);
+}
+
+.assistify-btn {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: var(--assistify-radius-sm);
+  cursor: pointer;
+  transition: all var(--assistify-transition);
+  border: none;
+}
+
+.assistify-btn-confirm {
+  background: var(--assistify-primary);
+  color: var(--assistify-white);
+}
+
+.assistify-btn-confirm:hover {
+  background: var(--assistify-primary-dark);
+}
+
+.assistify-btn-confirm.assistify-btn-destructive {
+  background: var(--assistify-error);
+}
+
+.assistify-btn-confirm.assistify-btn-destructive:hover {
+  background: #c82828;
+}
+
+.assistify-btn-cancel {
+  background: var(--assistify-bg);
+  color: var(--assistify-text);
+  border: 1px solid var(--assistify-border);
+}
+
+.assistify-btn-cancel:hover {
+  background: var(--assistify-border-light);
+}
+
+.assistify-action-processing {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--assistify-text-light);
+  font-size: 13px;
+}
+
+.assistify-action-processing::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--assistify-border);
+  border-top-color: var(--assistify-primary);
+  border-radius: 50%;
+  animation: assistify-spin 1s linear infinite;
+}
+
+@keyframes assistify-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
    Markdown Styles in Messages
    ========================================================================== */
 .assistify-message-content p {

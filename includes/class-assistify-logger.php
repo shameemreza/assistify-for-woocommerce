@@ -50,9 +50,8 @@ class Assistify_Logger {
 	 * @return bool True if logging is enabled.
 	 */
 	public static function is_enabled() {
-		if ( null === self::$enabled ) {
-			self::$enabled = 'yes' === get_option( 'assistify_debug_logging', 'no' );
-		}
+		// Always re-check the option to avoid cache issues.
+		self::$enabled = 'yes' === get_option( 'assistify_debug_logging', 'no' );
 		return self::$enabled;
 	}
 

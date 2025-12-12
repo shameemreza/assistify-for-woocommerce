@@ -895,6 +895,8 @@ class Assistify_Admin {
 	/**
 	 * Handle AJAX request for admin chat.
 	 *
+	 * Uses agentic approach with function/tool calling for actions.
+	 *
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -942,34 +944,15 @@ class Assistify_Admin {
 		// Get session ID from client.
 		$session_id = isset( $_POST['session_id'] ) ? sanitize_text_field( wp_unslash( $_POST['session_id'] ) ) : '';
 
-		// Detect intent and fetch relevant store data.
-		$store_data = $this->fetch_relevant_store_data( $message );
-
-		// Build system prompt with store context and data.
-		$system_prompt = $this->get_admin_system_prompt_with_data( $store_data );
-
-		// Get chat history from session (optional - for context).
-		$history = $this->get_chat_history_from_session( $session_id );
-
-		// Build messages array.
-		$messages   = $history;
-		$messages[] = array(
-			'role'    => 'user',
-			'content' => $message,
+		// Log admin chat request if debug enabled.
+		\Assistify_For_WooCommerce\Assistify_Logger::debug(
+			'Admin chat request (agentic)',
+			'admin-chat',
+			array( 'message' => substr( $message, 0, 100 ) )
 		);
 
-		// Get selected model.
-		$model = get_option( 'assistify_ai_model', '' );
-
-		// Send to AI provider.
-		$response = $provider->chat(
-			$messages,
-			array(
-				'system_prompt' => $system_prompt,
-				'model'         => ! empty( $model ) ? $model : null,
-				'max_tokens'    => 2048,
-			)
-		);
+		// Use agentic approach with function calling.
+		$response = $this->process_agentic_chat( $provider, $message, $session_id );
 
 		if ( is_wp_error( $response ) ) {
 			wp_send_json_error(
@@ -988,34 +971,610 @@ class Assistify_Admin {
 
 		wp_send_json_success(
 			array(
-				'message' => $response['content'],
-				'usage'   => isset( $response['usage'] ) ? $response['usage'] : array(),
+				'message'       => $response['content'],
+				'usage'         => isset( $response['usage'] ) ? $response['usage'] : array(),
+				'actions_taken' => isset( $response['actions_taken'] ) ? $response['actions_taken'] : array(),
 			)
+		);
+	}
+
+	/**
+	 * Process chat using agentic approach with function calling.
+	 *
+	 * This method implements a tool-calling loop where:
+	 * 1. Send message to AI with available tools
+	 * 2. If AI calls tools, execute them and send results back
+	 * 3. Continue until AI returns a final text response
+	 *
+	 * @since 1.0.0
+	 * @param object $provider   The AI provider instance.
+	 * @param string $message    User message.
+	 * @param string $session_id Session ID for context.
+	 * @return array|\WP_Error Response with content or error.
+	 */
+	private function process_agentic_chat( $provider, $message, $session_id ) {
+		// Get admin tools.
+		$admin_tools = Admin_Tools::instance();
+		$tools       = $admin_tools->get_tools_for_openai();
+
+		// Build system prompt for agentic mode.
+		$system_prompt = $this->get_agentic_system_prompt();
+
+		// Get chat history.
+		$history = $this->get_chat_history_from_session( $session_id );
+
+		// Build initial messages.
+		$messages   = $history;
+		$messages[] = array(
+			'role'    => 'user',
+			'content' => $message,
+		);
+
+		// Get selected model.
+		$model = get_option( 'assistify_ai_model', '' );
+
+		$options = array(
+			'system_prompt' => $system_prompt,
+			'model'         => ! empty( $model ) ? $model : null,
+			'max_tokens'    => 2048,
+			'temperature'   => 0.7,
+		);
+
+		// Track actions taken.
+		$actions_taken  = array();
+		$max_iterations = 5; // Prevent infinite loops.
+		$iteration      = 0;
+
+		// Check if provider supports tool calling.
+		if ( ! method_exists( $provider, 'chat_with_tools' ) ) {
+			// Fallback to regular chat for providers without tool support.
+			\Assistify_For_WooCommerce\Assistify_Logger::debug(
+				'Provider does not support tools, using regular chat',
+				'admin-chat'
+			);
+
+			$response = $provider->chat( $messages, $options );
+
+			if ( is_wp_error( $response ) ) {
+				return $response;
+			}
+
+			return array(
+				'content'       => $response['content'],
+				'usage'         => $response['usage'] ?? array(),
+				'actions_taken' => array(),
+			);
+		}
+
+		// Tool calling loop.
+		while ( $iteration < $max_iterations ) {
+			++$iteration;
+
+			\Assistify_For_WooCommerce\Assistify_Logger::debug(
+				sprintf( 'Agentic chat iteration %d', $iteration ),
+				'admin-chat'
+			);
+
+			// Call AI with tools.
+			$response = $provider->chat_with_tools( $messages, $tools, $options );
+
+			if ( is_wp_error( $response ) ) {
+				return $response;
+			}
+
+			// Check response type.
+			if ( 'content' === $response['type'] ) {
+				// AI returned a final text response.
+				return array(
+					'content'       => $response['content'],
+					'usage'         => $response['usage'] ?? array(),
+					'actions_taken' => $actions_taken,
+				);
+			}
+
+			if ( 'tool_calls' === $response['type'] && ! empty( $response['tool_calls'] ) ) {
+				// AI wants to call tools.
+				// Add assistant message with tool calls to conversation.
+				$messages[] = $response['message'];
+
+				// Process each tool call.
+				foreach ( $response['tool_calls'] as $tool_call ) {
+					$tool_name = $tool_call['function']['name'] ?? '';
+					$tool_args = array();
+
+					if ( isset( $tool_call['function']['arguments'] ) ) {
+						$tool_args = json_decode( $tool_call['function']['arguments'], true );
+						if ( ! is_array( $tool_args ) ) {
+							$tool_args = array();
+						}
+					}
+
+					\Assistify_For_WooCommerce\Assistify_Logger::info(
+						sprintf( 'Executing tool: %s', $tool_name ),
+						'admin-chat',
+						array( 'args' => $tool_args )
+					);
+
+					// Execute the tool.
+					$tool_result = $admin_tools->execute( $tool_name, $tool_args );
+
+					if ( is_wp_error( $tool_result ) ) {
+						$tool_result = array(
+							'success' => false,
+							'error'   => $tool_result->get_error_message(),
+						);
+					}
+
+					// Track action taken.
+					$actions_taken[] = array(
+						'tool'   => $tool_name,
+						'args'   => $tool_args,
+						'result' => $tool_result,
+					);
+
+					// Add tool result to conversation.
+					$messages[] = array(
+						'role'         => 'tool',
+						'tool_call_id' => $tool_call['id'],
+						'content'      => wp_json_encode( $tool_result ),
+					);
+				}
+
+				// Continue the loop to get AI's response to tool results.
+				continue;
+			}
+
+			// Unexpected response type - break loop.
+			break;
+		}
+
+		// If we exit the loop without a content response, return error.
+		return new \WP_Error(
+			'assistify_agent_error',
+			__( 'Agent could not complete the request. Please try again.', 'assistify-for-woocommerce' )
+		);
+	}
+
+	/**
+	 * Get the system prompt for agentic mode.
+	 *
+	 * @since 1.0.0
+	 * @return string System prompt.
+	 */
+	private function get_agentic_system_prompt() {
+		$store_name      = get_bloginfo( 'name' );
+		$currency_symbol = function_exists( 'get_woocommerce_currency_symbol' )
+			? html_entity_decode( get_woocommerce_currency_symbol() )
+			: '$';
+		$admin_name      = wp_get_current_user()->display_name;
+
+		$prompt = sprintf(
+			'You are Ayana, an AI assistant for the "%s" WooCommerce store. You help %s manage their store.
+
+## YOUR CAPABILITIES
+You have access to tools that let you ACTUALLY perform actions, not just describe them:
+
+### Actions You Can Take:
+- **Create coupons** with any discount type, amount, and conditions
+- **Enable/disable payment gateways** (PayPal, Stripe, Cash on Delivery, etc.)
+- **Update WooCommerce settings** (guest checkout, coupons, reviews, etc.)
+- **Update order status** and add order notes
+- **Update product stock** and prices
+
+### Information You Can Retrieve:
+- Order details and recent orders
+- Product details and search products
+- Coupon list and details
+- Payment gateway status
+- Store settings
+- Sales summaries
+
+## HOW TO RESPOND
+
+1. **For action requests**: USE THE TOOLS to actually perform the action, then confirm what you did.
+   Example: "Create a 10%% coupon" → Call create_coupon tool → "Done! Created coupon SAVE10 for 10%% off."
+
+2. **For information requests**: USE THE TOOLS to get real data, then present it clearly.
+   Example: "How many payment methods?" → Call get_payment_gateways → "You have 3 enabled: PayPal, Stripe, COD."
+
+3. **Be concise**: After performing an action, confirm briefly. No lengthy explanations.
+
+4. **Use markdown**: Bold for emphasis, backticks for codes like `COUPON123`.
+
+## IMPORTANT RULES
+- NEVER say "I cannot do that" if you have a tool for it - USE THE TOOL
+- NEVER give step-by-step instructions for things you can do directly
+- ALWAYS use tools to get real data instead of making assumptions
+- After tool execution, report what actually happened based on the result
+
+## STORE INFO
+- Currency: %s
+- Admin: %s',
+			$store_name,
+			$admin_name,
+			$currency_symbol,
+			$admin_name
+		);
+
+		return $prompt;
+	}
+
+	/**
+	 * Build the confirmation message for a pending action.
+	 *
+	 * @since 1.0.0
+	 * @param array $pending Pending action data.
+	 * @return string Formatted confirmation message.
+	 */
+	private function build_action_confirmation_message( $pending ) {
+		$message  = "## Action Confirmation Required\n\n";
+		$message .= "I understand you want to perform the following action:\n\n";
+		$message .= '**' . esc_html( $pending['preview'] ) . "**\n\n";
+
+		if ( ! empty( $pending['is_destructive'] ) ) {
+			$message .= "**Warning: This is a destructive action and cannot be undone.**\n\n";
+		}
+
+		$message .= "Please confirm or cancel this action using the buttons below.\n";
+
+		return $message;
+	}
+
+	/**
+	 * Handle action confirmation AJAX request.
+	 *
+	 * @since 1.0.0
+	 */
+	public function handle_confirm_action() {
+		// Verify nonce.
+		if ( ! check_ajax_referer( 'assistify_admin_nonce', 'nonce', false ) ) {
+			wp_send_json_error(
+				array( 'message' => __( 'Security check failed. Please refresh the page.', 'assistify-for-woocommerce' ) )
+			);
+		}
+
+		// Check capabilities.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_send_json_error(
+				array( 'message' => __( 'You do not have permission to perform this action.', 'assistify-for-woocommerce' ) )
+			);
+		}
+
+		// Get confirmation token.
+		$token = isset( $_POST['confirmation_token'] ) ? sanitize_text_field( wp_unslash( $_POST['confirmation_token'] ) ) : '';
+
+		if ( empty( $token ) ) {
+			wp_send_json_error(
+				array( 'message' => __( 'Invalid confirmation token.', 'assistify-for-woocommerce' ) )
+			);
+		}
+
+		// Execute the confirmed action.
+		$classifier = new \Assistify_For_WooCommerce\Intent_Classifier();
+		$result     = $classifier->execute_confirmed_action( $token );
+
+		if ( is_wp_error( $result ) ) {
+			wp_send_json_error(
+				array( 'message' => $result->get_error_message() )
+			);
+		}
+
+		// Get session ID for logging.
+		$session_id = isset( $_POST['session_id'] ) ? sanitize_text_field( wp_unslash( $_POST['session_id'] ) ) : '';
+
+		// Build success message.
+		$success_message  = "## Action Completed\n\n";
+		$success_message .= esc_html( $result['message'] ) . "\n\n";
+
+		if ( ! empty( $result['result'] ) && is_array( $result['result'] ) ) {
+			// Add relevant details from the result.
+			if ( isset( $result['result']['id'] ) ) {
+				$success_message .= '**ID:** ' . $result['result']['id'] . "\n";
+			}
+			if ( isset( $result['result']['status'] ) ) {
+				$success_message .= '**Status:** ' . ucfirst( $result['result']['status'] ) . "\n";
+			}
+			if ( isset( $result['result']['edit_url'] ) ) {
+				$success_message .= "\n[View/Edit →](" . esc_url( $result['result']['edit_url'] ) . ")\n";
+			}
+		}
+
+		// Save to database session.
+		if ( ! empty( $session_id ) ) {
+			$this->save_message_to_db( $session_id, 'assistant', $success_message );
+		}
+
+		wp_send_json_success(
+			array(
+				'message' => $success_message,
+				'result'  => $result['result'],
+			)
+		);
+	}
+
+	/**
+	 * Handle action cancellation AJAX request.
+	 *
+	 * @since 1.0.0
+	 */
+	public function handle_cancel_action() {
+		// Verify nonce.
+		if ( ! check_ajax_referer( 'assistify_admin_nonce', 'nonce', false ) ) {
+			wp_send_json_error(
+				array( 'message' => __( 'Security check failed.', 'assistify-for-woocommerce' ) )
+			);
+		}
+
+		// Get confirmation token and delete the pending action.
+		$token = isset( $_POST['confirmation_token'] ) ? sanitize_text_field( wp_unslash( $_POST['confirmation_token'] ) ) : '';
+
+		if ( ! empty( $token ) ) {
+			delete_transient( 'assistify_pending_action_' . $token );
+		}
+
+		// Get session ID for logging.
+		$session_id = isset( $_POST['session_id'] ) ? sanitize_text_field( wp_unslash( $_POST['session_id'] ) ) : '';
+
+		$cancel_message = __( 'Action cancelled. Is there anything else I can help you with?', 'assistify-for-woocommerce' );
+
+		// Save to database session.
+		if ( ! empty( $session_id ) ) {
+			$this->save_message_to_db( $session_id, 'assistant', $cancel_message );
+		}
+
+		wp_send_json_success(
+			array( 'message' => $cancel_message )
 		);
 	}
 
 	/**
 	 * Fetch relevant store data based on user message intent.
 	 *
-	 * Uses the Intent Classifier to intelligently route queries to abilities.
+	 * Uses a hybrid approach:
+	 * 1. Always provide baseline context (recent activity, summary)
+	 * 2. Use Intent Classifier for specific queries
+	 *
+	 * This ensures the AI always has context (like customer chat) while
+	 * still allowing specific data fetching for detailed queries.
 	 *
 	 * @since 1.0.0
 	 * @param string $message User message.
 	 * @return array Store data relevant to the query.
 	 */
+	/**
+	 * Fetch relevant store data for admin chat.
+	 *
+	 * Simplified approach: Always inject comprehensive context like customer chat.
+	 * No intent classification - let AI respond naturally based on provided data.
+	 *
+	 * @since 1.0.0
+	 * @param string $message The user message.
+	 * @return array Store data context.
+	 */
 	private function fetch_relevant_store_data( $message ) {
-		// Use the Intent Classifier for smart ability routing.
-		$classifier = new \Assistify_For_WooCommerce\Intent_Classifier();
+		$results = array();
 
-		// Execute matching abilities and get results.
-		$results = $classifier->execute_matching_abilities( $message );
+		// Get comprehensive baseline context.
+		$baseline = $this->get_baseline_admin_context();
+		if ( ! empty( $baseline ) ) {
+			$results['store_overview'] = $baseline;
+		}
 
-		// If no matches, return empty array (general conversation).
-		if ( empty( $results ) ) {
-			return array();
+		// For specific queries, add additional context based on simple keyword detection.
+		$additional = $this->get_additional_context_for_query( $message );
+		if ( ! empty( $additional ) ) {
+			$results = array_merge( $results, $additional );
 		}
 
 		return $results;
+	}
+
+	/**
+	 * Get additional context based on user query keywords.
+	 *
+	 * Simple keyword detection (not intent classification) to enrich context
+	 * when user asks about specific things.
+	 *
+	 * @since 1.0.0
+	 * @param string $message The user message.
+	 * @return array Additional context data.
+	 */
+	private function get_additional_context_for_query( $message ) {
+		$abilities = \Assistify_For_WooCommerce\Abilities\Abilities_Registry::instance();
+		$results   = array();
+		$message   = strtolower( $message );
+
+		// If asking about specific order number.
+		if ( preg_match( '/order\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$order_data = $abilities->execute( 'afw/orders/get', array( 'order_id' => (int) $matches[1] ) );
+			if ( ! is_wp_error( $order_data ) ) {
+				$results['specific_order'] = $order_data;
+			}
+		}
+
+		// If asking about products.
+		if ( preg_match( '/product|item|inventory|stock/i', $message ) ) {
+			// Get recent products.
+			$products = $abilities->execute( 'afw/products/list', array( 'limit' => 10 ) );
+			if ( ! is_wp_error( $products ) ) {
+				$results['products'] = $products;
+			}
+
+			// Check for low stock.
+			if ( preg_match( '/low\s*stock|out\s*of\s*stock/i', $message ) ) {
+				$low_stock = $abilities->execute( 'afw/products/low-stock', array( 'threshold' => 5 ) );
+				if ( ! is_wp_error( $low_stock ) ) {
+					$results['low_stock_products'] = $low_stock;
+				}
+			}
+		}
+
+		// If asking about coupons.
+		if ( preg_match( '/coupon|discount|promo/i', $message ) ) {
+			$coupons = $abilities->execute( 'afw/coupons/list', array( 'limit' => 10 ) );
+			if ( ! is_wp_error( $coupons ) ) {
+				$results['coupons'] = $coupons;
+			}
+		}
+
+		// If asking about customers.
+		if ( preg_match( '/customer|buyer|client/i', $message ) ) {
+			$customers = $abilities->execute( 'afw/customers/recent', array( 'limit' => 10 ) );
+			if ( ! is_wp_error( $customers ) ) {
+				$results['recent_customers'] = $customers;
+			}
+		}
+
+		// If asking about sales/revenue/analytics.
+		if ( preg_match( '/sales|revenue|earning|analytics|report/i', $message ) ) {
+			$sales = $abilities->execute( 'afw/analytics/sales', array( 'days' => 30 ) );
+			if ( ! is_wp_error( $sales ) ) {
+				$results['sales_analytics'] = $sales;
+			}
+		}
+
+		// If asking about settings, payment, or shipping.
+		if ( preg_match( '/setting|payment|gateway|checkout|shipping|tax/i', $message ) ) {
+			// Full store settings.
+			$store_settings = $abilities->execute( 'afw/store/settings', array() );
+			if ( ! is_wp_error( $store_settings ) ) {
+				$results['store_settings'] = $store_settings;
+			}
+
+			// Full payment gateways list.
+			$gateways = $abilities->execute( 'afw/store/payment-gateways', array() );
+			if ( ! is_wp_error( $gateways ) ) {
+				$results['all_payment_gateways'] = $gateways;
+			}
+
+			// Shipping zones details.
+			if ( preg_match( '/shipping/i', $message ) ) {
+				$shipping = $abilities->execute( 'afw/store/shipping-zones', array() );
+				if ( ! is_wp_error( $shipping ) ) {
+					$results['shipping_zones'] = $shipping;
+				}
+			}
+
+			// Tax settings.
+			if ( preg_match( '/tax/i', $message ) ) {
+				$tax_rates = $abilities->execute( 'afw/store/tax-rates', array() );
+				if ( ! is_wp_error( $tax_rates ) ) {
+					$results['tax_rates'] = $tax_rates;
+				}
+			}
+		}
+
+		return $results;
+	}
+
+	/**
+	 * Get baseline admin context that is ALWAYS injected.
+	 *
+	 * Similar to how customer chat always has order/cart context,
+	 * admin chat always has recent activity context.
+	 *
+	 * @since 1.0.0
+	 * @return array Baseline context data.
+	 */
+	private function get_baseline_admin_context() {
+		$abilities = \Assistify_For_WooCommerce\Abilities\Abilities_Registry::instance();
+		$context   = array();
+
+		// Today's summary (orders, revenue, customers).
+		$summary = $abilities->execute( 'afw/analytics/daily-summary', array( 'days' => 1 ) );
+		if ( ! is_wp_error( $summary ) && ! empty( $summary ) ) {
+			$context['today'] = array(
+				'orders'        => $summary['total_orders'] ?? 0,
+				'revenue'       => $summary['total_sales_formatted'] ?? '$0.00',
+				'new_customers' => $summary['new_customers'] ?? 0,
+			);
+		}
+
+		// Recent orders (last 5).
+		$recent_orders_result = $abilities->execute( 'afw/orders/list', array( 'limit' => 5 ) );
+		if ( ! is_wp_error( $recent_orders_result ) && ! empty( $recent_orders_result['orders'] ) ) {
+			$context['recent_orders'] = array();
+			foreach ( $recent_orders_result['orders'] as $order ) {
+				$order_id                   = $order['id'] ?? 0;
+				$context['recent_orders'][] = array(
+					'id'       => $order_id,
+					'number'   => $order['number'] ?? $order_id,
+					'status'   => $order['status_label'] ?? $order['status'] ?? 'unknown',
+					'total'    => $order['total'] ?? 'N/A',
+					'customer' => $order['customer'] ?? 'Guest',
+					'date'     => $order['date_created'] ?? '',
+					'edit_url' => $order_id ? admin_url( 'post.php?post=' . $order_id . '&action=edit' ) : '',
+				);
+			}
+		}
+
+		// Pending actions count.
+		$processing = $abilities->execute( 'afw/orders/processing-count', array() );
+		if ( ! is_wp_error( $processing ) && ! empty( $processing ) ) {
+			$context['pending_actions'] = array(
+				'to_ship'          => $processing['processing'] ?? 0,
+				'awaiting_payment' => $processing['pending'] ?? 0,
+				'on_hold'          => $processing['on-hold'] ?? 0,
+			);
+		}
+
+		// Low stock products (top 5).
+		$low_stock = $abilities->execute(
+			'afw/products/low-stock',
+			array(
+				'threshold' => 5,
+				'limit'     => 5,
+			)
+		);
+		if ( ! is_wp_error( $low_stock ) && ! empty( $low_stock ) ) {
+			$context['low_stock_alert'] = count( $low_stock ) . ' products low on stock';
+		}
+
+		// Active coupons count.
+		$coupons = $abilities->execute(
+			'afw/coupons/list',
+			array(
+				'status' => 'publish',
+				'limit'  => 100,
+			)
+		);
+		if ( ! is_wp_error( $coupons ) ) {
+			$context['active_coupons'] = count( $coupons );
+		}
+
+		// Store currency.
+		$context['currency'] = html_entity_decode( get_woocommerce_currency_symbol(), ENT_QUOTES, 'UTF-8' );
+
+		// Payment gateways (enabled ones).
+		$payment_gateways = $abilities->execute( 'afw/store/payment-gateways', array() );
+		if ( ! is_wp_error( $payment_gateways ) && ! empty( $payment_gateways ) ) {
+			$enabled_gateways      = array();
+			$enabled_gateways_list = array();
+			foreach ( $payment_gateways as $gateway ) {
+				if ( ! empty( $gateway['enabled'] ) ) {
+					$enabled_gateways_list[] = array(
+						'id'    => $gateway['id'] ?? '',
+						'title' => $gateway['title'] ?? $gateway['id'],
+					);
+				}
+			}
+			$context['payment_gateways'] = array(
+				'enabled_count' => count( $enabled_gateways_list ),
+				'enabled_list'  => $enabled_gateways_list,
+				'settings_url'  => admin_url( 'admin.php?page=wc-settings&tab=checkout' ),
+			);
+		}
+
+		// Shipping zones count.
+		$shipping_zones = $abilities->execute( 'afw/store/shipping-zones', array() );
+		if ( ! is_wp_error( $shipping_zones ) && ! empty( $shipping_zones ) ) {
+			$context['shipping'] = array(
+				'zones_count'  => count( $shipping_zones ),
+				'settings_url' => admin_url( 'admin.php?page=wc-settings&tab=shipping' ),
+			);
+		}
+
+		return $context;
 	}
 
 	/**
@@ -1045,39 +1604,101 @@ class Assistify_Admin {
 	private function get_admin_system_prompt_with_data( $store_data ) {
 		$base_prompt = $this->get_admin_system_prompt();
 
-		if ( empty( $store_data ) ) {
-			// No data was fetched - add a clear warning to prevent hallucination.
-			$no_data_warning  = "\n\n## ⚠️ NO LIVE DATA AVAILABLE FOR THIS QUERY\n\n";
-			$no_data_warning .= "I could not retrieve specific store data for this question.\n\n";
-			$no_data_warning .= "**YOU MUST:**\n";
-			$no_data_warning .= "1. DO NOT make up or invent any data (orders, coupons, customers, numbers)\n";
-			$no_data_warning .= "2. Tell the user: \"I don't have specific data for this query. Please check the WooCommerce dashboard directly or try asking in a different way.\"\n";
-			$no_data_warning .= "3. Suggest alternative questions you CAN help with, like:\n";
-			$no_data_warning .= "   - \"Show me recent orders\"\n";
-			$no_data_warning .= "   - \"List active coupons\"\n";
-			$no_data_warning .= "   - \"What are my top selling products?\"\n";
-			$no_data_warning .= "   - \"Show low stock products\"\n\n";
-			$no_data_warning .= "**NEVER FABRICATE DATA. If you don't have it, say so clearly.**";
-
-			return $base_prompt . $no_data_warning;
-		}
-
 		// Decode any HTML entities in the data for clean AI processing.
 		$store_data = $this->decode_html_entities_recursive( $store_data );
 
-		$data_context = "\n\n## ✅ LIVE STORE DATA (ONLY use this data to answer):\n";
+		$data_context = "\n\n## 📊 LIVE STORE DATA\n\n";
 
-		foreach ( $store_data as $key => $value ) {
-			$data_context .= "\n### " . ucwords( str_replace( '_', ' ', $key ) ) . ":\n";
-			$data_context .= "```json\n" . wp_json_encode( $value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) . "\n```\n";
+		// Check if we have baseline overview.
+		$has_overview = isset( $store_data['store_overview'] ) && ! empty( $store_data['store_overview'] );
+
+		if ( $has_overview ) {
+			$overview      = $store_data['store_overview'];
+			$data_context .= "### 🏪 Store Overview (Real-time):\n";
+
+			if ( isset( $overview['today'] ) ) {
+				$data_context .= "**Today's Activity:**\n";
+				$data_context .= '- Orders: ' . ( $overview['today']['orders'] ?? 0 ) . "\n";
+				$data_context .= '- Revenue: ' . ( $overview['today']['revenue'] ?? '$0.00' ) . "\n";
+				$data_context .= '- New Customers: ' . ( $overview['today']['new_customers'] ?? 0 ) . "\n\n";
+			}
+
+			if ( isset( $overview['pending_actions'] ) ) {
+				$data_context .= "**Pending Actions:**\n";
+				$data_context .= '- Orders to Ship: ' . ( $overview['pending_actions']['to_ship'] ?? 0 ) . "\n";
+				$data_context .= '- Awaiting Payment: ' . ( $overview['pending_actions']['awaiting_payment'] ?? 0 ) . "\n";
+				$data_context .= '- On Hold: ' . ( $overview['pending_actions']['on_hold'] ?? 0 ) . "\n\n";
+			}
+
+			if ( isset( $overview['low_stock_alert'] ) ) {
+				$data_context .= '**Low Stock Alert:** ' . $overview['low_stock_alert'] . "\n\n";
+			}
+
+			if ( isset( $overview['recent_orders'] ) && ! empty( $overview['recent_orders'] ) ) {
+				$data_context .= "**Recent Orders:**\n";
+				foreach ( $overview['recent_orders'] as $order ) {
+					$data_context .= sprintf(
+						"- [Order #%s](%s): %s - %s (%s)\n",
+						$order['number'],
+						$order['edit_url'] ?? '#',
+						$order['status'],
+						$order['total'],
+						$order['customer']
+					);
+				}
+				$data_context .= "\n";
+			}
+
+			$data_context .= '**Active Coupons:** ' . ( $overview['active_coupons'] ?? 0 ) . "\n";
+			$data_context .= '**Currency:** ' . ( $overview['currency'] ?? '$' ) . "\n";
+
+			// Payment gateways.
+			if ( isset( $overview['payment_gateways'] ) && ! empty( $overview['payment_gateways']['enabled_list'] ) ) {
+				$gateway_names = array_map(
+					function ( $gw ) {
+						return $gw['title'];
+					},
+					$overview['payment_gateways']['enabled_list']
+				);
+				$data_context .= '**Payment Methods Enabled:** ' . count( $gateway_names ) . ' - ' . implode( ', ', $gateway_names ) . "\n";
+				$data_context .= '[Payment Settings](' . ( $overview['payment_gateways']['settings_url'] ?? '#' ) . ")\n";
+			}
+
+			// Shipping zones.
+			if ( isset( $overview['shipping'] ) ) {
+				$data_context .= '**Shipping Zones:** ' . ( $overview['shipping']['zones_count'] ?? 0 ) . ' configured\n';
+				$data_context .= '[Shipping Settings](' . ( $overview['shipping']['settings_url'] ?? '#' ) . ")\n";
+			}
+
+			$data_context .= "\n";
+
+			// Remove overview from store_data to avoid duplication.
+			unset( $store_data['store_overview'] );
 		}
 
-		$data_context .= "\n**CRITICAL RULES:**\n";
-		$data_context .= "1. ONLY use the data shown above - do NOT invent or fabricate any information\n";
-		$data_context .= "2. If the user asks for something not in the data above, say \"This specific information was not retrieved. Please try asking differently or check the WooCommerce dashboard.\"\n";
-		$data_context .= "3. Format responses nicely with markdown (bold, lists, etc.)\n";
-		$data_context .= "4. Use the currency symbol from store info for prices\n";
-		$data_context .= '5. If there are no items in a list, say "No [items] found" - do NOT make up items';
+		// Add any additional specific data (from intent matching).
+		if ( ! empty( $store_data ) ) {
+			$data_context .= "### 📋 Specific Query Results:\n";
+			foreach ( $store_data as $key => $value ) {
+				$data_context .= "\n#### " . ucwords( str_replace( '_', ' ', $key ) ) . ":\n";
+				$data_context .= "```json\n" . wp_json_encode( $value, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE ) . "\n```\n";
+			}
+		}
+
+		$data_context .= "\n---\n\n";
+		$data_context .= "## ABSOLUTE RULES - MUST FOLLOW:\n\n";
+		$data_context .= "1. **USE ONLY DATA ABOVE** - Never invent data. If not shown, say \"I don't see that in my current data.\"\n";
+		$data_context .= "2. **NEVER SAY \"LOG IN\"** - Admin is ALREADY logged in. Just give the link.\n";
+		$data_context .= "3. **NO NUMBERED STEPS** - Don't write \"Step 1, Step 2...\" Just give link + one sentence.\n";
+		$data_context .= "4. **BE BRIEF** - Maximum 2-3 sentences for action requests.\n\n";
+		$data_context .= "## Quick Links for Actions:\n";
+		$data_context .= '- Checkout/Guest Settings: ' . admin_url( 'admin.php?page=wc-settings&tab=checkout' ) . "\n";
+		$data_context .= '- Payment Methods: ' . admin_url( 'admin.php?page=wc-settings&tab=checkout' ) . "\n";
+		$data_context .= '- Shipping Settings: ' . admin_url( 'admin.php?page=wc-settings&tab=shipping' ) . "\n";
+		$data_context .= '- General Settings: ' . admin_url( 'admin.php?page=wc-settings' ) . "\n";
+		$data_context .= '- Create Coupon: ' . admin_url( 'post-new.php?post_type=shop_coupon' ) . "\n";
+		$data_context .= '- All Orders: ' . admin_url( 'edit.php?post_type=shop_order' ) . "\n";
+		$data_context .= '- Add Product: ' . admin_url( 'post-new.php?post_type=product' ) . "\n";
 
 		return $base_prompt . $data_context;
 	}
@@ -1120,44 +1741,45 @@ class Assistify_Admin {
 			__(
 				'You are Ayana, the AI assistant for "%2$s" WooCommerce store. You help %1$s manage their business.
 
+## CRITICAL CONTEXT - READ FIRST:
+- %1$s is ALREADY LOGGED IN to WordPress Admin Dashboard
+- They are chatting with you FROM INSIDE the admin panel
+- NEVER say "Log in to WordPress" or "Go to your dashboard" - they are already there!
+- Just provide direct links and brief instructions
+
 ## Your Capabilities:
-- **Orders**: View details, list by status, search orders, track fulfillment
-- **Products**: Check inventory, low stock alerts, product details, sales performance
-- **Customers**: Look up info, purchase history, lifetime value
-- **Analytics**: Sales reports, revenue, top products, geographic sales, AOV
-- **Coupons**: List coupons, check usage stats, view available codes
-- **Content Generation**: Generate product titles, descriptions, short descriptions, meta descriptions, tags
+- **View Data**: Orders, products, customers, analytics, coupons, settings - use the LIVE DATA provided
+- **Provide Links**: Give direct admin URLs for any action
+- **Generate Content**: Product titles, descriptions, meta descriptions, tags
 
 ## Store Info:
 - Currency: %3$s (%4$s)
 - Platform: WooCommerce
 
-## Response Guidelines:
-1. **Always use the LIVE STORE DATA provided** - never say you cannot access data if data is given
-2. Format with **markdown**: bold for emphasis, bullet points for lists
-3. For product/order lists, use clean bullet points or simple formatting - avoid complex tables
-4. Be concise and direct
-5. Include key numbers and metrics
-6. Use currency symbol (%4$s) for prices
+## Response Style - BE CONCISE:
+1. Use the LIVE STORE DATA provided - never say "I cannot access" if data is given
+2. For actions: Give ONE direct link + brief instruction (1-2 sentences max)
+3. NEVER list numbered steps like "Step 1, Step 2..." - just give the link
+4. Format: **bold** for emphasis, bullets for lists
+5. Keep responses SHORT and actionable
 
-## CRITICAL - Coupon Display Rules:
-When showing coupons, ALWAYS display the coupon code prominently like this:
-- **Code**: `COUPONCODE` (in backticks for easy copying)
-- Then show discount amount, expiry, usage stats
+## Example Good Response:
+User: "Disable guest checkout"
+Good: "Go to [Checkout Settings](link) and uncheck "Allow guest checkout", then save."
+Bad: "Step 1: Log in... Step 2: Navigate to... Step 3: Click on..."
+
+## Coupon Display:
+- **Code**: `COUPONCODE` (in backticks)
+- Show discount, expiry, usage
 
 ## Content Generation:
-When generating content for products:
 - **Product Title**: SEO-optimized, under 60 characters
-- **Product Description**: Full HTML with features and benefits, customizable length (short/medium/long)
-- **Short Description**: 2-3 compelling sentences
-- **Meta Description**: Exactly 150-160 characters for SEO (Yoast/RankMath)
-- **Product Tags**: Comma-separated relevant keywords
-
-Options: tone (professional/casual/luxury/playful), keywords, apply (true to save)
-Example: "Generate a professional description for product 123 with keywords: organic, handmade"
+- **Description**: HTML with features/benefits
+- **Short Description**: 2-3 sentences
+- **Meta Description**: 150-160 characters for SEO
 
 ## Tone:
-Friendly, helpful, and efficient. Keep responses focused.',
+Direct, helpful, efficient. No fluff.',
 				'assistify-for-woocommerce'
 			),
 			$admin_name,

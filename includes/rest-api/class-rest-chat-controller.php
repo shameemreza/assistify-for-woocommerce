@@ -547,7 +547,7 @@ When answering questions:
 			$context_parts[] = '';
 		}
 
-		if ( empty( $context_parts ) ) {
+		if ( 0 === count( $context_parts ) ) {
 			return 'Unable to retrieve store data. The user should check the WooCommerce dashboard directly.';
 		}
 
