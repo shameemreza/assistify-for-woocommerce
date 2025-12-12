@@ -1076,6 +1076,15 @@ class Intent_Classifier {
 			'is_action' => true,
 		);
 
+		// Register subscription intents (WooCommerce Subscriptions integration).
+		$this->register_subscription_intents();
+
+		// Register booking intents (WooCommerce Bookings integration).
+		$this->register_booking_intents();
+
+		// Register membership intents (WooCommerce Memberships integration).
+		$this->register_membership_intents();
+
 		/**
 		 * Filter intent patterns to allow customization.
 		 *
@@ -1083,6 +1092,617 @@ class Intent_Classifier {
 		 * @param array $intent_patterns The intent patterns array.
 		 */
 		$this->intent_patterns = apply_filters( 'assistify_intent_patterns', $this->intent_patterns );
+	}
+
+	/**
+	 * Register subscription intent patterns.
+	 *
+	 * Patterns for WooCommerce Subscriptions integration.
+	 * These only work when WC Subscriptions is installed and active.
+	 *
+	 * @since 1.1.0
+	 * @return void
+	 */
+	private function register_subscription_intents() {
+		// Check if WC Subscriptions is active.
+		if ( ! class_exists( 'WC_Subscriptions' ) && ! function_exists( 'wcs_get_subscription' ) ) {
+			return;
+		}
+
+		// Admin: List subscriptions.
+		$this->intent_patterns['subscription_list'] = array(
+			'keywords'  => array( 'subscriptions', 'list subscription', 'show subscription', 'all subscription', 'active subscription' ),
+			'patterns'  => array(
+				'/(?:list|show|all|active|cancelled|on-hold|expired)\s*subscriptions?/i',
+				'/subscriptions?\s+(?:do\s+)?(?:i|we)\s+have/i',
+				'/how\s+many\s+subscriptions?/i',
+				'/(?:what|which)\s+subscriptions?/i',
+			),
+			'ability'   => 'afw/subscriptions/list',
+			'extractor' => 'extract_subscription_list_params',
+			'priority'  => 6,
+		);
+
+		// Admin: Get subscription details.
+		$this->intent_patterns['subscription_get'] = array(
+			'keywords'  => array( 'subscription #', 'subscription id', 'show subscription', 'get subscription' ),
+			'patterns'  => array(
+				'/subscription\s*#?\s*(\d+)/i',
+				'/show\s+subscription\s*#?\s*(\d+)/i',
+				'/get\s+subscription\s*#?\s*(\d+)/i',
+			),
+			'ability'   => 'afw/subscriptions/get',
+			'extractor' => 'extract_subscription_id',
+			'priority'  => 10,
+		);
+
+		// Admin: Search subscriptions.
+		$this->intent_patterns['subscription_search'] = array(
+			'keywords'  => array( 'search subscription', 'find subscription', 'subscription for' ),
+			'patterns'  => array(
+				'/search\s+subscriptions?\s+(?:for\s+)?(.+)/i',
+				'/find\s+subscriptions?\s+(.+)/i',
+				'/subscriptions?\s+for\s+(.+)/i',
+			),
+			'ability'   => 'afw/subscriptions/search',
+			'extractor' => 'extract_subscription_search_params',
+			'priority'  => 8,
+		);
+
+		// Admin: Subscription analytics.
+		$this->intent_patterns['subscription_analytics'] = array(
+			'keywords'  => array( 'mrr', 'monthly recurring', 'subscription analytics', 'churn rate', 'ltv', 'lifetime value', 'subscription revenue' ),
+			'patterns'  => array(
+				'/\b(?:mrr|arr)\b/i',
+				'/monthly\s+recurring\s+revenue/i',
+				'/subscription\s+(?:analytics?|stats?|metrics?|revenue)/i',
+				'/churn\s+(?:rate|percentage)/i',
+				'/(?:customer\s+)?(?:ltv|lifetime\s+value)/i',
+				'/(?:how\s+many\s+)?(?:active\s+)?subscribers?/i',
+			),
+			'ability'   => 'afw/subscriptions/analytics',
+			'extractor' => 'extract_period_params',
+			'priority'  => 9,
+		);
+
+		// Admin: Churn risk.
+		$this->intent_patterns['subscription_churn_risk'] = array(
+			'keywords'  => array( 'churn risk', 'at risk', 'risk of churn', 'likely to cancel' ),
+			'patterns'  => array(
+				'/(?:churn|churning)\s+risk/i',
+				'/(?:at\s+risk|risky)\s+subscriptions?/i',
+				'/subscriptions?\s+(?:at\s+)?risk/i',
+				'/(?:likely|about)\s+to\s+(?:cancel|churn)/i',
+				'/(?:who|which\s+customers?)\s+(?:might|will)\s+(?:cancel|churn)/i',
+			),
+			'ability'   => 'afw/subscriptions/churn-risk',
+			'extractor' => 'extract_basic_limit_params',
+			'priority'  => 9,
+		);
+
+		// Admin: Failed subscription payments.
+		$this->intent_patterns['subscription_failed_payments'] = array(
+			'keywords'  => array( 'failed subscription', 'subscription failed', 'failed renewal', 'renewal failed' ),
+			'patterns'  => array(
+				'/failed\s+subscription\s+(?:payments?|renewals?)/i',
+				'/subscription\s+(?:payment|renewal)\s+(?:failures?|failed)/i',
+				'/(?:renewals?|subscriptions?)\s+(?:that\s+)?failed/i',
+				'/(?:on-hold|on\s+hold)\s+subscriptions?/i',
+			),
+			'ability'   => 'afw/subscriptions/failed-payments',
+			'extractor' => 'extract_basic_limit_params',
+			'priority'  => 9,
+		);
+
+		// Admin: Expiring subscriptions.
+		$this->intent_patterns['subscription_expiring'] = array(
+			'keywords'  => array( 'expiring subscription', 'subscription expiring', 'ending soon' ),
+			'patterns'  => array(
+				'/(?:expiring|ending)\s+subscriptions?/i',
+				'/subscriptions?\s+(?:expiring|ending)\s+(?:soon|this)/i',
+				'/subscriptions?\s+(?:about\s+to|going\s+to)\s+(?:expire|end)/i',
+			),
+			'ability'   => 'afw/subscriptions/expiring-soon',
+			'extractor' => 'extract_subscription_expiring_params',
+			'priority'  => 9,
+		);
+
+		// Customer: My subscriptions.
+		$this->intent_patterns['my_subscriptions'] = array(
+			'keywords'  => array( 'my subscription', 'my membership', 'my plan', 'subscription status' ),
+			'patterns'  => array(
+				'/(?:my|view\s+my)\s+subscriptions?/i',
+				'/(?:what|which)\s+subscriptions?\s+do\s+i\s+have/i',
+				'/(?:my|view\s+my)\s+(?:membership|plan)/i',
+				'/subscription\s+status/i',
+			),
+			'ability'   => 'afw/subscription/my-subscriptions',
+			'extractor' => 'extract_customer_subscription_params',
+			'priority'  => 7,
+			'scope'     => 'customer',
+		);
+
+		// Customer: Next payment.
+		$this->intent_patterns['subscription_next_payment'] = array(
+			'keywords'  => array( 'next payment', 'when charged', 'next bill', 'payment due', 'renewal date' ),
+			'patterns'  => array(
+				'/(?:when\s+is\s+)?(?:my\s+)?next\s+(?:payment|billing|charge|renewal)/i',
+				'/(?:when\s+)?(?:will\s+)?(?:i\s+)?(?:be\s+)?(?:charged|billed)/i',
+				'/(?:payment|renewal)\s+(?:date|due)/i',
+				'/how\s+much\s+(?:is\s+)?(?:my\s+)?next\s+(?:payment|bill)/i',
+			),
+			'ability'   => 'afw/subscription/next-payment',
+			'extractor' => 'extract_customer_subscription_params',
+			'priority'  => 8,
+			'scope'     => 'customer',
+		);
+
+		// Customer: Pause subscription (ACTION).
+		$this->intent_patterns['subscription_pause'] = array(
+			'keywords'  => array( 'pause subscription', 'pause my subscription', 'put on hold', 'suspend subscription' ),
+			'patterns'  => array(
+				'/pause\s+(?:my\s+)?subscription/i',
+				'/(?:put|place)\s+(?:my\s+)?subscription\s+on\s+hold/i',
+				'/(?:suspend|hold)\s+(?:my\s+)?subscription/i',
+				'/(?:i\s+)?want\s+to\s+pause/i',
+			),
+			'ability'   => 'afw/subscription/pause',
+			'extractor' => 'extract_customer_subscription_action_params',
+			'priority'  => 10,
+			'scope'     => 'customer',
+			'is_action' => true,
+		);
+
+		// Customer: Resume subscription (ACTION).
+		$this->intent_patterns['subscription_resume'] = array(
+			'keywords'  => array( 'resume subscription', 'reactivate', 'unpause', 'restart subscription' ),
+			'patterns'  => array(
+				'/(?:resume|reactivate|unpause|restart)\s+(?:my\s+)?subscription/i',
+				'/(?:take|remove)\s+(?:my\s+)?subscription\s+off\s+hold/i',
+				'/(?:i\s+)?want\s+to\s+(?:resume|reactivate)/i',
+			),
+			'ability'   => 'afw/subscription/resume',
+			'extractor' => 'extract_customer_subscription_action_params',
+			'priority'  => 10,
+			'scope'     => 'customer',
+			'is_action' => true,
+		);
+
+		// Customer: Cancel subscription (ACTION).
+		$this->intent_patterns['subscription_cancel'] = array(
+			'keywords'  => array( 'cancel subscription', 'cancel my subscription', 'end subscription', 'stop subscription' ),
+			'patterns'  => array(
+				'/cancel\s+(?:my\s+)?subscription/i',
+				'/(?:end|stop|terminate)\s+(?:my\s+)?subscription/i',
+				'/(?:i\s+)?(?:want|would\s+like)\s+to\s+cancel/i',
+				'/(?:don\'?t|do\s+not)\s+want\s+(?:my\s+)?subscription/i',
+			),
+			'ability'   => 'afw/subscription/cancel',
+			'extractor' => 'extract_customer_subscription_action_params',
+			'priority'  => 10,
+			'scope'     => 'customer',
+			'is_action' => true,
+		);
+
+		// Customer: Update payment method.
+		$this->intent_patterns['subscription_update_payment'] = array(
+			'keywords'  => array( 'update payment', 'change card', 'new card', 'payment method' ),
+			'patterns'  => array(
+				'/(?:update|change)\s+(?:my\s+)?(?:payment|card|credit\s+card)/i',
+				'/(?:new|different)\s+(?:payment|card|credit\s+card)/i',
+				'/(?:my\s+)?(?:payment\s+method|card)\s+(?:expired|declined|changed)/i',
+			),
+			'ability'   => 'afw/subscription/update-payment',
+			'extractor' => 'extract_customer_subscription_params',
+			'priority'  => 8,
+			'scope'     => 'customer',
+		);
+
+		// Customer: Update address.
+		$this->intent_patterns['subscription_update_address'] = array(
+			'keywords'  => array( 'update address', 'change address', 'new address', 'shipping address' ),
+			'patterns'  => array(
+				'/(?:update|change)\s+(?:my\s+)?(?:shipping\s+)?address/i',
+				'/(?:new|different)\s+(?:shipping\s+)?address/i',
+				'/(?:i\s+)?(?:moved|moving)/i',
+				'/send\s+(?:to|my\s+subscription\s+to)\s+(?:a\s+)?(?:new|different)\s+address/i',
+			),
+			'ability'   => 'afw/subscription/update-address',
+			'extractor' => 'extract_customer_subscription_params',
+			'priority'  => 8,
+			'scope'     => 'customer',
+		);
+	}
+
+	/**
+	 * Register booking intent patterns.
+	 *
+	 * Patterns for WooCommerce Bookings integration.
+	 * These only work when WC Bookings is installed and active.
+	 *
+	 * @since 1.1.0
+	 * @return void
+	 */
+	private function register_booking_intents() {
+		// Check if WC Bookings is active.
+		if ( ! class_exists( 'WC_Bookings' ) && ! function_exists( 'get_wc_booking' ) ) {
+			return;
+		}
+
+		// Admin: List bookings.
+		$this->intent_patterns['booking_list'] = array(
+			'keywords'  => array( 'bookings', 'list booking', 'show booking', 'all booking', 'reservations', 'appointments' ),
+			'patterns'  => array(
+				'/(?:list|show|all|confirmed|paid|cancelled|complete)\s*bookings?/i',
+				'/bookings?\s+(?:do\s+)?(?:i|we)\s+have/i',
+				'/how\s+many\s+bookings?/i',
+				'/(?:what|which)\s+bookings?/i',
+				'/(?:list|show|all)\s*(?:reservations?|appointments?)/i',
+			),
+			'ability'   => 'afw/bookings/list',
+			'extractor' => 'extract_booking_list_params',
+			'priority'  => 6,
+		);
+
+		// Admin: Get booking details.
+		$this->intent_patterns['booking_get'] = array(
+			'keywords'  => array( 'booking #', 'booking id', 'show booking', 'get booking', 'reservation #' ),
+			'patterns'  => array(
+				'/booking\s*#?\s*(\d+)/i',
+				'/show\s+booking\s*#?\s*(\d+)/i',
+				'/get\s+booking\s*#?\s*(\d+)/i',
+				'/reservation\s*#?\s*(\d+)/i',
+			),
+			'ability'   => 'afw/bookings/get',
+			'extractor' => 'extract_booking_id',
+			'priority'  => 10,
+		);
+
+		// Admin: Today's bookings.
+		$this->intent_patterns['booking_today'] = array(
+			'keywords'  => array( 'today booking', 'booking today', 'today appointment', 'today schedule', 'today reservation' ),
+			'patterns'  => array(
+				'/(?:today\'?s?|todays)\s*(?:bookings?|appointments?|reservations?|schedule)/i',
+				'/(?:bookings?|appointments?|reservations?)\s+(?:for\s+)?today/i',
+				'/what\s+(?:do\s+)?(?:i|we)\s+have\s+today/i',
+				'/(?:schedule|calendar)\s+(?:for\s+)?today/i',
+			),
+			'ability'   => 'afw/bookings/today',
+			'extractor' => 'extract_booking_today_params',
+			'priority'  => 9,
+		);
+
+		// Admin: Upcoming bookings.
+		$this->intent_patterns['booking_upcoming'] = array(
+			'keywords'  => array( 'upcoming booking', 'next booking', 'future booking', 'upcoming appointment', 'this week booking' ),
+			'patterns'  => array(
+				'/(?:upcoming|next|future|scheduled)\s*(?:bookings?|appointments?|reservations?)/i',
+				'/(?:bookings?|appointments?)\s+(?:this|next)\s+(?:week|month)/i',
+				'/what\s+(?:bookings?|appointments?)\s+(?:are\s+)?(?:coming|next)/i',
+			),
+			'ability'   => 'afw/bookings/upcoming',
+			'extractor' => 'extract_booking_upcoming_params',
+			'priority'  => 8,
+		);
+
+		// Admin: Search bookings.
+		$this->intent_patterns['booking_search'] = array(
+			'keywords'  => array( 'search booking', 'find booking', 'booking for', 'reservation for' ),
+			'patterns'  => array(
+				'/search\s+bookings?\s+(?:for\s+)?(.+)/i',
+				'/find\s+bookings?\s+(.+)/i',
+				'/bookings?\s+for\s+(?:customer\s+)?(.+)/i',
+				'/(?:who\s+)?booked\s+(.+)/i',
+			),
+			'ability'   => 'afw/bookings/search',
+			'extractor' => 'extract_booking_search_params',
+			'priority'  => 8,
+		);
+
+		// Admin: Booking analytics.
+		$this->intent_patterns['booking_analytics'] = array(
+			'keywords'  => array( 'booking analytics', 'booking stats', 'booking revenue', 'booking report', 'popular service' ),
+			'patterns'  => array(
+				'/booking\s+(?:analytics?|stats?|statistics?|metrics?|report)/i',
+				'/(?:how\s+many|total)\s+bookings?\s+(?:this|last)/i',
+				'/booking\s+revenue/i',
+				'/(?:popular|top|best)\s+(?:bookable\s+)?(?:services?|products?)/i',
+				'/cancellation\s+rate/i',
+			),
+			'ability'   => 'afw/bookings/analytics',
+			'extractor' => 'extract_booking_analytics_params',
+			'priority'  => 8,
+		);
+
+		// Admin: Check availability.
+		$this->intent_patterns['booking_availability'] = array(
+			'keywords'  => array( 'availability', 'available slot', 'check availability', 'open slot' ),
+			'patterns'  => array(
+				'/(?:check|what|any)\s*(?:is\s+)?availability/i',
+				'/available\s+(?:slots?|times?|dates?)/i',
+				'/(?:when|what\s+times?)\s+(?:is|are)\s+available/i',
+				'/(?:can\s+)?(?:i|we|they)\s+book/i',
+			),
+			'ability'   => 'afw/bookings/availability',
+			'extractor' => 'extract_booking_availability_params',
+			'priority'  => 7,
+		);
+
+		// Admin: List resources.
+		$this->intent_patterns['booking_resources'] = array(
+			'keywords'  => array( 'resources', 'bookable resource', 'booking resource', 'staff', 'room' ),
+			'patterns'  => array(
+				'/(?:list|show|all)\s*(?:bookable\s+)?resources?/i',
+				'/(?:what|which)\s+resources?/i',
+				'/(?:staff|rooms?|equipment)\s+(?:available|list)/i',
+			),
+			'ability'   => 'afw/bookings/resources',
+			'extractor' => 'extract_basic_limit_params',
+			'priority'  => 6,
+		);
+
+		// Admin: Update booking status.
+		$this->intent_patterns['booking_update_status'] = array(
+			'keywords'  => array( 'confirm booking', 'cancel booking', 'complete booking', 'mark booking' ),
+			'patterns'  => array(
+				'/(?:confirm|approve)\s+booking\s*#?\s*(\d+)/i',
+				'/(?:cancel|reject)\s+booking\s*#?\s*(\d+)/i',
+				'/(?:complete|finish)\s+booking\s*#?\s*(\d+)/i',
+				'/(?:mark|set)\s+booking\s*#?\s*(\d+)\s+(?:as\s+)?(\w+)/i',
+			),
+			'ability'   => 'afw/bookings/update-status',
+			'extractor' => 'extract_booking_status_update_params',
+			'priority'  => 10,
+			'is_action' => true,
+		);
+
+		// Customer: My bookings.
+		$this->intent_patterns['my_bookings'] = array(
+			'keywords'  => array( 'my booking', 'my appointment', 'my reservation', 'view booking' ),
+			'patterns'  => array(
+				'/(?:my|view\s+my)\s+(?:bookings?|appointments?|reservations?)/i',
+				'/(?:what|which)\s+(?:bookings?|appointments?)\s+do\s+i\s+have/i',
+				'/(?:do\s+i\s+have\s+any)\s+(?:bookings?|appointments?)/i',
+				'/(?:show|list)\s+(?:my\s+)?(?:bookings?|appointments?)/i',
+			),
+			'ability'   => 'afw/booking/my-bookings',
+			'extractor' => 'extract_customer_booking_params',
+			'priority'  => 7,
+			'scope'     => 'customer',
+		);
+
+		// Customer: Upcoming bookings.
+		$this->intent_patterns['my_upcoming_bookings'] = array(
+			'keywords'  => array( 'upcoming appointment', 'next appointment', 'my next booking', 'when is my booking' ),
+			'patterns'  => array(
+				'/(?:my\s+)?(?:upcoming|next|future)\s+(?:bookings?|appointments?)/i',
+				'/when\s+is\s+my\s+(?:next\s+)?(?:booking|appointment)/i',
+				'/(?:do\s+i\s+have\s+)?(?:any\s+)?upcoming\s+(?:bookings?|appointments?)/i',
+			),
+			'ability'   => 'afw/booking/upcoming',
+			'extractor' => 'extract_customer_booking_params',
+			'priority'  => 8,
+			'scope'     => 'customer',
+		);
+
+		// Customer: Get booking details.
+		$this->intent_patterns['my_booking_details'] = array(
+			'keywords'  => array( 'booking details', 'appointment details', 'reservation details' ),
+			'patterns'  => array(
+				'/(?:details?\s+(?:of|for)\s+)?(?:my\s+)?booking\s*#?\s*(\d+)/i',
+				'/(?:show|get)\s+(?:my\s+)?(?:booking|appointment)\s*#?\s*(\d+)/i',
+				'/(?:what|when)\s+is\s+(?:my\s+)?booking\s*#?\s*(\d+)/i',
+			),
+			'ability'   => 'afw/booking/get-details',
+			'extractor' => 'extract_customer_booking_details_params',
+			'priority'  => 9,
+			'scope'     => 'customer',
+		);
+
+		// Customer: Cancel booking (ACTION).
+		$this->intent_patterns['cancel_booking'] = array(
+			'keywords'  => array( 'cancel booking', 'cancel appointment', 'cancel reservation' ),
+			'patterns'  => array(
+				'/cancel\s+(?:my\s+)?(?:booking|appointment|reservation)/i',
+				'/(?:i\s+)?(?:want|need)\s+to\s+cancel\s+(?:my\s+)?(?:booking|appointment)/i',
+				'/(?:can\'?t|cannot|won\'?t)\s+(?:make|attend)\s+(?:my\s+)?(?:booking|appointment)/i',
+			),
+			'ability'   => 'afw/booking/cancel',
+			'extractor' => 'extract_customer_booking_cancel_params',
+			'priority'  => 10,
+			'scope'     => 'customer',
+			'is_action' => true,
+		);
+
+		// Customer: Check availability.
+		$this->intent_patterns['check_booking_availability'] = array(
+			'keywords'  => array( 'book', 'make appointment', 'schedule', 'available time', 'can i book' ),
+			'patterns'  => array(
+				'/(?:can\s+i|i\'?d?\s+like\s+to)\s+(?:book|schedule|make\s+(?:an?\s+)?(?:booking|appointment))/i',
+				'/(?:is|are)\s+(?:there|any)\s+(?:available|open)\s+(?:slots?|times?)/i',
+				'/(?:when\s+can\s+i|what\s+times?\s+(?:can\s+i|are\s+available\s+to))\s+book/i',
+				'/(?:check|see)\s+(?:if\s+)?(?:there\'?s?\s+)?availability/i',
+			),
+			'ability'   => 'afw/booking/check-availability',
+			'extractor' => 'extract_customer_availability_params',
+			'priority'  => 7,
+			'scope'     => 'customer',
+		);
+	}
+
+	/**
+	 * Register membership intent patterns.
+	 *
+	 * Patterns for WooCommerce Memberships integration.
+	 * These only work when WC Memberships is installed and active.
+	 *
+	 * @since 1.1.0
+	 * @return void
+	 */
+	private function register_membership_intents() {
+		// Check if WC Memberships is active.
+		if ( ! function_exists( 'wc_memberships' ) && ! class_exists( 'WC_Memberships' ) ) {
+			return;
+		}
+
+		// Admin: List memberships.
+		$this->intent_patterns['membership_list'] = array(
+			'keywords'  => array( 'memberships', 'list membership', 'show membership', 'all membership', 'active member' ),
+			'patterns'  => array(
+				'/(?:list|show|all|active|paused|expired|cancelled)\s*memberships?/i',
+				'/memberships?\s+(?:do\s+)?(?:i|we)\s+have/i',
+				'/how\s+many\s+memberships?/i',
+				'/(?:what|which)\s+memberships?/i',
+				'/(?:list|show|all)\s*members?/i',
+			),
+			'ability'   => 'afw/memberships/list',
+			'extractor' => 'extract_membership_list_params',
+			'priority'  => 6,
+		);
+
+		// Admin: Get membership details.
+		$this->intent_patterns['membership_get'] = array(
+			'keywords'  => array( 'membership #', 'membership id', 'show membership', 'get membership' ),
+			'patterns'  => array(
+				'/membership\s*#?\s*(\d+)/i',
+				'/show\s+membership\s*#?\s*(\d+)/i',
+				'/get\s+membership\s*#?\s*(\d+)/i',
+				'/user\s+membership\s*#?\s*(\d+)/i',
+			),
+			'ability'   => 'afw/memberships/get',
+			'extractor' => 'extract_membership_id',
+			'priority'  => 10,
+		);
+
+		// Admin: List membership plans.
+		$this->intent_patterns['membership_plans'] = array(
+			'keywords'  => array( 'membership plan', 'plan', 'available plan', 'membership level', 'tier' ),
+			'patterns'  => array(
+				'/(?:list|show|all|available)\s*(?:membership\s+)?plans?/i',
+				'/membership\s+(?:plans?|levels?|tiers?)/i',
+				'/(?:what|which)\s+(?:membership\s+)?plans?/i',
+			),
+			'ability'   => 'afw/memberships/plans',
+			'extractor' => 'extract_basic_limit_params',
+			'priority'  => 7,
+		);
+
+		// Admin: Search memberships.
+		$this->intent_patterns['membership_search'] = array(
+			'keywords'  => array( 'search membership', 'find membership', 'membership for', 'member named' ),
+			'patterns'  => array(
+				'/search\s+memberships?\s+(?:for\s+)?(.+)/i',
+				'/find\s+memberships?\s+(.+)/i',
+				'/memberships?\s+for\s+(?:customer\s+)?(.+)/i',
+				'/(?:is\s+)?(.+)\s+a\s+member/i',
+			),
+			'ability'   => 'afw/memberships/search',
+			'extractor' => 'extract_membership_search_params',
+			'priority'  => 8,
+		);
+
+		// Admin: Membership analytics.
+		$this->intent_patterns['membership_analytics'] = array(
+			'keywords'  => array( 'membership analytics', 'membership stats', 'membership report', 'member count' ),
+			'patterns'  => array(
+				'/membership\s+(?:analytics?|stats?|statistics?|metrics?|report)/i',
+				'/(?:how\s+many|total)\s+(?:active\s+)?members?/i',
+				'/member\s+(?:count|statistics)/i',
+				'/(?:popular|top)\s+(?:membership\s+)?plans?/i',
+			),
+			'ability'   => 'afw/memberships/analytics',
+			'extractor' => 'extract_membership_analytics_params',
+			'priority'  => 8,
+		);
+
+		// Admin: Expiring memberships.
+		$this->intent_patterns['membership_expiring'] = array(
+			'keywords'  => array( 'expiring membership', 'membership expiring', 'ending soon', 'about to expire' ),
+			'patterns'  => array(
+				'/(?:expiring|ending)\s+memberships?/i',
+				'/memberships?\s+(?:expiring|ending)\s+(?:soon|this)/i',
+				'/memberships?\s+(?:about\s+to|going\s+to)\s+expire/i',
+				'/(?:who|which\s+members?)\s+(?:are\s+)?expiring/i',
+			),
+			'ability'   => 'afw/memberships/expiring',
+			'extractor' => 'extract_membership_expiring_params',
+			'priority'  => 9,
+		);
+
+		// Admin: Members by plan.
+		$this->intent_patterns['membership_by_plan'] = array(
+			'keywords'  => array( 'members of plan', 'who is in plan', 'members in', 'plan members' ),
+			'patterns'  => array(
+				'/members?\s+(?:of|in|on)\s+(?:plan\s+)?(.+)/i',
+				'/(?:who|which\s+users?)\s+(?:are|is)\s+(?:in|on)\s+(?:the\s+)?(.+)\s+plan/i',
+				'/(.+)\s+plan\s+members?/i',
+			),
+			'ability'   => 'afw/memberships/members-by-plan',
+			'extractor' => 'extract_membership_by_plan_params',
+			'priority'  => 8,
+		);
+
+		// Customer: My memberships.
+		$this->intent_patterns['my_memberships'] = array(
+			'keywords'  => array( 'my membership', 'my plan', 'membership status', 'am i a member' ),
+			'patterns'  => array(
+				'/(?:my|view\s+my)\s+memberships?/i',
+				'/(?:what|which)\s+memberships?\s+do\s+i\s+have/i',
+				'/(?:my|view\s+my)\s+(?:membership\s+)?plan/i',
+				'/am\s+i\s+(?:a\s+)?member/i',
+				'/(?:do\s+i\s+have\s+)?(?:a\s+)?membership/i',
+			),
+			'ability'   => 'afw/membership/my-memberships',
+			'extractor' => 'extract_customer_membership_params',
+			'priority'  => 7,
+			'scope'     => 'customer',
+		);
+
+		// Customer: Membership benefits.
+		$this->intent_patterns['membership_benefits'] = array(
+			'keywords'  => array( 'membership benefit', 'member perk', 'what do i get', 'membership include' ),
+			'patterns'  => array(
+				'/(?:my\s+)?membership\s+(?:benefits?|perks?|privileges?)/i',
+				'/what\s+(?:do\s+)?(?:i\s+)?get\s+(?:with|as)\s+(?:a\s+)?member/i',
+				'/(?:what\'?s?\s+)?included\s+(?:in|with)\s+(?:my\s+)?membership/i',
+				'/member\s+(?:benefits?|perks?|discounts?)/i',
+			),
+			'ability'   => 'afw/membership/benefits',
+			'extractor' => 'extract_customer_membership_params',
+			'priority'  => 8,
+			'scope'     => 'customer',
+		);
+
+		// Customer: Check membership access.
+		$this->intent_patterns['membership_check_access'] = array(
+			'keywords'  => array( 'do i have access', 'can i access', 'am i eligible', 'member access' ),
+			'patterns'  => array(
+				'/(?:do\s+)?(?:i\s+)?have\s+access\s+to/i',
+				'/(?:can\s+)?(?:i\s+)?access\s+(?:the\s+)?(.+)/i',
+				'/am\s+i\s+(?:eligible|allowed)/i',
+				'/(?:is\s+)?(?:my\s+)?membership\s+(?:active|valid)/i',
+			),
+			'ability'   => 'afw/membership/check-access',
+			'extractor' => 'extract_customer_membership_params',
+			'priority'  => 7,
+			'scope'     => 'customer',
+		);
+
+		// Customer: Cancel membership (ACTION).
+		$this->intent_patterns['cancel_membership'] = array(
+			'keywords'  => array( 'cancel membership', 'cancel my membership', 'end membership', 'stop membership' ),
+			'patterns'  => array(
+				'/cancel\s+(?:my\s+)?membership/i',
+				'/(?:end|stop|terminate)\s+(?:my\s+)?membership/i',
+				'/(?:i\s+)?(?:want|would\s+like)\s+to\s+cancel\s+(?:my\s+)?membership/i',
+				'/(?:don\'?t|do\s+not)\s+want\s+(?:my\s+)?membership/i',
+			),
+			'ability'   => 'afw/membership/cancel',
+			'extractor' => 'extract_customer_membership_cancel_params',
+			'priority'  => 10,
+			'scope'     => 'customer',
+			'is_action' => true,
+		);
 	}
 
 	/**
@@ -2709,6 +3329,699 @@ class Intent_Classifier {
 
 		// Check if customer should be notified.
 		$params['is_customer_note'] = (bool) preg_match( '/(?:notify|email|customer)/i', $message );
+
+		return $params;
+	}
+
+	// ==========================================================================
+	// SUBSCRIPTION Parameter Extractors
+	// ==========================================================================
+
+	/**
+	 * Extract subscription ID from message.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_subscription_id( $message ) {
+		if ( preg_match( '/subscription\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			return array( 'subscription_id' => (int) $matches[1] );
+		}
+		if ( preg_match( '/\b(\d{3,})\b/', $message, $matches ) ) {
+			return array( 'subscription_id' => (int) $matches[1] );
+		}
+		return array();
+	}
+
+	/**
+	 * Extract subscription list parameters from message.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_subscription_list_params( $message ) {
+		$params = array( 'limit' => 10 );
+
+		// Check for status.
+		$statuses = array( 'active', 'on-hold', 'cancelled', 'expired', 'pending-cancel', 'pending' );
+		foreach ( $statuses as $status ) {
+			if ( stripos( $message, $status ) !== false ) {
+				$params['status'] = $status;
+				break;
+			}
+		}
+
+		// Check for limit.
+		if ( preg_match( '/(?:last|recent|top|first)\s+(\d+)/i', $message, $matches ) ) {
+			$params['limit'] = min( (int) $matches[1], 50 );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract subscription search parameters from message.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_subscription_search_params( $message ) {
+		$params = array( 'limit' => 10 );
+
+		// Check for customer email.
+		if ( preg_match( '/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i', $message, $matches ) ) {
+			$params['query'] = trim( $matches[1] );
+		}
+
+		// Check for quoted search term.
+		if ( preg_match( '/["\']([^"\']+)["\']/', $message, $matches ) ) {
+			$params['query'] = trim( $matches[1] );
+		}
+
+		// Check for "for X" or "named X".
+		if ( preg_match( '/(?:for|named|from)\s+([a-zA-Z\s]+)/i', $message, $matches ) ) {
+			$query = trim( $matches[1] );
+			if ( strlen( $query ) > 2 ) {
+				$params['query'] = $query;
+			}
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract subscription expiring parameters from message.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_subscription_expiring_params( $message ) {
+		$params = array(
+			'days'  => 30,
+			'limit' => 10,
+		);
+
+		// Check for number of days.
+		if ( preg_match( '/(?:next|within|in)\s+(\d+)\s+days?/i', $message, $matches ) ) {
+			$params['days'] = (int) $matches[1];
+		} elseif ( preg_match( '/this\s+week/i', $message ) ) {
+			$params['days'] = 7;
+		} elseif ( preg_match( '/this\s+month/i', $message ) ) {
+			$params['days'] = 30;
+		}
+
+		// Check for limit.
+		if ( preg_match( '/(?:top|first)\s+(\d+)/i', $message, $matches ) ) {
+			$params['limit'] = min( (int) $matches[1], 50 );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract customer subscription parameters from message.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_customer_subscription_params( $message ) {
+		$params = array();
+
+		// Check for subscription ID.
+		if ( preg_match( '/subscription\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['subscription_id'] = (int) $matches[1];
+		}
+
+		// Check for status filter.
+		$statuses = array( 'active', 'on-hold', 'cancelled', 'expired', 'paused' );
+		foreach ( $statuses as $status ) {
+			if ( stripos( $message, $status ) !== false ) {
+				$params['status'] = ( 'paused' === $status ) ? 'on-hold' : $status;
+				break;
+			}
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract customer subscription action parameters from message.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_customer_subscription_action_params( $message ) {
+		$params = array();
+
+		// Check for subscription ID.
+		if ( preg_match( '/subscription\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['subscription_id'] = (int) $matches[1];
+		}
+
+		return $params;
+	}
+
+	// ==========================================================================
+	// BOOKING Parameter Extractors
+	// ==========================================================================
+
+	/**
+	 * Extract booking ID from message.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_booking_id( $message ) {
+		if ( preg_match( '/booking\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			return array( 'booking_id' => (int) $matches[1] );
+		}
+		if ( preg_match( '/reservation\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			return array( 'booking_id' => (int) $matches[1] );
+		}
+		if ( preg_match( '/\b(\d{3,})\b/', $message, $matches ) ) {
+			return array( 'booking_id' => (int) $matches[1] );
+		}
+		return array();
+	}
+
+	/**
+	 * Extract booking list parameters from message.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_booking_list_params( $message ) {
+		$params = array( 'limit' => 10 );
+
+		// Check for status.
+		$statuses = array( 'unpaid', 'pending-confirmation', 'confirmed', 'paid', 'cancelled', 'complete' );
+		foreach ( $statuses as $status ) {
+			if ( stripos( $message, $status ) !== false ) {
+				$params['status'] = $status;
+				break;
+			}
+		}
+
+		// Check for limit.
+		if ( preg_match( '/(?:last|recent|top|first)\s+(\d+)/i', $message, $matches ) ) {
+			$params['limit'] = min( (int) $matches[1], 50 );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract today's booking parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_booking_today_params( $message ) {
+		$params = array();
+
+		// Check for status filter.
+		if ( preg_match( '/confirmed/i', $message ) ) {
+			$params['status'] = 'confirmed';
+		} elseif ( preg_match( '/paid/i', $message ) ) {
+			$params['status'] = 'paid';
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract upcoming booking parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_booking_upcoming_params( $message ) {
+		$params = array(
+			'days'  => 7,
+			'limit' => 20,
+		);
+
+		// Check for days.
+		if ( preg_match( '/(?:next|within|in)\s+(\d+)\s+days?/i', $message, $matches ) ) {
+			$params['days'] = (int) $matches[1];
+		} elseif ( preg_match( '/this\s+week/i', $message ) ) {
+			$params['days'] = 7;
+		} elseif ( preg_match( '/this\s+month/i', $message ) ) {
+			$params['days'] = 30;
+		} elseif ( preg_match( '/next\s+week/i', $message ) ) {
+			$params['days'] = 14;
+		}
+
+		// Check for limit.
+		if ( preg_match( '/(?:last|recent|top|first)\s+(\d+)/i', $message, $matches ) ) {
+			$params['limit'] = min( (int) $matches[1], 50 );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract booking search parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_booking_search_params( $message ) {
+		$params = array( 'limit' => 10 );
+
+		// Check for customer email.
+		if ( preg_match( '/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i', $message, $matches ) ) {
+			$params['query'] = trim( $matches[1] );
+		}
+
+		// Check for quoted search term.
+		if ( preg_match( '/["\']([^"\']+)["\']/', $message, $matches ) ) {
+			$params['query'] = trim( $matches[1] );
+		}
+
+		// Check for "for X" pattern.
+		if ( empty( $params['query'] ) && preg_match( '/(?:for|named|from)\s+([a-zA-Z\s]+)/i', $message, $matches ) ) {
+			$query = trim( $matches[1] );
+			if ( strlen( $query ) > 2 ) {
+				$params['query'] = $query;
+			}
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract booking analytics parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_booking_analytics_params( $message ) {
+		$params = array( 'period' => '30days' );
+
+		// Check for period.
+		if ( preg_match( '/(?:last|past)\s+(\d+)\s+days?/i', $message, $matches ) ) {
+			$days             = (int) $matches[1];
+			$params['period'] = $days . 'days';
+		} elseif ( preg_match( '/this\s+week/i', $message ) ) {
+			$params['period'] = '7days';
+		} elseif ( preg_match( '/this\s+month/i', $message ) ) {
+			$params['period'] = '30days';
+		} elseif ( preg_match( '/(?:this|last)\s+year/i', $message ) ) {
+			$params['period'] = 'year';
+		} elseif ( preg_match( '/(?:last\s+)?(?:quarter|90\s*days?)/i', $message ) ) {
+			$params['period'] = '90days';
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract booking availability parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_booking_availability_params( $message ) {
+		$params = array();
+
+		// Check for product ID.
+		if ( preg_match( '/product\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['product_id'] = (int) $matches[1];
+		}
+
+		// Check for date.
+		if ( preg_match( '/(\d{4}-\d{2}-\d{2})/', $message, $matches ) ) {
+			$params['date'] = $matches[1];
+		} elseif ( preg_match( '/(?:on\s+)?(?:for\s+)?(tomorrow)/i', $message, $matches ) ) {
+			$params['date'] = gmdate( 'Y-m-d', strtotime( '+1 day' ) );
+		} elseif ( preg_match( '/(?:on\s+)?(?:for\s+)?(today)/i', $message, $matches ) ) {
+			$params['date'] = gmdate( 'Y-m-d' );
+		} elseif ( preg_match( '/(?:on|for)\s+(?:the\s+)?(\d{1,2})(?:st|nd|rd|th)?(?:\s+of)?\s*(\w+)?/i', $message, $matches ) ) {
+			$day   = (int) $matches[1];
+			$month = ! empty( $matches[2] ) ? $matches[2] : gmdate( 'F' );
+			$year  = gmdate( 'Y' );
+			$date  = strtotime( "{$day} {$month} {$year}" );
+			if ( $date ) {
+				$params['date'] = gmdate( 'Y-m-d', $date );
+			}
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract booking status update parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_booking_status_update_params( $message ) {
+		$params = array();
+
+		// Extract booking ID.
+		if ( preg_match( '/booking\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['booking_id'] = (int) $matches[1];
+		}
+
+		// Detect status from action words.
+		if ( preg_match( '/(?:confirm|approve)/i', $message ) ) {
+			$params['status'] = 'confirmed';
+		} elseif ( preg_match( '/(?:cancel|reject)/i', $message ) ) {
+			$params['status'] = 'cancelled';
+		} elseif ( preg_match( '/(?:complete|finish)/i', $message ) ) {
+			$params['status'] = 'complete';
+		} elseif ( preg_match( '/(?:mark|set)\s+.*?\s+(?:as\s+)?(\w+)/i', $message, $matches ) ) {
+			$status_map = array(
+				'confirmed' => 'confirmed',
+				'paid'      => 'paid',
+				'cancelled' => 'cancelled',
+				'complete'  => 'complete',
+				'unpaid'    => 'unpaid',
+			);
+			$status     = strtolower( $matches[1] );
+			if ( isset( $status_map[ $status ] ) ) {
+				$params['status'] = $status_map[ $status ];
+			}
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract customer booking parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_customer_booking_params( $message ) {
+		$params = array();
+
+		// Check for status filter.
+		if ( preg_match( '/confirmed/i', $message ) ) {
+			$params['status'] = 'confirmed';
+		} elseif ( preg_match( '/cancelled/i', $message ) ) {
+			$params['status'] = 'cancelled';
+		} elseif ( preg_match( '/upcoming|future/i', $message ) ) {
+			$params['status'] = 'confirmed';
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract customer booking details parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_customer_booking_details_params( $message ) {
+		$params = array();
+
+		// Extract booking ID.
+		if ( preg_match( '/booking\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['booking_id'] = (int) $matches[1];
+		} elseif ( preg_match( '/\b(\d{3,})\b/', $message, $matches ) ) {
+			$params['booking_id'] = (int) $matches[1];
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract customer booking cancel parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_customer_booking_cancel_params( $message ) {
+		$params = array();
+
+		// Extract booking ID if specified.
+		if ( preg_match( '/booking\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['booking_id'] = (int) $matches[1];
+		} elseif ( preg_match( '/\b(\d{3,})\b/', $message, $matches ) ) {
+			$params['booking_id'] = (int) $matches[1];
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract customer availability check parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_customer_availability_params( $message ) {
+		$params = array();
+
+		// Check for product ID.
+		if ( preg_match( '/product\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['product_id'] = (int) $matches[1];
+		}
+
+		// Check for date.
+		if ( preg_match( '/(\d{4}-\d{2}-\d{2})/', $message, $matches ) ) {
+			$params['date'] = $matches[1];
+		} elseif ( preg_match( '/tomorrow/i', $message ) ) {
+			$params['date'] = gmdate( 'Y-m-d', strtotime( '+1 day' ) );
+		} elseif ( preg_match( '/today/i', $message ) ) {
+			$params['date'] = gmdate( 'Y-m-d' );
+		} elseif ( preg_match( '/next\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)/i', $message, $matches ) ) {
+			$params['date'] = gmdate( 'Y-m-d', strtotime( 'next ' . $matches[1] ) );
+		}
+
+		// Check for service/product name.
+		if ( preg_match( '/book\s+(?:a\s+)?(?:an?\s+)?([a-zA-Z\s]+?)(?:\s+(?:on|for|tomorrow|today|next))/i', $message, $matches ) ) {
+			$service = trim( $matches[1] );
+			if ( strlen( $service ) > 2 ) {
+				$params['service_name'] = $service;
+			}
+		}
+
+		return $params;
+	}
+
+	// ==========================================================================
+	// MEMBERSHIP Parameter Extractors
+	// ==========================================================================
+
+	/**
+	 * Extract membership ID from message.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_membership_id( $message ) {
+		if ( preg_match( '/membership\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			return array( 'membership_id' => (int) $matches[1] );
+		}
+		if ( preg_match( '/\b(\d{3,})\b/', $message, $matches ) ) {
+			return array( 'membership_id' => (int) $matches[1] );
+		}
+		return array();
+	}
+
+	/**
+	 * Extract membership list parameters from message.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_membership_list_params( $message ) {
+		$params = array( 'limit' => 10 );
+
+		// Check for status.
+		$statuses = array( 'active', 'paused', 'expired', 'cancelled', 'pending', 'free_trial', 'complimentary' );
+		foreach ( $statuses as $status ) {
+			if ( stripos( $message, $status ) !== false ) {
+				$params['status'] = $status;
+				break;
+			}
+		}
+
+		// Check for limit.
+		if ( preg_match( '/(?:last|recent|top|first)\s+(\d+)/i', $message, $matches ) ) {
+			$params['limit'] = min( (int) $matches[1], 50 );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract membership search parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_membership_search_params( $message ) {
+		$params = array( 'limit' => 10 );
+
+		// Check for customer email.
+		if ( preg_match( '/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/i', $message, $matches ) ) {
+			$params['query'] = trim( $matches[1] );
+		}
+
+		// Check for quoted search term.
+		if ( preg_match( '/["\']([^"\']+)["\']/', $message, $matches ) ) {
+			$params['query'] = trim( $matches[1] );
+		}
+
+		// Check for "for X" pattern.
+		if ( empty( $params['query'] ) && preg_match( '/(?:for|named|from)\s+([a-zA-Z\s]+)/i', $message, $matches ) ) {
+			$query = trim( $matches[1] );
+			if ( strlen( $query ) > 2 ) {
+				$params['query'] = $query;
+			}
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract membership analytics parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_membership_analytics_params( $message ) {
+		$params = array( 'period' => '30days' );
+
+		// Check for period.
+		if ( preg_match( '/(?:last|past)\s+(\d+)\s+days?/i', $message, $matches ) ) {
+			$days             = (int) $matches[1];
+			$params['period'] = $days . 'days';
+		} elseif ( preg_match( '/this\s+week/i', $message ) ) {
+			$params['period'] = '7days';
+		} elseif ( preg_match( '/this\s+month/i', $message ) ) {
+			$params['period'] = '30days';
+		} elseif ( preg_match( '/(?:this|last)\s+year/i', $message ) ) {
+			$params['period'] = 'year';
+		} elseif ( preg_match( '/(?:last\s+)?(?:quarter|90\s*days?)/i', $message ) ) {
+			$params['period'] = '90days';
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract expiring membership parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_membership_expiring_params( $message ) {
+		$params = array(
+			'days'  => 30,
+			'limit' => 20,
+		);
+
+		// Check for number of days.
+		if ( preg_match( '/(?:next|within|in)\s+(\d+)\s+days?/i', $message, $matches ) ) {
+			$params['days'] = (int) $matches[1];
+		} elseif ( preg_match( '/this\s+week/i', $message ) ) {
+			$params['days'] = 7;
+		} elseif ( preg_match( '/this\s+month/i', $message ) ) {
+			$params['days'] = 30;
+		}
+
+		// Check for limit.
+		if ( preg_match( '/(?:last|recent|top|first)\s+(\d+)/i', $message, $matches ) ) {
+			$params['limit'] = min( (int) $matches[1], 50 );
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract members by plan parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_membership_by_plan_params( $message ) {
+		$params = array( 'limit' => 20 );
+
+		// Try to extract plan ID.
+		if ( preg_match( '/plan\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['plan_id'] = (int) $matches[1];
+		}
+
+		// Check for status.
+		$statuses = array( 'active', 'paused', 'expired', 'cancelled' );
+		foreach ( $statuses as $status ) {
+			if ( stripos( $message, $status ) !== false ) {
+				$params['status'] = $status;
+				break;
+			}
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract customer membership parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_customer_membership_params( $message ) {
+		$params = array();
+
+		// Check for status filter.
+		if ( preg_match( '/active/i', $message ) ) {
+			$params['status'] = 'active';
+		} elseif ( preg_match( '/expired/i', $message ) ) {
+			$params['status'] = 'expired';
+		} elseif ( preg_match( '/cancelled/i', $message ) ) {
+			$params['status'] = 'cancelled';
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract customer membership cancel parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_customer_membership_cancel_params( $message ) {
+		$params = array();
+
+		// Extract membership ID if specified.
+		if ( preg_match( '/membership\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['membership_id'] = (int) $matches[1];
+		} elseif ( preg_match( '/\b(\d{3,})\b/', $message, $matches ) ) {
+			$params['membership_id'] = (int) $matches[1];
+		}
 
 		return $params;
 	}

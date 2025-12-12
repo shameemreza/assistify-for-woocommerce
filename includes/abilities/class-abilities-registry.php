@@ -46,14 +46,15 @@ class Abilities_Registry {
 	 * @var array
 	 */
 	private $categories = array(
-		'orders'    => 'Orders',
-		'products'  => 'Products',
-		'customers' => 'Customers',
-		'coupons'   => 'Coupons',
-		'analytics' => 'Analytics',
-		'content'   => 'Content',
-		'image'     => 'Image',
-		'store'     => 'Store',
+		'orders'        => 'Orders',
+		'products'      => 'Products',
+		'customers'     => 'Customers',
+		'coupons'       => 'Coupons',
+		'analytics'     => 'Analytics',
+		'content'       => 'Content',
+		'image'         => 'Image',
+		'store'         => 'Store',
+		'subscriptions' => 'Subscriptions',
 	);
 
 	/**
@@ -2368,6 +2369,37 @@ class Abilities_Registry {
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Add a new ability category.
+	 *
+	 * Allows extensions to register their own ability categories.
+	 *
+	 * @since 1.1.0
+	 * @param string $category_slug Category slug (lowercase, no spaces).
+	 * @param string $category_name Category display name.
+	 * @return bool True on success, false if already exists.
+	 */
+	public function add_category( $category_slug, $category_name ) {
+		$category_slug = sanitize_key( $category_slug );
+
+		if ( isset( $this->categories[ $category_slug ] ) ) {
+			return false;
+		}
+
+		$this->categories[ $category_slug ] = $category_name;
+		return true;
+	}
+
+	/**
+	 * Get all ability categories.
+	 *
+	 * @since 1.1.0
+	 * @return array Array of category_slug => category_name.
+	 */
+	public function get_categories() {
+		return $this->categories;
 	}
 
 	/**

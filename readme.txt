@@ -14,7 +14,7 @@ A unified, native WooCommerce AI Assistant that provides dual-interface chat for
 
 Assistify for WooCommerce is a powerful AI assistant that deeply integrates with your WooCommerce store to provide intelligent support for both store owners and customers.
 
-= For Store Owners (67+ AI Tools) =
+= For Store Owners (98+ AI Tools) =
 
 * **Natural Language Queries** - Ask questions about your store in plain English.
 * **Order Management** - Look up orders, process refunds, update statuses, add notes.
@@ -38,7 +38,7 @@ Assistify for WooCommerce is a powerful AI assistant that deeply integrates with
 = Key Features =
 
 * **Multi-Provider Support** - Works with OpenAI, Anthropic, Google, xAI, and DeepSeek.
-* **67+ Admin Tools** - Comprehensive store management via AI chat.
+* **98+ Admin Tools** - Comprehensive store management via AI chat.
 * **Agentic AI** - Tool-calling architecture for accurate, real-time data.
 * **Store Health Dashboard** - Dedicated monitoring page with health score.
 * **Analytics Tracking** - Product views, cart behavior, traffic sources, conversions.
@@ -87,14 +87,77 @@ Assistify includes a comprehensive health monitoring system:
 * **Image Editing** - Edit existing images with AI prompts.
 * **Variations** - Create style variants of existing images.
 
+= WooCommerce Subscriptions Integration =
+
+Deep integration with WooCommerce Subscriptions providing:
+
+**For Store Owners (9 Admin Tools):**
+* List subscriptions with filters (status, customer, product).
+* Get detailed subscription information.
+* Search subscriptions by customer name or email.
+* **Subscription Analytics** - MRR, ARR, churn rate, LTV, ARPU metrics.
+* **Churn Risk Analysis** - Identify at-risk subscriptions before they cancel.
+* View failed renewal payments and retry options.
+* Update subscription status with notes.
+* View expiring subscriptions for retention outreach.
+
+**For Customers (7 Self-Service Tools):**
+* View all their subscriptions and status.
+* Check next payment date and amount.
+* **Pause/Resume** subscriptions on their own.
+* **Cancel** subscriptions with confirmation.
+* Update shipping address for deliveries.
+* Update payment method for renewals.
+
+= WooCommerce Bookings Integration =
+
+Deep integration with WooCommerce Bookings providing:
+
+**For Store Owners (9 Admin Tools):**
+* **List Bookings** - View all bookings with status, date, and customer filters.
+* **Get Booking Details** - Detailed information about any booking.
+* **Today's Bookings** - Quick view of scheduled bookings for today.
+* **Upcoming Bookings** - See bookings scheduled for the next 7/30 days.
+* **Search Bookings** - Find bookings by customer name, email, or ID.
+* **Booking Analytics** - Revenue, counts, popular products, cancellation rate.
+* **Check Availability** - View availability for any bookable product/date.
+* **Update Status** - Confirm, cancel, or complete bookings.
+* **List Resources** - View all bookable resources (staff, rooms, equipment).
+
+**For Customers (5 Self-Service Tools):**
+* **My Bookings** - View all their booking history and status.
+* **Upcoming Bookings** - See their confirmed upcoming appointments.
+* **Booking Details** - Get information about a specific booking.
+* **Cancel Booking** - Cancel their own bookings with confirmation.
+* **Check Availability** - Ask about availability for services and dates.
+
+= WooCommerce Memberships Integration =
+
+Deep integration with WooCommerce Memberships providing:
+
+**For Store Owners (8 Admin Tools):**
+* **List Memberships** - View all user memberships with status and plan filters.
+* **Get Membership Details** - Detailed information about any membership.
+* **List Membership Plans** - View all available membership plans and member counts.
+* **Search Memberships** - Find members by name, email, or membership ID.
+* **Membership Analytics** - New memberships, total active members, popular plans.
+* **Expiring Memberships** - View memberships expiring soon for retention outreach.
+* **Update Status** - Activate, pause, or cancel memberships.
+* **Members by Plan** - List all members of a specific plan.
+
+**For Customers (5 Self-Service Tools):**
+* **My Memberships** - View all their memberships and status.
+* **Membership Details** - Get information about their membership.
+* **Membership Benefits** - See what benefits and perks their membership includes.
+* **Check Access** - Verify membership status and access levels.
+* **Cancel Membership** - Cancel their membership with confirmation.
+
 = WooCommerce Extension Support =
 
-* WooCommerce Subscriptions
-* WooCommerce Bookings
-* WooCommerce Memberships
-* WC Shipment Tracking
-* Product Bundles
-* And more...
+* WooCommerce Subscriptions (Deep Integration)
+* WooCommerce Bookings (Deep Integration)
+* WooCommerce Memberships (Deep Integration)
+* And more coming..
 
 == Installation ==
 
@@ -148,6 +211,14 @@ Yes. Your store data stays in WordPress. Only the conversation context needed fo
 
 Yes! Assistify has deep integration with WooCommerce Subscriptions, allowing customers to manage their subscriptions through chat and giving store owners subscription analytics.
 
+= Does it work with WooCommerce Bookings? =
+
+Yes! Assistify has deep integration with WooCommerce Bookings, allowing store owners to manage bookings via chat (view today's schedule, search bookings, analytics) and customers can view their bookings, check availability, and cancel appointments.
+
+= Does it work with WooCommerce Memberships? =
+
+Yes! Assistify has deep integration with WooCommerce Memberships, allowing store owners to manage memberships via chat (view members, analytics, expiring memberships) and customers can view their membership status, benefits, and cancel memberships.
+
 = Is it GDPR compliant? =
 
 Yes. The plugin includes consent management, data export, and data erasure capabilities. Customer consent is required before chat, and all data handling follows GDPR requirements.
@@ -186,6 +257,27 @@ Please report bugs and request features on our [GitHub Issues](https://github.co
 6. AI image generation - Generate product images from text.
 
 == Changelog ==
+
+= 1.1.0 - 2025-12-12 =
+* NEW: Deep WooCommerce Subscriptions integration with 16 abilities.
+* NEW: Admin subscription tools - list, get, search, analytics, churn risk.
+* NEW: Subscription analytics - MRR, ARR, churn rate, LTV, ARPU.
+* NEW: Customer subscription self-service - pause, resume, cancel.
+* NEW: Failed subscription payment tracking and retry.
+* NEW: Expiring subscriptions monitoring for retention.
+* NEW: Intent patterns for natural language subscription queries.
+* NEW: Deep WooCommerce Bookings integration with 14 abilities.
+* NEW: Admin booking tools - list, get, search, today's bookings, upcoming.
+* NEW: Booking analytics - revenue, counts, popular products, cancellation rate.
+* NEW: Customer booking self-service - view bookings, check availability, cancel.
+* NEW: Intent patterns for natural language booking queries.
+* NEW: Deep WooCommerce Memberships integration with 13 abilities.
+* NEW: Admin membership tools - list, get, search, plans, analytics, expiring.
+* NEW: Membership analytics - new memberships, active members, popular plans.
+* NEW: Customer membership self-service - view memberships, benefits, cancel.
+* NEW: Intent patterns for natural language membership queries.
+* Improved: Total admin tools increased from 67 to 98+.
+* Improved: PHPStan Level 2 compliance for new code.
 
 = 1.0.0 - 2025-12-12 =
 * Initial release.

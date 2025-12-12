@@ -66,6 +66,7 @@ final class Assistify {
 		$this->init_abilities();
 		$this->init_privacy();
 		$this->init_editor();
+		$this->load_integrations();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 		$this->define_rest_api();
@@ -358,6 +359,41 @@ final class Assistify {
 	private function init_editor() {
 		if ( is_admin() ) {
 			Editor\Assistify_Editor::instance();
+		}
+	}
+
+	/**
+	 * Load third-party plugin integrations.
+	 *
+	 * Loads integrations for WooCommerce extensions like Subscriptions, Bookings, etc.
+	 *
+	 * @since 1.1.0
+	 * @return void
+	 */
+	private function load_integrations() {
+		$integrations_dir = ASSISTIFY_PLUGIN_DIR . 'includes/integrations/';
+
+		// Create integrations directory if it doesn't exist.
+		if ( ! is_dir( $integrations_dir ) ) {
+			return;
+		}
+
+		// WooCommerce Subscriptions integration.
+		if ( file_exists( $integrations_dir . 'class-wc-subscriptions-integration.php' ) ) {
+			require_once $integrations_dir . 'class-wc-subscriptions-integration.php';
+			Integrations\WC_Subscriptions_Integration::instance();
+		}
+
+		// WooCommerce Bookings integration.
+		if ( file_exists( $integrations_dir . 'class-wc-bookings-integration.php' ) ) {
+			require_once $integrations_dir . 'class-wc-bookings-integration.php';
+			Integrations\WC_Bookings_Integration::instance();
+		}
+
+		// WooCommerce Memberships integration.
+		if ( file_exists( $integrations_dir . 'class-wc-memberships-integration.php' ) ) {
+			require_once $integrations_dir . 'class-wc-memberships-integration.php';
+			Integrations\WC_Memberships_Integration::instance();
 		}
 	}
 
