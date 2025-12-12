@@ -1,0 +1,759 @@
+/**
+ * Store Health Page Styles
+ *
+ * @package Assistify_For_WooCommerce
+ */
+
+.assistify-health-page {
+  max-width: 1400px;
+}
+
+/* Overview Section */
+.assistify-health-overview {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.assistify-score-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 25px 30px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-width: 300px;
+}
+
+.assistify-score-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--score-color) calc(var(--score, 100) * 3.6deg),
+    #e0e0e0 0deg
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-right: 25px;
+  position: relative;
+}
+
+.assistify-score-circle::before {
+  content: "";
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.assistify-score-number,
+.assistify-score-label {
+  position: relative;
+  z-index: 1;
+}
+
+.assistify-score-number {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--score-color);
+  line-height: 1;
+}
+
+.assistify-score-label {
+  font-size: 12px;
+  color: #666;
+}
+
+.assistify-score-details h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.assistify-score-details p {
+  margin: 0 0 12px;
+  color: #666;
+}
+
+.assistify-issue-counts {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.assistify-issue-counts span {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.assistify-count-critical {
+  background: #fce4e4;
+  color: #dc3545;
+}
+
+.assistify-count-warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.assistify-count-info {
+  background: #e7f1ff;
+  color: #0056b3;
+}
+
+/* Quick Stats */
+.assistify-quick-stats {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.assistify-stat-card {
+  background: #fff;
+  padding: 20px 25px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  min-width: 120px;
+}
+
+.assistify-stat-value {
+  display: block;
+  font-size: 28px;
+  font-weight: 700;
+  color: #333;
+  line-height: 1.2;
+}
+
+.assistify-stat-label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+}
+
+/* Main Content Columns */
+.assistify-health-columns {
+  display: flex;
+  gap: 25px;
+  flex-wrap: wrap;
+}
+
+.assistify-health-main {
+  flex: 2;
+  min-width: 400px;
+}
+
+.assistify-health-sidebar {
+  flex: 1;
+  min-width: 300px;
+}
+
+/* Sections */
+.assistify-health-section {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.assistify-health-section h3 {
+  margin: 0;
+  padding: 15px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+}
+
+.assistify-section-critical h3 {
+  background: #fce4e4;
+  color: #dc3545;
+}
+
+.assistify-section-warning h3 {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.assistify-section-info h3 {
+  background: #e7f1ff;
+  color: #0056b3;
+}
+
+.assistify-section-good h3 {
+  background: #d4edda;
+  color: #28a745;
+}
+
+/* Issues List */
+.assistify-issues-list {
+  padding: 0;
+}
+
+.assistify-issue-item {
+  display: flex;
+  padding: 15px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  align-items: flex-start;
+}
+
+.assistify-issue-item:last-child {
+  border-bottom: none;
+}
+
+.assistify-issue-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.assistify-issue-critical .assistify-issue-icon {
+  background: #dc3545;
+  color: #fff;
+}
+
+.assistify-issue-warning .assistify-issue-icon {
+  background: #ffc107;
+  color: #333;
+}
+
+.assistify-issue-info .assistify-issue-icon {
+  background: #17a2b8;
+  color: #fff;
+}
+
+.assistify-issue-content {
+  flex: 1;
+}
+
+.assistify-issue-content h4 {
+  margin: 0 0 5px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.assistify-issue-content p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+}
+
+.assistify-issue-fix {
+  margin-top: 8px !important;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  font-size: 12px !important;
+}
+
+.assistify-issue-actions {
+  margin-left: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.assistify-issue-actions .button {
+  white-space: nowrap;
+}
+
+.assistify-resolve-button {
+  font-size: 11px !important;
+  color: #999 !important;
+  text-decoration: none !important;
+}
+
+.assistify-resolve-button:hover {
+  color: #28a745 !important;
+}
+
+/* Issue samples/details */
+.assistify-issue-samples {
+  margin-top: 10px;
+}
+
+.assistify-issue-samples summary {
+  cursor: pointer;
+  color: #0073aa;
+  font-size: 12px;
+}
+
+.assistify-issue-samples summary:hover {
+  text-decoration: underline;
+}
+
+.assistify-issue-samples pre {
+  background: #2d2d2d;
+  color: #f8f8f2;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  overflow-x: auto;
+  max-height: 150px;
+  margin-top: 8px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Log and settings links */
+.assistify-issue-log-link,
+.assistify-issue-settings-link {
+  margin-top: 8px !important;
+  font-size: 12px !important;
+}
+
+.assistify-issue-log-link a,
+.assistify-issue-settings-link a {
+  color: #0073aa;
+  text-decoration: none;
+}
+
+.assistify-issue-log-link a:hover,
+.assistify-issue-settings-link a:hover {
+  text-decoration: underline;
+}
+
+/* Legacy support */
+.assistify-issue-action {
+  margin-left: 15px;
+}
+
+.assistify-issue-action .button {
+  white-space: nowrap;
+}
+
+/* All Good State */
+.assistify-all-good {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.assistify-all-good .dashicons {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #28a745;
+  margin-bottom: 15px;
+}
+
+.assistify-all-good h3 {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0 0 10px;
+  font-size: 18px;
+}
+
+.assistify-all-good p {
+  margin: 0;
+  color: #666;
+}
+
+/* Sidebar Cards */
+.assistify-sidebar-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+.assistify-sidebar-card h3 {
+  margin: 0 0 15px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.assistify-sidebar-card h3 .dashicons {
+  color: #6861f2;
+}
+
+/* Quick Actions */
+.assistify-quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.assistify-quick-actions .button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+}
+
+.assistify-quick-actions .button .dashicons {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+.assistify-action-button.running {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* AI Card */
+.assistify-ai-card {
+  border: 1px solid #6861f2;
+  border-left-width: 4px;
+}
+
+.assistify-ai-placeholder {
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.assistify-ai-content .button-primary {
+  background: #6861f2;
+  border-color: #6861f2;
+}
+
+.assistify-ai-content .button-primary:hover {
+  background: #5851d8;
+  border-color: #5851d8;
+}
+
+.assistify-ai-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #666;
+}
+
+.assistify-ai-recommendations {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.assistify-ai-recommendation {
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  border-left: 4px solid #6861f2;
+}
+
+.assistify-rec-priority {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin-bottom: 8px;
+  background: #e7f1ff;
+  color: #0056b3;
+}
+
+.assistify-ai-recommendation.priority-high .assistify-rec-priority {
+  background: #fce4e4;
+  color: #dc3545;
+}
+
+.assistify-ai-recommendation.priority-low .assistify-rec-priority {
+  background: #d4edda;
+  color: #28a745;
+}
+
+.assistify-rec-action,
+.assistify-rec-impact {
+  margin: 6px 0 0 0;
+  font-size: 12px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.assistify-rec-action strong,
+.assistify-rec-impact strong {
+  color: #333;
+}
+
+.assistify-ai-source {
+  margin: 15px 0 0 0;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+  font-size: 11px;
+  color: #888;
+  font-style: italic;
+}
+
+.assistify-ai-recommendation:last-child {
+  margin-bottom: 0;
+}
+
+.assistify-ai-recommendation h4 {
+  margin: 0 0 5px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.assistify-ai-recommendation p {
+  margin: 0;
+  font-size: 12px;
+  color: #666;
+}
+
+.assistify-ai-recommendation.priority-high {
+  border-left-color: #dc3545;
+}
+
+.assistify-ai-recommendation.priority-medium {
+  border-left-color: #ffc107;
+}
+
+.assistify-ai-recommendation.priority-low {
+  border-left-color: #28a745;
+}
+
+/* Category Scores */
+.assistify-category-scores {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.assistify-category-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.assistify-category-label {
+  flex: 1;
+  font-size: 13px;
+  color: #333;
+}
+
+.assistify-category-bar {
+  width: 100px;
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.assistify-category-fill {
+  height: 100%;
+  background: #6861f2;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.assistify-category-score {
+  font-size: 13px;
+  font-weight: 600;
+  width: 30px;
+  text-align: right;
+}
+
+/* Failed Orders Table */
+.assistify-failures-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.assistify-failures-table th,
+.assistify-failures-table td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.assistify-failures-table th {
+  font-weight: 600;
+  color: #666;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.assistify-failures-table a {
+  color: #6861f2;
+  text-decoration: none;
+}
+
+.assistify-view-all {
+  display: block;
+  margin-top: 12px;
+  font-size: 12px;
+  color: #6861f2;
+  text-decoration: none;
+}
+
+.assistify-view-all:hover {
+  text-decoration: underline;
+}
+
+/* Footer */
+.assistify-health-footer {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .assistify-health-columns {
+    flex-direction: column;
+  }
+
+  .assistify-health-main,
+  .assistify-health-sidebar {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 782px) {
+  .assistify-score-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .assistify-score-circle {
+    margin-right: 0;
+    margin-bottom: 15px;
+  }
+
+  .assistify-issue-item {
+    flex-direction: column;
+  }
+
+  .assistify-issue-icon {
+    margin-bottom: 10px;
+  }
+
+  .assistify-issue-action {
+    margin-left: 0;
+    margin-top: 10px;
+  }
+}
+
+/* Modal Styles */
+.assistify-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 100100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0.2s;
+}
+
+.assistify-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.assistify-modal {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  max-width: 420px;
+  width: 90%;
+  transform: scale(0.9);
+  transition: transform 0.2s;
+}
+
+.assistify-modal-overlay.active .assistify-modal {
+  transform: scale(1);
+}
+
+.assistify-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.assistify-modal-header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.assistify-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.assistify-modal-close:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.assistify-modal-body {
+  padding: 20px;
+}
+
+.assistify-modal-body p {
+  margin: 0 0 12px;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.assistify-modal-body p:last-child {
+  margin-bottom: 0;
+}
+
+.assistify-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+  background: #f9f9f9;
+  border-radius: 0 0 8px 8px;
+}
+
+.assistify-modal-footer .button-primary {
+  background: #6861f2;
+  border-color: #6861f2;
+}
+
+.assistify-modal-footer .button-primary:hover {
+  background: #5449d6;
+  border-color: #5449d6;
+}

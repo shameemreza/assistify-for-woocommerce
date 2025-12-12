@@ -169,6 +169,12 @@ final class Assistify {
 		// Load Privacy/GDPR class.
 		require_once ASSISTIFY_PLUGIN_DIR . 'includes/class-assistify-privacy.php';
 
+		// Load Analytics class.
+		$this->load_analytics();
+
+		// Load Health Monitor (always load for cron and dashboard widget).
+		$this->load_health_monitor();
+
 		$this->loader = new Assistify_Loader();
 	}
 
@@ -231,6 +237,67 @@ final class Assistify {
 
 		// Load remove.bg provider for background removal.
 		require_once $image_providers_dir . 'class-removebg-provider.php';
+	}
+
+	/**
+	 * Load Analytics classes.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	private function load_analytics() {
+		$analytics_dir = ASSISTIFY_PLUGIN_DIR . 'includes/analytics/';
+
+		// Check if directory exists.
+		if ( ! is_dir( $analytics_dir ) ) {
+			return;
+		}
+
+		require_once $analytics_dir . 'class-analytics.php';
+		require_once $analytics_dir . 'class-conversion-tracker.php';
+		require_once $analytics_dir . 'class-traffic-tracker.php';
+		require_once $analytics_dir . 'class-behavior-tracker.php';
+
+		// Initialize conversion tracker (frontend and admin).
+		\Assistify\Analytics\Conversion_Tracker::get_instance();
+
+		// Initialize traffic tracker (frontend and admin).
+		\Assistify\Analytics\Traffic_Tracker::get_instance();
+
+		// Initialize behavior tracker (frontend and admin).
+		\Assistify\Analytics\Behavior_Tracker::get_instance();
+	}
+
+	/**
+	 * Load Health Monitor classes.
+	 *
+	 * @since 1.0.0
+	 * @return void
+	 */
+	private function load_health_monitor() {
+		$health_monitor_dir = ASSISTIFY_PLUGIN_DIR . 'includes/health-monitor/';
+
+		// Check if directory exists.
+		if ( ! is_dir( $health_monitor_dir ) ) {
+			return;
+		}
+
+		// Load alerts class first (used by monitor).
+		require_once $health_monitor_dir . 'class-health-alerts.php';
+
+		// Load main monitor class (it loads check classes).
+		require_once $health_monitor_dir . 'class-health-monitor.php';
+
+		// Load admin page class.
+		require_once $health_monitor_dir . 'class-health-page.php';
+
+		// Initialize the health monitor.
+		\Assistify\Health_Monitor\Health_Monitor::get_instance();
+
+		// Initialize the health page (admin only).
+		if ( is_admin() ) {
+			\Assistify\Health_Monitor\Health_Page::get_instance();
+		}
 	}
 
 	/**

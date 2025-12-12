@@ -762,6 +762,78 @@ class Assistify_Admin {
 				'id'   => 'assistify_removebg_settings',
 			),
 
+			// Health Monitoring Settings.
+			array(
+				'title' => esc_html__( 'Health Monitoring', 'assistify-for-woocommerce' ),
+				'type'  => 'title',
+				'desc'  => esc_html__( 'Configure store health monitoring and email alerts. Alerts are sent to the admin email when issues are detected.', 'assistify-for-woocommerce' ),
+				'id'    => 'assistify_health_settings',
+			),
+			array(
+				'title'   => esc_html__( 'Enable Health Monitoring', 'assistify-for-woocommerce' ),
+				'desc'    => esc_html__( 'Monitor store health and display status in admin dashboard.', 'assistify-for-woocommerce' ),
+				'id'      => 'assistify_enable_health_monitoring',
+				'type'    => 'checkbox',
+				'default' => 'yes',
+			),
+			array(
+				'title'   => esc_html__( 'Critical Issue Alerts', 'assistify-for-woocommerce' ),
+				'desc'    => esc_html__( 'Send email when critical issues are detected (PHP errors, security issues).', 'assistify-for-woocommerce' ),
+				'id'      => 'assistify_alert_critical',
+				'type'    => 'checkbox',
+				'default' => 'yes',
+			),
+			array(
+				'title'   => esc_html__( 'Payment Failure Alerts', 'assistify-for-woocommerce' ),
+				'desc'    => esc_html__( 'Send email when multiple payment failures occur within an hour.', 'assistify-for-woocommerce' ),
+				'id'      => 'assistify_alert_payment',
+				'type'    => 'checkbox',
+				'default' => 'yes',
+			),
+			array(
+				'title'   => esc_html__( 'Low Stock Alerts', 'assistify-for-woocommerce' ),
+				'desc'    => esc_html__( 'Send email when products are running low in stock.', 'assistify-for-woocommerce' ),
+				'id'      => 'assistify_alert_stock',
+				'type'    => 'checkbox',
+				'default' => 'yes',
+			),
+			array(
+				'title'       => esc_html__( 'Alert Email', 'assistify-for-woocommerce' ),
+				'desc'        => esc_html__( 'Email address for health alerts. Leave empty to use WooCommerce admin email.', 'assistify-for-woocommerce' ),
+				'id'          => 'assistify_alert_email',
+				'type'        => 'email',
+				'default'     => '',
+				'placeholder' => get_option( 'woocommerce_email_from_address', get_option( 'admin_email' ) ),
+				'desc_tip'    => true,
+			),
+			array(
+				'type' => 'sectionend',
+				'id'   => 'assistify_health_settings',
+			),
+
+			// Advanced Settings.
+			array(
+				'title' => esc_html__( 'Advanced Settings', 'assistify-for-woocommerce' ),
+				'type'  => 'title',
+				'desc'  => esc_html__( 'Developer and debugging options.', 'assistify-for-woocommerce' ),
+				'id'    => 'assistify_advanced_settings',
+			),
+			array(
+				'title'   => esc_html__( 'Enable Debug Logging', 'assistify-for-woocommerce' ),
+				'desc'    => sprintf(
+					/* translators: %s: Link to WooCommerce logs */
+					esc_html__( 'Log API requests and errors for troubleshooting. View logs in %s.', 'assistify-for-woocommerce' ),
+					'<a href="' . esc_url( admin_url( 'admin.php?page=wc-status&tab=logs' ) ) . '">' . esc_html__( 'WooCommerce > Status > Logs', 'assistify-for-woocommerce' ) . '</a>'
+				),
+				'id'      => 'assistify_debug_logging',
+				'type'    => 'checkbox',
+				'default' => 'no',
+			),
+			array(
+				'type' => 'sectionend',
+				'id'   => 'assistify_advanced_settings',
+			),
+
 			// Privacy & Data Settings.
 			array(
 				'title' => esc_html__( 'Privacy & Data', 'assistify-for-woocommerce' ),
@@ -796,29 +868,6 @@ class Assistify_Admin {
 			array(
 				'type' => 'sectionend',
 				'id'   => 'assistify_privacy_settings',
-			),
-
-			// Advanced Settings.
-			array(
-				'title' => esc_html__( 'Advanced Settings', 'assistify-for-woocommerce' ),
-				'type'  => 'title',
-				'desc'  => esc_html__( 'Developer and debugging options.', 'assistify-for-woocommerce' ),
-				'id'    => 'assistify_advanced_settings',
-			),
-			array(
-				'title'   => esc_html__( 'Enable Debug Logging', 'assistify-for-woocommerce' ),
-				'desc'    => sprintf(
-					/* translators: %s: Link to WooCommerce logs */
-					esc_html__( 'Log API requests and errors for troubleshooting. View logs in %s.', 'assistify-for-woocommerce' ),
-					'<a href="' . esc_url( admin_url( 'admin.php?page=wc-status&tab=logs' ) ) . '">' . esc_html__( 'WooCommerce > Status > Logs', 'assistify-for-woocommerce' ) . '</a>'
-				),
-				'id'      => 'assistify_debug_logging',
-				'type'    => 'checkbox',
-				'default' => 'no',
-			),
-			array(
-				'type' => 'sectionend',
-				'id'   => 'assistify_advanced_settings',
 			),
 		);
 

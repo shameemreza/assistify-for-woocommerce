@@ -1293,6 +1293,30 @@ class Admin_Tools {
 		);
 
 		$this->register_tool(
+			'get_store_health',
+			array(
+				'description' => 'Get comprehensive store health report including score, issues, failed orders, payment success rate, system status, and recommendations',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'force_refresh' => array(
+							'type'        => 'boolean',
+							'description' => 'Force fresh check, bypass cache (default false)',
+						),
+						'category'      => array(
+							'type'        => 'string',
+							'description' => 'Filter by category: critical, performance, security, inventory, business, updates (optional, returns all if not specified)',
+							'enum'        => array( 'critical', 'performance', 'security', 'inventory', 'business', 'updates' ),
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_store_health' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
 			'get_sales_summary',
 			array(
 				'description' => 'Get sales summary for a time period',
@@ -1398,6 +1422,386 @@ class Admin_Tools {
 			)
 		);
 
+		// Advanced Analytics Tools using Analytics class.
+		$this->register_tool(
+			'get_revenue_trends',
+			array(
+				'description' => 'Get revenue trends over time (daily, weekly, or monthly data points)',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'period' => array(
+							'type'        => 'string',
+							'enum'        => array( 'daily', 'weekly', 'monthly' ),
+							'description' => 'Period granularity (default: daily)',
+						),
+						'count'  => array(
+							'type'        => 'integer',
+							'description' => 'Number of periods to return (default: 7 for daily, 4 for weekly, 6 for monthly)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_revenue_trends' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_customer_retention',
+			array(
+				'description' => 'Get customer retention metrics including repeat customer rate, new customers, and one-time buyers',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_customer_retention' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_aov_trends',
+			array(
+				'description' => 'Get average order value trends over time',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'months' => array(
+							'type'        => 'integer',
+							'description' => 'Number of months to analyze (default: 6)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_aov_trends' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_refund_patterns',
+			array(
+				'description' => 'Get refund patterns and rates over time',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'months' => array(
+							'type'        => 'integer',
+							'description' => 'Number of months to analyze (default: 6)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_refund_patterns' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_analytics_summary',
+			array(
+				'description' => 'Get comprehensive store analytics summary including revenue, AOV, retention, top products, and trends',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_analytics_summary' ),
+				'destructive' => false,
+			)
+		);
+
+		// Conversion Tracking Tools.
+		$this->register_tool(
+			'get_product_views',
+			array(
+				'description' => 'Get product page view statistics and conversion rates',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'product_id' => array(
+							'type'        => 'integer',
+							'description' => 'Specific product ID to get views for (optional)',
+						),
+						'days'       => array(
+							'type'        => 'integer',
+							'description' => 'Number of days to analyze (default: 30)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_product_views' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_top_viewed_products',
+			array(
+				'description' => 'Get products with the most page views',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'days'  => array(
+							'type'        => 'integer',
+							'description' => 'Number of days to analyze (default: 30)',
+						),
+						'limit' => array(
+							'type'        => 'integer',
+							'description' => 'Number of products to return (default: 10)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_top_viewed_products' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_low_conversion_products',
+			array(
+				'description' => 'Get products with high views but low sales (conversion optimization opportunities)',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'min_views'      => array(
+							'type'        => 'integer',
+							'description' => 'Minimum views to consider (default: 50)',
+						),
+						'max_conversion' => array(
+							'type'        => 'number',
+							'description' => 'Maximum conversion rate % to filter by (default: 2)',
+						),
+						'days'           => array(
+							'type'        => 'integer',
+							'description' => 'Number of days to analyze (default: 30)',
+						),
+						'limit'          => array(
+							'type'        => 'integer',
+							'description' => 'Number of products to return (default: 10)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_low_conversion_products' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_conversion_summary',
+			array(
+				'description' => 'Get overall store conversion metrics (views to purchases)',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'days' => array(
+							'type'        => 'integer',
+							'description' => 'Number of days to analyze (default: 30)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_conversion_summary' ),
+				'destructive' => false,
+			)
+		);
+
+		// Traffic Source Analytics Tools.
+		$this->register_tool(
+			'get_traffic_sources',
+			array(
+				'description' => 'Get traffic source statistics showing where orders are coming from (UTM campaigns, referrers, channels)',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'days' => array(
+							'type'        => 'integer',
+							'description' => 'Number of days to analyze (default: 30)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_traffic_sources' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_top_traffic_sources',
+			array(
+				'description' => 'Get top traffic sources by order count and revenue',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'days'  => array(
+							'type'        => 'integer',
+							'description' => 'Number of days to analyze (default: 30)',
+						),
+						'limit' => array(
+							'type'        => 'integer',
+							'description' => 'Number of sources to return (default: 10)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_top_traffic_sources' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_campaign_performance',
+			array(
+				'description' => 'Get marketing campaign performance (UTM campaigns)',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'days' => array(
+							'type'        => 'integer',
+							'description' => 'Number of days to analyze (default: 30)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_campaign_performance' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_channel_breakdown',
+			array(
+				'description' => 'Get marketing channel breakdown (Paid Search, Social Media, Email, Organic, Referral, Direct)',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'days' => array(
+							'type'        => 'integer',
+							'description' => 'Number of days to analyze (default: 30)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_channel_breakdown' ),
+				'destructive' => false,
+			)
+		);
+
+		// Behavior Tracking Tools.
+		$this->register_tool(
+			'get_cart_behavior',
+			array(
+				'description' => 'Get add-to-cart behavior statistics and most added products',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'days' => array(
+							'type'        => 'integer',
+							'description' => 'Number of days to analyze (default: 30)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_cart_behavior' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_abandonment_rate',
+			array(
+				'description' => 'Get checkout abandonment rate and estimated lost revenue',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'days' => array(
+							'type'        => 'integer',
+							'description' => 'Number of days to analyze (default: 30)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_abandonment_rate' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_search_analytics',
+			array(
+				'description' => 'Get customer search query statistics including top searches and searches with no results',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'days' => array(
+							'type'        => 'integer',
+							'description' => 'Number of days to analyze (default: 30)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_search_analytics' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_behavior_summary',
+			array(
+				'description' => 'Get comprehensive customer behavior summary (cart, abandonment, searches)',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'days' => array(
+							'type'        => 'integer',
+							'description' => 'Number of days to analyze (default: 30)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_behavior_summary' ),
+				'destructive' => false,
+			)
+		);
+
+		// Order Region Analytics (uses existing WooCommerce data).
+		$this->register_tool(
+			'get_orders_by_region',
+			array(
+				'description' => 'Get orders grouped by country/region with revenue breakdown',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'days' => array(
+							'type'        => 'integer',
+							'description' => 'Number of days to analyze (default: 30)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_orders_by_region' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_analytics_status',
+			array(
+				'description' => 'Check analytics tracking status and data availability',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => new \stdClass(),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_analytics_status' ),
+				'destructive' => false,
+			)
+		);
+
 		$this->register_tool(
 			'get_orders_by_status',
 			array(
@@ -1493,6 +1897,27 @@ class Admin_Tools {
 	}
 
 	/**
+	 * Ensure parameters schema is valid for JSON encoding.
+	 * Empty arrays must be objects in JSON schema.
+	 *
+	 * @param array $parameters Parameters schema.
+	 * @return array Fixed parameters.
+	 */
+	private function fix_parameters_schema( $parameters ) {
+		// Ensure properties is an object (not array) when empty.
+		if ( isset( $parameters['properties'] ) && empty( $parameters['properties'] ) ) {
+			$parameters['properties'] = new \stdClass();
+		}
+
+		// Ensure required is an array.
+		if ( ! isset( $parameters['required'] ) ) {
+			$parameters['required'] = array();
+		}
+
+		return $parameters;
+	}
+
+	/**
 	 * Get all tools formatted for OpenAI API.
 	 *
 	 * @return array Tools in OpenAI format.
@@ -1506,7 +1931,7 @@ class Admin_Tools {
 				'function' => array(
 					'name'        => $name,
 					'description' => $tool['description'],
-					'parameters'  => $tool['parameters'],
+					'parameters'  => $this->fix_parameters_schema( $tool['parameters'] ),
 				),
 			);
 		}
@@ -1526,7 +1951,7 @@ class Admin_Tools {
 			$tools[] = array(
 				'name'         => $name,
 				'description'  => $tool['description'],
-				'input_schema' => $tool['parameters'],
+				'input_schema' => $this->fix_parameters_schema( $tool['parameters'] ),
 			);
 		}
 
@@ -3211,6 +3636,166 @@ class Admin_Tools {
 		$result['update_url']    = admin_url( 'update-core.php' );
 
 		return $result;
+	}
+
+	/**
+	 * Get store health report.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_store_health( $args ) {
+		// Check if health monitoring is enabled.
+		if ( 'yes' !== get_option( 'assistify_enable_health_monitoring', 'yes' ) ) {
+			return array(
+				'success' => false,
+				'message' => 'Health monitoring is disabled. Enable it in WooCommerce > Settings > Assistify.',
+			);
+		}
+
+		$force_refresh = isset( $args['force_refresh'] ) && $args['force_refresh'];
+		$category      = isset( $args['category'] ) ? sanitize_text_field( $args['category'] ) : '';
+
+		// Get health monitor instance.
+		$monitor = \Assistify\Health_Monitor\Health_Monitor::get_instance();
+		$results = $monitor->run_checks( $force_refresh );
+
+		// Build response.
+		$response = array(
+			'success'   => true,
+			'timestamp' => $results['timestamp'],
+			'score'     => $results['score'],
+			'status'    => $monitor->get_score_status( $results['score'] ),
+		);
+
+		// Add summary.
+		$response['summary'] = array(
+			'status'         => $results['summary']['status'],
+			'message'        => $results['summary']['message'],
+			'critical_count' => $results['summary']['critical_count'],
+			'warning_count'  => $results['summary']['warning_count'],
+			'info_count'     => $results['summary']['info_count'],
+		);
+
+		// Add category scores.
+		$response['categories'] = array();
+		foreach ( $results['categories'] as $cat_id => $cat_data ) {
+			$response['categories'][ $cat_id ] = array(
+				'label'       => $cat_data['label'],
+				'score'       => $cat_data['score'],
+				'issue_count' => count( $cat_data['issues'] ),
+			);
+		}
+
+		// Add issues (filtered by category if specified).
+		$response['issues'] = array(
+			'critical' => array(),
+			'warning'  => array(),
+			'info'     => array(),
+		);
+
+		foreach ( array( 'critical', 'warning', 'info' ) as $severity ) {
+			foreach ( $results['issues'][ $severity ] as $issue ) {
+				// Filter by category if specified.
+				if ( ! empty( $category ) && $issue['category'] !== $category ) {
+					continue;
+				}
+
+				$response['issues'][ $severity ][] = array(
+					'title'    => $issue['title'],
+					'message'  => $issue['message'],
+					'fix'      => $issue['fix'] ?? '',
+					'category' => $issue['category'],
+				);
+			}
+		}
+
+		// Add payment statistics.
+		$payment_stats             = $monitor->get_payment_stats();
+		$response['payment_stats'] = array(
+			'success_rate'  => $payment_stats['success_rate'] . '%',
+			'total_tracked' => $payment_stats['total'],
+			'successful'    => $payment_stats['success'],
+			'failed'        => $payment_stats['failed'],
+		);
+
+		// Add recent failed orders if any.
+		$recent_failures = $monitor->get_recent_failures( 5 );
+		if ( ! empty( $recent_failures ) ) {
+			$response['recent_failures'] = array();
+			foreach ( $recent_failures as $failure ) {
+				$response['recent_failures'][] = array(
+					'order_id' => $failure['order_id'],
+					'gateway'  => $failure['gateway_title'],
+					'total'    => $failure['total'] . ' ' . $failure['currency'],
+					'time'     => $failure['timestamp'],
+				);
+			}
+		}
+
+		// Add recommendations based on issues.
+		$response['recommendations'] = $this->generate_health_recommendations( $results );
+
+		return $response;
+	}
+
+	/**
+	 * Generate health recommendations based on issues.
+	 *
+	 * @param array $results Health check results.
+	 * @return array Recommendations.
+	 */
+	private function generate_health_recommendations( $results ) {
+		$recommendations = array();
+
+		// Priority 1: Critical issues.
+		if ( ! empty( $results['issues']['critical'] ) ) {
+			$recommendations[] = array(
+				'priority' => 'high',
+				'action'   => 'Address critical issues immediately to prevent store problems.',
+				'details'  => sprintf( '%d critical issue(s) need attention.', count( $results['issues']['critical'] ) ),
+			);
+		}
+
+		// Check payment success rate.
+		$monitor       = \Assistify\Health_Monitor\Health_Monitor::get_instance();
+		$payment_stats = $monitor->get_payment_stats();
+		if ( $payment_stats['success_rate'] < 90 && $payment_stats['total'] >= 10 ) {
+			$recommendations[] = array(
+				'priority' => 'high',
+				'action'   => 'Review payment gateway configuration.',
+				'details'  => sprintf( 'Payment success rate is %.1f%%. Check gateway settings and API credentials.', $payment_stats['success_rate'] ),
+			);
+		}
+
+		// Check update status.
+		if ( isset( $results['categories']['updates'] ) && $results['categories']['updates']['score'] < 100 ) {
+			$recommendations[] = array(
+				'priority' => 'medium',
+				'action'   => 'Review available updates.',
+				'details'  => 'Updates are available for WordPress, plugins, or themes. Consider updating after backup.',
+			);
+		}
+
+		// Check inventory.
+		if ( isset( $results['categories']['inventory'] ) && $results['categories']['inventory']['score'] < 80 ) {
+			$recommendations[] = array(
+				'priority' => 'medium',
+				'action'   => 'Review inventory levels.',
+				'details'  => 'Some products are low or out of stock. Restock to avoid lost sales.',
+			);
+		}
+
+		// Add general recommendation if healthy.
+		if ( empty( $recommendations ) && $results['score'] >= 90 ) {
+			$recommendations[] = array(
+				'priority' => 'info',
+				'action'   => 'Store is healthy.',
+				'details'  => 'No immediate actions required. Keep monitoring regularly.',
+			);
+		}
+
+		return $recommendations;
 	}
 
 	/**
@@ -5073,5 +5658,1004 @@ This email was sent from ' . esc_html( $from_name ) . '
 		}
 
 		return implode( '. ', $summaries ) . '.';
+	}
+
+	/**
+	 * Tool: Get revenue trends using Analytics class.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_revenue_trends( $args ) {
+		$period = sanitize_text_field( $args['period'] ?? 'daily' );
+		$count  = isset( $args['count'] ) ? (int) $args['count'] : null;
+
+		// Set default count based on period if not provided.
+		if ( null === $count ) {
+			$count = 'daily' === $period ? 7 : ( 'weekly' === $period ? 4 : 6 );
+		}
+
+		$analytics = \Assistify\Analytics\Analytics::get_instance();
+		$data      = $analytics->get_revenue_trends( $period, $count );
+
+		// Calculate totals and averages.
+		$total_revenue = 0;
+		$total_orders  = 0;
+		foreach ( $data as $point ) {
+			$total_revenue += $point['revenue'];
+			$total_orders  += $point['order_count'];
+		}
+
+		return array(
+			'success'       => true,
+			'period'        => $period,
+			'data_points'   => $data,
+			'total_revenue' => wc_price( $total_revenue ),
+			'total_orders'  => $total_orders,
+			'average'       => $total_orders > 0 ? wc_price( $total_revenue / $total_orders ) : wc_price( 0 ),
+			'summary'       => sprintf(
+				'Over the last %d %s periods: %s total revenue from %d orders.',
+				$count,
+				'daily' === $period ? 'day' : ( 'weekly' === $period ? 'week' : 'month' ),
+				wc_price( $total_revenue ),
+				$total_orders
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get customer retention metrics.
+	 *
+	 * @param array $args Arguments (unused).
+	 * @return array Result.
+	 */
+	public function tool_get_customer_retention( $args ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		$analytics = \Assistify\Analytics\Analytics::get_instance();
+		$data      = $analytics->get_customer_retention();
+
+		return array(
+			'success'          => true,
+			'total_customers'  => $data['total_customers'],
+			'repeat_customers' => $data['repeat_customers'],
+			'one_time_buyers'  => $data['one_time_buyers'],
+			'retention_rate'   => $data['retention_rate'] . '%',
+			'new_this_month'   => $data['new_this_month'],
+			'summary'          => sprintf(
+				'Customer retention rate: %s%%. %d repeat customers out of %d total. %d new customers this month.',
+				$data['retention_rate'],
+				$data['repeat_customers'],
+				$data['total_customers'],
+				$data['new_this_month']
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get average order value trends.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_aov_trends( $args ) {
+		$months = isset( $args['months'] ) ? (int) $args['months'] : 6;
+
+		$analytics = \Assistify\Analytics\Analytics::get_instance();
+		$data      = $analytics->get_aov_trends( $months );
+
+		// Calculate change.
+		$latest = end( $data );
+		$oldest = reset( $data );
+		$change = $oldest['aov'] > 0 ? round( ( ( $latest['aov'] - $oldest['aov'] ) / $oldest['aov'] ) * 100, 1 ) : 0;
+		$trend  = $change >= 0 ? 'up' : 'down';
+
+		return array(
+			'success'     => true,
+			'months'      => $months,
+			'data_points' => $data,
+			'current_aov' => wc_price( $latest['aov'] ),
+			'change'      => $change . '%',
+			'trend'       => $trend,
+			'summary'     => sprintf(
+				'Current AOV: %s (%.1f%% %s over %d months).',
+				wc_price( $latest['aov'] ),
+				abs( $change ),
+				$trend,
+				$months
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get refund patterns.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_refund_patterns( $args ) {
+		$months = isset( $args['months'] ) ? (int) $args['months'] : 6;
+
+		$analytics = \Assistify\Analytics\Analytics::get_instance();
+		$data      = $analytics->get_refund_patterns( $months );
+
+		// Calculate totals.
+		$total_refunds = 0;
+		$total_amount  = 0;
+		foreach ( $data as $point ) {
+			$total_refunds += $point['refund_count'];
+			$total_amount  += $point['refund_total'];
+		}
+
+		$latest_rate = ! empty( $data ) ? end( $data )['refund_rate'] : 0;
+
+		return array(
+			'success'       => true,
+			'months'        => $months,
+			'data_points'   => $data,
+			'total_refunds' => $total_refunds,
+			'total_amount'  => wc_price( $total_amount ),
+			'current_rate'  => $latest_rate . '%',
+			'summary'       => sprintf(
+				'%d refunds totaling %s over the last %d months. Current refund rate: %s%%.',
+				$total_refunds,
+				wc_price( $total_amount ),
+				$months,
+				$latest_rate
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get comprehensive analytics summary.
+	 *
+	 * @param array $args Arguments (unused).
+	 * @return array Result.
+	 */
+	public function tool_get_analytics_summary( $args ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		$analytics = \Assistify\Analytics\Analytics::get_instance();
+		$data      = $analytics->get_summary();
+
+		// Format top products for display.
+		$top_products = array();
+		foreach ( $data['top_products'] as $product ) {
+			$top_products[] = array(
+				'name'     => $product['name'],
+				'revenue'  => wc_price( $product['revenue'] ),
+				'quantity' => $product['quantity_sold'],
+			);
+		}
+
+		return array(
+			'success'        => true,
+			'today'          => array(
+				'revenue' => wc_price( $data['today']['revenue'] ),
+				'orders'  => $data['today']['orders'],
+				'change'  => $data['today']['change'] . '%',
+			),
+			'this_month'     => array(
+				'revenue' => wc_price( $data['this_month']['revenue'] ),
+				'orders'  => $data['this_month']['orders'],
+				'change'  => $data['this_month']['change'] . '%',
+			),
+			'aov'            => array(
+				'current' => wc_price( $data['aov']['current'] ),
+				'change'  => $data['aov']['change'] . '%',
+			),
+			'retention_rate' => $data['retention_rate'] . '%',
+			'new_customers'  => $data['new_customers'],
+			'refund_rate'    => $data['refund_rate'] . '%',
+			'top_products'   => $top_products,
+			'summary'        => sprintf(
+				'Today: %s (%d orders). This month: %s (%d orders, %s%% vs last month). AOV: %s. Retention: %s%%. Refund rate: %s%%.',
+				wc_price( $data['today']['revenue'] ),
+				$data['today']['orders'],
+				wc_price( $data['this_month']['revenue'] ),
+				$data['this_month']['orders'],
+				( $data['this_month']['change'] >= 0 ? '+' : '' ) . $data['this_month']['change'],
+				wc_price( $data['aov']['current'] ),
+				$data['retention_rate'],
+				$data['refund_rate']
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get product views and conversion rate.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_product_views( $args ) {
+		$product_id = isset( $args['product_id'] ) ? (int) $args['product_id'] : 0;
+		$days       = isset( $args['days'] ) ? (int) $args['days'] : 30;
+
+		$tracker = \Assistify\Analytics\Conversion_Tracker::get_instance();
+
+		if ( $product_id > 0 ) {
+			$product = wc_get_product( $product_id );
+			if ( ! $product ) {
+				return array(
+					'success' => false,
+					'message' => 'Product not found.',
+				);
+			}
+
+			$views      = $tracker->get_views_for_period( $product_id, $days );
+			$sales      = $tracker->get_sales_for_period( $product_id, $days );
+			$conversion = $tracker->get_conversion_rate( $product_id, $days );
+
+			return array(
+				'success'         => true,
+				'product_id'      => $product_id,
+				'product_name'    => $product->get_name(),
+				'views'           => $views,
+				'sales'           => $sales,
+				'conversion_rate' => $conversion . '%',
+				'period_days'     => $days,
+				'summary'         => sprintf(
+					'%s: %d views, %d sales, %.2f%% conversion rate (last %d days).',
+					$product->get_name(),
+					$views,
+					$sales,
+					$conversion,
+					$days
+				),
+			);
+		}
+
+		// Return summary if no specific product.
+		$summary = $tracker->get_conversion_summary( $days );
+
+		return array(
+			'success'             => true,
+			'total_views'         => $summary['total_views'],
+			'total_sales'         => $summary['total_sales'],
+			'overall_conversion'  => $summary['overall_conversion'] . '%',
+			'average_conversion'  => $summary['average_conversion'] . '%',
+			'products_with_views' => $summary['products_with_views'],
+			'period_days'         => $days,
+			'summary'             => sprintf(
+				'Store-wide: %d total views, %d total sales, %.2f%% overall conversion (last %d days).',
+				$summary['total_views'],
+				$summary['total_sales'],
+				$summary['overall_conversion'],
+				$days
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get top viewed products.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_top_viewed_products( $args ) {
+		$days  = isset( $args['days'] ) ? (int) $args['days'] : 30;
+		$limit = isset( $args['limit'] ) ? (int) $args['limit'] : 10;
+
+		$tracker  = \Assistify\Analytics\Conversion_Tracker::get_instance();
+		$products = $tracker->get_top_viewed_products( $days, $limit );
+
+		if ( empty( $products ) ) {
+			return array(
+				'success'  => true,
+				'message'  => 'No product view data available yet. Views are tracked when customers visit product pages.',
+				'products' => array(),
+			);
+		}
+
+		return array(
+			'success'     => true,
+			'products'    => $products,
+			'period_days' => $days,
+			'summary'     => sprintf(
+				'Top %d viewed products in the last %d days. Most viewed: %s with %d views (%.2f%% conversion).',
+				count( $products ),
+				$days,
+				$products[0]['name'],
+				$products[0]['views'],
+				$products[0]['conversion_rate']
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get low conversion products (high interest, low sales).
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_low_conversion_products( $args ) {
+		$min_views      = isset( $args['min_views'] ) ? (int) $args['min_views'] : 50;
+		$max_conversion = isset( $args['max_conversion'] ) ? (float) $args['max_conversion'] : 2;
+		$days           = isset( $args['days'] ) ? (int) $args['days'] : 30;
+		$limit          = isset( $args['limit'] ) ? (int) $args['limit'] : 10;
+
+		$tracker  = \Assistify\Analytics\Conversion_Tracker::get_instance();
+		$products = $tracker->get_low_conversion_products( $min_views, $max_conversion, $days, $limit );
+
+		if ( empty( $products ) ) {
+			return array(
+				'success'  => true,
+				'message'  => 'No low-conversion products found matching the criteria. This is good - your products are converting well.',
+				'products' => array(),
+			);
+		}
+
+		// Format for display.
+		$formatted = array();
+		foreach ( $products as $product ) {
+			$formatted[] = array(
+				'name'            => $product['name'],
+				'views'           => $product['views'],
+				'sales'           => $product['sales'],
+				'conversion_rate' => $product['conversion_rate'] . '%',
+				'price'           => wc_price( $product['price'] ),
+				'recommendation'  => $this->get_conversion_recommendation( $product ),
+			);
+		}
+
+		return array(
+			'success'     => true,
+			'products'    => $formatted,
+			'period_days' => $days,
+			'criteria'    => array(
+				'min_views'      => $min_views,
+				'max_conversion' => $max_conversion . '%',
+			),
+			'summary'     => sprintf(
+				'Found %d products with %d+ views but less than %.1f%% conversion. Top opportunity: %s (%d views, %.2f%% conversion).',
+				count( $products ),
+				$min_views,
+				$max_conversion,
+				$products[0]['name'],
+				$products[0]['views'],
+				$products[0]['conversion_rate']
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get conversion summary.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_conversion_summary( $args ) {
+		$days = isset( $args['days'] ) ? (int) $args['days'] : 30;
+
+		$tracker = \Assistify\Analytics\Conversion_Tracker::get_instance();
+		$summary = $tracker->get_conversion_summary( $days );
+
+		$benchmark_msg = '';
+		if ( $summary['overall_conversion'] < 1 ) {
+			$benchmark_msg = 'Below average. Consider improving product descriptions, images, or pricing.';
+		} elseif ( $summary['overall_conversion'] < 3 ) {
+			$benchmark_msg = 'Average for e-commerce. Room for improvement.';
+		} else {
+			$benchmark_msg = 'Good conversion rate. Keep up the good work.';
+		}
+
+		return array(
+			'success'             => true,
+			'total_views'         => $summary['total_views'],
+			'total_sales'         => $summary['total_sales'],
+			'overall_conversion'  => $summary['overall_conversion'] . '%',
+			'average_conversion'  => $summary['average_conversion'] . '%',
+			'products_with_views' => $summary['products_with_views'],
+			'period_days'         => $days,
+			'benchmark'           => $benchmark_msg,
+			'summary'             => sprintf(
+				'Last %d days: %d product page views, %d sales, %.2f%% overall conversion rate. %s',
+				$days,
+				$summary['total_views'],
+				$summary['total_sales'],
+				$summary['overall_conversion'],
+				$benchmark_msg
+			),
+		);
+	}
+
+	/**
+	 * Get recommendation for a low-conversion product.
+	 *
+	 * @param array $product Product data.
+	 * @return string Recommendation.
+	 */
+	private function get_conversion_recommendation( $product ) {
+		$recommendations = array();
+
+		// High views, very low conversion.
+		if ( $product['views'] > 100 && $product['conversion_rate'] < 0.5 ) {
+			$recommendations[] = 'Review pricing - may be too high for the perceived value';
+			$recommendations[] = 'Improve product images and description';
+		}
+
+		// Medium views, low conversion.
+		if ( $product['views'] >= 50 && $product['conversion_rate'] < 2 ) {
+			$recommendations[] = 'Add more customer reviews';
+			$recommendations[] = 'Consider offering a discount or promotion';
+		}
+
+		// Zero sales despite views.
+		if ( 0 === $product['sales'] && $product['views'] > 20 ) {
+			$recommendations[] = 'Check if product is in stock and properly configured';
+			$recommendations[] = 'Review shipping costs which may deter buyers';
+		}
+
+		if ( empty( $recommendations ) ) {
+			return 'Review product page for potential improvements.';
+		}
+
+		return implode( '. ', array_slice( $recommendations, 0, 2 ) ) . '.';
+	}
+
+	/**
+	 * Tool: Get traffic source statistics.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_traffic_sources( $args ) {
+		$days = isset( $args['days'] ) ? (int) $args['days'] : 30;
+
+		$tracker = \Assistify\Analytics\Traffic_Tracker::get_instance();
+		$stats   = $tracker->get_traffic_stats( $days );
+
+		if ( 0 === $stats['total_tracked'] ) {
+			return array(
+				'success' => true,
+				'message' => 'No traffic source data available yet. Data is captured when customers with UTM parameters or external referrers place orders.',
+				'data'    => array(),
+			);
+		}
+
+		// Format sources for display.
+		$sources = array();
+		foreach ( array_slice( $stats['by_source'], 0, 10, true ) as $source => $data ) {
+			$sources[] = array(
+				'source'  => $source,
+				'orders'  => $data['orders'],
+				'revenue' => wc_price( $data['revenue'] ),
+			);
+		}
+
+		return array(
+			'success'       => true,
+			'period_days'   => $days,
+			'total_tracked' => $stats['total_tracked'],
+			'total_revenue' => wc_price( $stats['total_revenue'] ),
+			'top_sources'   => $sources,
+			'summary'       => sprintf(
+				'%d orders tracked with traffic source data (last %d days). Total revenue: %s. Top source: %s with %d orders.',
+				$stats['total_tracked'],
+				$days,
+				wc_price( $stats['total_revenue'] ),
+				! empty( $sources ) ? $sources[0]['source'] : 'N/A',
+				! empty( $sources ) ? $sources[0]['orders'] : 0
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get top traffic sources.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_top_traffic_sources( $args ) {
+		$days  = isset( $args['days'] ) ? (int) $args['days'] : 30;
+		$limit = isset( $args['limit'] ) ? (int) $args['limit'] : 10;
+
+		$tracker = \Assistify\Analytics\Traffic_Tracker::get_instance();
+		$sources = $tracker->get_top_sources( $days, $limit );
+
+		if ( empty( $sources ) ) {
+			return array(
+				'success' => true,
+				'message' => 'No traffic source data available yet.',
+				'sources' => array(),
+			);
+		}
+
+		// Format for display.
+		$formatted = array();
+		foreach ( $sources as $source ) {
+			$formatted[] = array(
+				'source'  => $source['source'],
+				'orders'  => $source['orders'],
+				'revenue' => wc_price( $source['revenue'] ),
+			);
+		}
+
+		return array(
+			'success'     => true,
+			'period_days' => $days,
+			'sources'     => $formatted,
+			'summary'     => sprintf(
+				'Top %d traffic sources (last %d days). #1: %s brought %d orders (%s revenue).',
+				count( $formatted ),
+				$days,
+				$formatted[0]['source'],
+				$formatted[0]['orders'],
+				$formatted[0]['revenue']
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get campaign performance.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_campaign_performance( $args ) {
+		$days = isset( $args['days'] ) ? (int) $args['days'] : 30;
+
+		$tracker   = \Assistify\Analytics\Traffic_Tracker::get_instance();
+		$campaigns = $tracker->get_campaign_performance( $days );
+
+		if ( empty( $campaigns ) ) {
+			return array(
+				'success'   => true,
+				'message'   => 'No UTM campaign data available. Ensure your marketing links include utm_campaign parameters.',
+				'campaigns' => array(),
+			);
+		}
+
+		// Format for display.
+		$formatted = array();
+		foreach ( $campaigns as $campaign ) {
+			$formatted[] = array(
+				'campaign' => $campaign['campaign'],
+				'orders'   => $campaign['orders'],
+				'revenue'  => wc_price( $campaign['revenue'] ),
+				'aov'      => wc_price( $campaign['aov'] ),
+			);
+		}
+
+		return array(
+			'success'     => true,
+			'period_days' => $days,
+			'campaigns'   => $formatted,
+			'summary'     => sprintf(
+				'%d campaigns tracked (last %d days). Best performer: "%s" with %d orders and %s revenue.',
+				count( $formatted ),
+				$days,
+				$formatted[0]['campaign'],
+				$formatted[0]['orders'],
+				$formatted[0]['revenue']
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get channel breakdown.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_channel_breakdown( $args ) {
+		$days = isset( $args['days'] ) ? (int) $args['days'] : 30;
+
+		$tracker  = \Assistify\Analytics\Traffic_Tracker::get_instance();
+		$channels = $tracker->get_channel_breakdown( $days );
+
+		if ( empty( $channels ) ) {
+			return array(
+				'success'  => true,
+				'message'  => 'No channel data available yet.',
+				'channels' => array(),
+			);
+		}
+
+		// Format for display.
+		$formatted = array();
+		foreach ( $channels as $channel ) {
+			$formatted[] = array(
+				'channel'    => $channel['channel'],
+				'orders'     => $channel['orders'],
+				'revenue'    => wc_price( $channel['revenue'] ),
+				'percentage' => $channel['percentage'] . '%',
+			);
+		}
+
+		// Build summary.
+		$summary_parts = array();
+		foreach ( array_slice( $formatted, 0, 3 ) as $ch ) {
+			$summary_parts[] = sprintf( '%s: %d orders (%s)', $ch['channel'], $ch['orders'], $ch['percentage'] );
+		}
+
+		return array(
+			'success'     => true,
+			'period_days' => $days,
+			'channels'    => $formatted,
+			'summary'     => sprintf(
+				'Channel breakdown (last %d days): %s.',
+				$days,
+				implode( ', ', $summary_parts )
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get cart behavior statistics.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_cart_behavior( $args ) {
+		$days = isset( $args['days'] ) ? (int) $args['days'] : 30;
+
+		$tracker = \Assistify\Analytics\Behavior_Tracker::get_instance();
+		$stats   = $tracker->get_cart_stats( $days );
+
+		if ( 0 === $stats['total_add_to_cart'] ) {
+			return array(
+				'success' => true,
+				'message' => 'No cart behavior data available yet. Data is collected when customers add products to cart.',
+				'data'    => array(),
+			);
+		}
+
+		return array(
+			'success'           => true,
+			'period_days'       => $days,
+			'total_add_to_cart' => $stats['total_add_to_cart'],
+			'top_products'      => $stats['top_products'],
+			'summary'           => sprintf(
+				'%d add-to-cart events in the last %d days. Most added product: %s (%d times).',
+				$stats['total_add_to_cart'],
+				$days,
+				! empty( $stats['top_products'] ) ? $stats['top_products'][0]['name'] : 'N/A',
+				! empty( $stats['top_products'] ) ? $stats['top_products'][0]['count'] : 0
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get checkout abandonment rate.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_abandonment_rate( $args ) {
+		$days = isset( $args['days'] ) ? (int) $args['days'] : 30;
+
+		$tracker = \Assistify\Analytics\Behavior_Tracker::get_instance();
+		$data    = $tracker->get_abandonment_rate( $days );
+
+		if ( 0 === $data['checkout_starts'] ) {
+			return array(
+				'success' => true,
+				'message' => 'No checkout data available yet. Data is collected when customers reach the checkout page.',
+				'data'    => array(),
+			);
+		}
+
+		$severity = 'good';
+		$advice   = 'Your abandonment rate is healthy.';
+
+		if ( $data['abandonment_rate'] > 70 ) {
+			$severity = 'critical';
+			$advice   = 'High abandonment rate. Consider simplifying checkout, adding trust badges, or offering free shipping.';
+		} elseif ( $data['abandonment_rate'] > 50 ) {
+			$severity = 'warning';
+			$advice   = 'Moderate abandonment. Review checkout flow for friction points.';
+		}
+
+		return array(
+			'success'          => true,
+			'period_days'      => $days,
+			'checkout_starts'  => $data['checkout_starts'],
+			'completed_orders' => $data['completed_orders'],
+			'abandoned'        => $data['abandoned'],
+			'abandonment_rate' => $data['abandonment_rate'] . '%',
+			'avg_cart_value'   => wc_price( $data['avg_cart_value'] ),
+			'estimated_lost'   => wc_price( $data['estimated_lost'] ),
+			'severity'         => $severity,
+			'advice'           => $advice,
+			'summary'          => sprintf(
+				'Checkout abandonment: %.1f%% (%d started, %d completed). Estimated lost revenue: %s. %s',
+				$data['abandonment_rate'],
+				$data['checkout_starts'],
+				$data['completed_orders'],
+				wc_price( $data['estimated_lost'] ),
+				$advice
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get search analytics.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_search_analytics( $args ) {
+		$days = isset( $args['days'] ) ? (int) $args['days'] : 30;
+
+		$tracker = \Assistify\Analytics\Behavior_Tracker::get_instance();
+		$stats   = $tracker->get_search_stats( $days );
+
+		if ( 0 === $stats['total_searches'] ) {
+			return array(
+				'success' => true,
+				'message' => 'No search data available yet. Data is collected when customers use the product search.',
+				'data'    => array(),
+			);
+		}
+
+		// Build no-results insight.
+		$no_results_msg = '';
+		if ( ! empty( $stats['no_results'] ) ) {
+			$no_results_terms = array_map(
+				function ( $s ) {
+					return '"' . $s['query'] . '"';
+				},
+				$stats['no_results']
+			);
+			$no_results_msg   = sprintf(
+				' Searches with no results: %s - consider adding these products.',
+				implode( ', ', $no_results_terms )
+			);
+		}
+
+		return array(
+			'success'        => true,
+			'period_days'    => $days,
+			'total_searches' => $stats['total_searches'],
+			'unique_queries' => $stats['unique_queries'],
+			'top_searches'   => $stats['top_searches'],
+			'no_results'     => $stats['no_results'],
+			'summary'        => sprintf(
+				'%d searches (%d unique queries) in the last %d days. Top search: "%s" (%d times).%s',
+				$stats['total_searches'],
+				$stats['unique_queries'],
+				$days,
+				! empty( $stats['top_searches'] ) ? $stats['top_searches'][0]['query'] : 'N/A',
+				! empty( $stats['top_searches'] ) ? $stats['top_searches'][0]['count'] : 0,
+				$no_results_msg
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get behavior summary.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_behavior_summary( $args ) {
+		$days = isset( $args['days'] ) ? (int) $args['days'] : 30;
+
+		$tracker = \Assistify\Analytics\Behavior_Tracker::get_instance();
+		$summary = $tracker->get_behavior_summary( $days );
+
+		$insights = array();
+
+		// Cart insight.
+		if ( $summary['add_to_cart'] > 0 && $summary['top_cart_product'] ) {
+			$insights[] = sprintf(
+				'%d add-to-cart events. Most added: %s.',
+				$summary['add_to_cart'],
+				$summary['top_cart_product']['name']
+			);
+		}
+
+		// Abandonment insight.
+		if ( $summary['abandonment_rate'] > 0 ) {
+			$insights[] = sprintf(
+				'%.1f%% checkout abandonment (est. %s lost).',
+				$summary['abandonment_rate'],
+				wc_price( $summary['estimated_lost'] )
+			);
+		}
+
+		// Search insight.
+		if ( $summary['total_searches'] > 0 ) {
+			$search_msg = sprintf( '%d product searches.', $summary['total_searches'] );
+			if ( $summary['no_results_count'] > 0 ) {
+				$search_msg .= sprintf( ' %d searches had no results.', $summary['no_results_count'] );
+			}
+			$insights[] = $search_msg;
+		}
+
+		return array(
+			'success'          => true,
+			'period_days'      => $days,
+			'add_to_cart'      => $summary['add_to_cart'],
+			'abandonment_rate' => $summary['abandonment_rate'] . '%',
+			'estimated_lost'   => wc_price( $summary['estimated_lost'] ),
+			'total_searches'   => $summary['total_searches'],
+			'no_results_count' => $summary['no_results_count'],
+			'summary'          => ! empty( $insights )
+				? implode( ' ', $insights )
+				: 'No behavior data available yet. Data is collected as customers interact with your store.',
+		);
+	}
+
+	/**
+	 * Tool: Get orders by region.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_orders_by_region( $args ) {
+		$days = isset( $args['days'] ) ? (int) $args['days'] : 30;
+
+		$orders = wc_get_orders(
+			array(
+				'status'       => array( 'completed', 'processing', 'on-hold' ),
+				'date_created' => '>' . strtotime( "-{$days} days" ),
+				'limit'        => -1,
+			)
+		);
+
+		if ( empty( $orders ) ) {
+			return array(
+				'success' => true,
+				'message' => 'No orders found in the specified period.',
+				'regions' => array(),
+			);
+		}
+
+		$by_country = array();
+
+		foreach ( $orders as $order ) {
+			$country_code = $order->get_billing_country();
+			$country_name = WC()->countries->get_countries()[ $country_code ] ?? $country_code;
+
+			if ( empty( $country_code ) ) {
+				$country_name = 'Unknown';
+			}
+
+			if ( ! isset( $by_country[ $country_name ] ) ) {
+				$by_country[ $country_name ] = array(
+					'orders'  => 0,
+					'revenue' => 0,
+				);
+			}
+
+			++$by_country[ $country_name ]['orders'];
+			$by_country[ $country_name ]['revenue'] += (float) $order->get_total();
+		}
+
+		// Sort by revenue descending.
+		uasort(
+			$by_country,
+			function ( $a, $b ) {
+				return $b['revenue'] <=> $a['revenue'];
+			}
+		);
+
+		// Format for display.
+		$regions       = array();
+		$summary_parts = array();
+
+		foreach ( $by_country as $country => $data ) {
+			$regions[] = array(
+				'country' => $country,
+				'orders'  => $data['orders'],
+				'revenue' => wc_price( $data['revenue'] ),
+			);
+
+			if ( count( $summary_parts ) < 3 ) {
+				$summary_parts[] = sprintf( '%s: %d orders (%s)', $country, $data['orders'], wc_price( $data['revenue'] ) );
+			}
+		}
+
+		return array(
+			'success'      => true,
+			'period_days'  => $days,
+			'total_orders' => count( $orders ),
+			'regions'      => $regions,
+			'summary'      => sprintf(
+				'Orders by region (last %d days): %s.',
+				$days,
+				implode( ', ', $summary_parts )
+			),
+		);
+	}
+
+	/**
+	 * Tool: Get analytics tracking status.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_analytics_status( $args ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		$status = array();
+
+		// Check product view tracking.
+		$conversion_tracker      = \Assistify\Analytics\Conversion_Tracker::get_instance();
+		$view_data               = $conversion_tracker->get_conversion_summary( 30 );
+		$status['product_views'] = array(
+			'enabled'     => true,
+			'data_exists' => $view_data['total_views'] > 0,
+			'total_views' => $view_data['total_views'],
+			'note'        => $view_data['total_views'] > 0
+				? sprintf( '%d product views tracked.', $view_data['total_views'] )
+				: 'No product views yet. Views are tracked when customers browse product pages.',
+		);
+
+		// Check behavior tracking.
+		$behavior_tracker = \Assistify\Analytics\Behavior_Tracker::get_instance();
+		$cart_stats       = $behavior_tracker->get_cart_stats( 30 );
+		$search_stats     = $behavior_tracker->get_search_stats( 30 );
+
+		$status['add_to_cart'] = array(
+			'enabled'     => true,
+			'data_exists' => $cart_stats['total_add_to_cart'] > 0,
+			'total'       => $cart_stats['total_add_to_cart'],
+			'note'        => $cart_stats['total_add_to_cart'] > 0
+				? sprintf( '%d add-to-cart events tracked.', $cart_stats['total_add_to_cart'] )
+				: 'No add-to-cart events yet. Tracked when customers add products to cart.',
+		);
+
+		$status['search_queries'] = array(
+			'enabled'     => true,
+			'data_exists' => $search_stats['total_searches'] > 0,
+			'total'       => $search_stats['total_searches'],
+			'note'        => $search_stats['total_searches'] > 0
+				? sprintf( '%d search queries tracked.', $search_stats['total_searches'] )
+				: 'No search queries yet. Tracked when customers search for products.',
+		);
+
+		// Check traffic source tracking.
+		$traffic_tracker = \Assistify\Analytics\Traffic_Tracker::get_instance();
+		$traffic_stats   = $traffic_tracker->get_traffic_stats( 30 );
+
+		$status['traffic_sources'] = array(
+			'enabled'     => true,
+			'data_exists' => $traffic_stats['total_tracked'] > 0,
+			'total'       => $traffic_stats['total_tracked'],
+			'note'        => $traffic_stats['total_tracked'] > 0
+				? sprintf( '%d orders with traffic source data.', $traffic_stats['total_tracked'] )
+				: 'No traffic source data yet. Captured when customers arrive via UTM links or external referrers.',
+		);
+
+		// Check order region data (always exists if orders exist).
+		$order_count = wc_get_orders(
+			array(
+				'status' => array( 'completed', 'processing', 'on-hold' ),
+				'limit'  => 1,
+				'return' => 'ids',
+			)
+		);
+
+		$status['order_regions'] = array(
+			'enabled'     => true,
+			'data_exists' => ! empty( $order_count ),
+			'note'        => ! empty( $order_count )
+				? 'Order region data available from WooCommerce billing addresses.'
+				: 'No orders yet. Region data comes from order billing addresses.',
+		);
+
+		// Build summary.
+		$working = array_filter(
+			$status,
+			function ( $s ) {
+				return $s['data_exists'];
+			}
+		);
+
+		$summary = sprintf(
+			'Analytics Status: %d of %d tracking features have data. ',
+			count( $working ),
+			count( $status )
+		);
+
+		if ( count( $working ) < count( $status ) ) {
+			$summary .= 'Some features need customer activity to collect data. Try browsing products, searching, and placing test orders from the frontend.';
+		} else {
+			$summary .= 'All tracking features are collecting data.';
+		}
+
+		return array(
+			'success' => true,
+			'status'  => $status,
+			'summary' => $summary,
+		);
 	}
 }

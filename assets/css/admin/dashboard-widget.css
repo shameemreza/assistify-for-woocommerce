@@ -1,0 +1,180 @@
+/**
+ * Store Health Dashboard Widget Styles
+ *
+ * @package Assistify_For_WooCommerce
+ */
+
+.assistify-health-widget {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.assistify-health-score {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.assistify-score-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  color: #fff;
+  margin-right: 15px;
+  flex-shrink: 0;
+}
+
+.assistify-score-excellent {
+  background-color: #28a745;
+}
+
+.assistify-score-good {
+  background-color: #6861f2;
+}
+
+.assistify-score-fair {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.assistify-score-poor {
+  background-color: #dc3545;
+}
+
+.assistify-health-summary h4 {
+  margin: 0 0 5px;
+  font-size: 14px;
+}
+
+.assistify-health-summary p {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+}
+
+.assistify-health-issues {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.assistify-health-issues li {
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 13px;
+}
+
+.assistify-health-issues li:last-child {
+  border-bottom: none;
+}
+
+.assistify-issue-critical .assistify-issue-title {
+  color: #dc3545;
+}
+
+.assistify-issue-warning .assistify-issue-title {
+  color: #856404;
+}
+
+.assistify-issue-info .assistify-issue-title {
+  color: #0c5460;
+}
+
+.assistify-issue-title {
+  font-weight: 600;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.assistify-issue-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.assistify-issue-critical .assistify-issue-indicator {
+  background: #dc3545;
+}
+
+.assistify-issue-warning .assistify-issue-indicator {
+  background: #dba617;
+}
+
+.assistify-issue-info .assistify-issue-indicator {
+  background: #2271b1;
+}
+
+.assistify-issue-message {
+  color: #666;
+  font-size: 12px;
+}
+
+.assistify-issue-action {
+  margin-top: 5px;
+}
+
+.assistify-issue-action a {
+  font-size: 11px;
+  color: #6861f2;
+  text-decoration: none;
+}
+
+.assistify-issue-action a:hover {
+  text-decoration: underline;
+}
+
+.assistify-health-footer {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #e0e0e0;
+  text-align: center;
+  font-size: 11px;
+  color: #999;
+}
+
+.assistify-health-footer a {
+  color: #6861f2;
+  text-decoration: none;
+}
+
+.assistify-health-footer a:hover {
+  text-decoration: underline;
+}
+
+.assistify-footer-separator {
+  margin: 0 8px;
+  color: #ccc;
+}
+
+.assistify-powered-by {
+  color: #999;
+}
+
+.assistify-no-issues {
+  padding: 20px;
+  text-align: center;
+  color: #28a745;
+}
+
+.assistify-timestamp {
+  margin-top: 10px;
+  text-align: center;
+  color: #999;
+  font-size: 11px;
+}
+
+.assistify-more-issues {
+  text-align: center;
+  font-size: 12px;
+  color: #666;
+  margin: 10px 0 0;
+}
