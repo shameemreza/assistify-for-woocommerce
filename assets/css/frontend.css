@@ -468,6 +468,21 @@
   height: 20px;
 }
 
+/* Chat Footer - AI Provider Info */
+.assistify-chat-footer {
+  padding: 8px 12px;
+  background: var(--assistify-bg-light);
+  border-top: 1px solid var(--assistify-border-color);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.assistify-powered-by {
+  font-size: 11px;
+  color: var(--assistify-text-muted);
+  letter-spacing: 0.3px;
+}
+
 /* Typing Indicator */
 .assistify-typing-indicator {
   display: flex;
@@ -790,5 +805,14 @@
 
   .assistify-message-content code {
     background: rgba(255, 255, 255, 0.1);
+  }
+
+  .assistify-chat-footer {
+    background: #1a1a1a;
+    border-color: #404040;
+  }
+
+  .assistify-powered-by {
+    color: #808080;
   }
 }

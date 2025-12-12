@@ -2306,6 +2306,145 @@ class Abilities_Registry {
 				'capability'  => 'edit_products',
 			)
 		);
+
+		// Generate review response.
+		$this->register(
+			'afw/content/review-response',
+			array(
+				'name'        => __( 'Generate Review Response', 'assistify-for-woocommerce' ),
+				'description' => __( 'Generate a professional response to a customer review.', 'assistify-for-woocommerce' ),
+				'category'    => 'content',
+				'callback'    => array( $this, 'ability_content_review_response' ),
+				'parameters'  => array(
+					'review_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'Review comment ID to respond to.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+					'tone'      => array(
+						'type'        => 'string',
+						'description' => __( 'Response tone (professional, friendly, apologetic, grateful).', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 'professional',
+					),
+					'apply'     => array(
+						'type'        => 'boolean',
+						'description' => __( 'Whether to post the response as a reply.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => false,
+					),
+				),
+				'capability'  => 'moderate_comments',
+			)
+		);
+
+		// Generate email template.
+		$this->register(
+			'afw/content/email-template',
+			array(
+				'name'        => __( 'Generate Email Template', 'assistify-for-woocommerce' ),
+				'description' => __( 'Generate email content for customer communication.', 'assistify-for-woocommerce' ),
+				'category'    => 'content',
+				'callback'    => array( $this, 'ability_content_email_template' ),
+				'parameters'  => array(
+					'type'        => array(
+						'type'        => 'string',
+						'description' => __( 'Email type (order_followup, shipping_delay, refund_confirmation, promotion, review_request, abandoned_cart, welcome, custom).', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+					'context'     => array(
+						'type'        => 'string',
+						'description' => __( 'Additional context or specific details for the email.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'order_id'    => array(
+						'type'        => 'integer',
+						'description' => __( 'Order ID for order-related emails.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'customer_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'Customer ID for personalization.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+					),
+					'tone'        => array(
+						'type'        => 'string',
+						'description' => __( 'Email tone (professional, friendly, urgent, apologetic).', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 'professional',
+					),
+				),
+				'capability'  => 'manage_woocommerce',
+			)
+		);
+
+		// Generate category description.
+		$this->register(
+			'afw/content/category-description',
+			array(
+				'name'        => __( 'Generate Category Description', 'assistify-for-woocommerce' ),
+				'description' => __( 'Generate SEO-optimized description for a product category.', 'assistify-for-woocommerce' ),
+				'category'    => 'content',
+				'callback'    => array( $this, 'ability_content_category_description' ),
+				'parameters'  => array(
+					'category_id' => array(
+						'type'        => 'integer',
+						'description' => __( 'Product category ID.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+					'length'      => array(
+						'type'        => 'string',
+						'description' => __( 'Description length (short, medium, long).', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 'medium',
+					),
+					'include_seo' => array(
+						'type'        => 'boolean',
+						'description' => __( 'Include SEO keywords in the description.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => true,
+					),
+					'apply'       => array(
+						'type'        => 'boolean',
+						'description' => __( 'Whether to apply the description to the category.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => false,
+					),
+				),
+				'capability'  => 'manage_product_terms',
+			)
+		);
+
+		// Generate custom content.
+		$this->register(
+			'afw/content/custom-prompt',
+			array(
+				'name'        => __( 'Generate Custom Content', 'assistify-for-woocommerce' ),
+				'description' => __( 'Generate custom content using any prompt.', 'assistify-for-woocommerce' ),
+				'category'    => 'content',
+				'callback'    => array( $this, 'ability_content_custom_prompt' ),
+				'parameters'  => array(
+					'prompt'     => array(
+						'type'        => 'string',
+						'description' => __( 'The prompt or instructions for content generation.', 'assistify-for-woocommerce' ),
+						'required'    => true,
+					),
+					'max_length' => array(
+						'type'        => 'integer',
+						'description' => __( 'Maximum length of generated content in words.', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 500,
+					),
+					'format'     => array(
+						'type'        => 'string',
+						'description' => __( 'Output format (text, html, markdown, list).', 'assistify-for-woocommerce' ),
+						'required'    => false,
+						'default'     => 'text',
+					),
+				),
+				'capability'  => 'edit_posts',
+			)
+		);
 	}
 
 	/**
@@ -2577,6 +2716,13 @@ class Abilities_Registry {
 			),
 			array( '%d', '%s', '%s', '%s', '%s', '%s' )
 		);
+
+		// Also log to detailed audit log.
+		if ( class_exists( '\Assistify_For_WooCommerce\Audit_Logger' ) ) {
+			$logger    = \Assistify_For_WooCommerce\Audit_Logger::instance();
+			$user_type = current_user_can( 'manage_woocommerce' ) ? 'admin' : 'customer';
+			$logger->log_ability( $ability_id, $params, $result, $status, $user_type );
+		}
 	}
 
 	/**
@@ -8009,7 +8155,7 @@ class Abilities_Registry {
 		$last_order  = wc_get_customer_last_order( $customer_id );
 
 		// Calculate average order value.
-		$aov = $order_count > 0 ? $total_spent / $order_count : 0;
+		$aov = $order_count > 0 ? (float) $total_spent / $order_count : 0;
 
 		// Get registration date.
 		$registered = $customer->get_date_created();
@@ -8655,5 +8801,479 @@ class Abilities_Registry {
 		} catch ( \Exception $e ) {
 			return new \WP_Error( 'ai_error', $e->getMessage() );
 		}
+	}
+
+	/**
+	 * Generate review response ability.
+	 *
+	 * @since 1.1.0
+	 * @param array $params Ability parameters.
+	 * @return array|\WP_Error Result or error.
+	 */
+	public function ability_content_review_response( $params ) {
+		$review_id = isset( $params['review_id'] ) ? absint( $params['review_id'] ) : 0;
+		$tone      = isset( $params['tone'] ) ? sanitize_text_field( $params['tone'] ) : 'professional';
+		$apply     = isset( $params['apply'] ) ? (bool) $params['apply'] : false;
+
+		if ( ! $review_id ) {
+			return new \WP_Error( 'missing_param', __( 'Review ID is required.', 'assistify-for-woocommerce' ) );
+		}
+
+		// Get the review comment.
+		$review = get_comment( $review_id );
+		if ( ! $review || 'review' !== $review->comment_type ) {
+			return new \WP_Error( 'review_not_found', __( 'Review not found.', 'assistify-for-woocommerce' ) );
+		}
+
+		// Get product.
+		$product = wc_get_product( $review->comment_post_ID );
+		$product_name = $product ? $product->get_name() : __( 'Product', 'assistify-for-woocommerce' );
+
+		// Get review rating.
+		$rating = (int) get_comment_meta( $review_id, 'rating', true );
+
+		// Build prompt.
+		$prompt = $this->build_review_response_prompt( $review, $product_name, $rating, $tone );
+
+		$generated = $this->generate_content_with_ai( $prompt );
+
+		if ( is_wp_error( $generated ) ) {
+			return $generated;
+		}
+
+		$result = array(
+			'success'         => true,
+			'type'            => 'review_response',
+			'review_id'       => $review_id,
+			'product_name'    => $product_name,
+			'reviewer_name'   => $review->comment_author,
+			'review_rating'   => $rating,
+			'review_content'  => wp_trim_words( $review->comment_content, 50 ),
+			'generated'       => $generated,
+			'tone'            => $tone,
+			'applied'         => false,
+		);
+
+		// Apply if requested.
+		if ( $apply ) {
+			$comment_id = wp_insert_comment(
+				array(
+					'comment_post_ID'  => $review->comment_post_ID,
+					'comment_author'   => get_bloginfo( 'name' ),
+					'comment_content'  => $generated,
+					'comment_type'     => 'comment',
+					'comment_parent'   => $review_id,
+					'comment_approved' => 1,
+					'user_id'          => get_current_user_id(),
+				)
+			);
+
+			if ( $comment_id ) {
+				$result['applied']    = true;
+				$result['comment_id'] = $comment_id;
+			}
+		} else {
+			$result['tip'] = __( 'Use apply: true to post this response as a reply.', 'assistify-for-woocommerce' );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Build prompt for review response.
+	 *
+	 * @since 1.1.0
+	 * @param object $review       Review comment object.
+	 * @param string $product_name Product name.
+	 * @param int    $rating       Review rating.
+	 * @param string $tone         Response tone.
+	 * @return string Prompt.
+	 */
+	private function build_review_response_prompt( $review, $product_name, $rating, $tone ) {
+		$store_name = get_bloginfo( 'name' );
+
+		$tone_guides = array(
+			'professional' => 'Respond professionally and courteously. Acknowledge the feedback and offer assistance if needed.',
+			'friendly'     => 'Respond in a warm, friendly manner. Make the customer feel valued and appreciated.',
+			'apologetic'   => 'If the review is negative, offer a sincere apology and solution. Be empathetic.',
+			'grateful'     => 'Express genuine gratitude for the feedback. Highlight appreciation for the customer.',
+		);
+
+		$tone_guide = isset( $tone_guides[ $tone ] ) ? $tone_guides[ $tone ] : $tone_guides['professional'];
+
+		$sentiment = $rating >= 4 ? 'positive' : ( $rating >= 3 ? 'neutral' : 'negative' );
+
+		return sprintf(
+			"Generate a response to a customer review for an e-commerce store.\n\n" .
+			"Store: %s\n" .
+			"Product: %s\n" .
+			"Reviewer: %s\n" .
+			"Rating: %d/5 stars (%s review)\n" .
+			"Review Content:\n\"%s\"\n\n" .
+			"Tone Guidelines: %s\n\n" .
+			"Requirements:\n" .
+			"- Keep the response to 2-4 sentences\n" .
+			"- Address the reviewer by name if appropriate\n" .
+			"- Reference specific points from their review\n" .
+			"- Sign off professionally\n" .
+			"- Do NOT use emojis\n\n" .
+			'Return ONLY the response text, nothing else.',
+			$store_name,
+			$product_name,
+			$review->comment_author,
+			$rating,
+			$sentiment,
+			$review->comment_content,
+			$tone_guide
+		);
+	}
+
+	/**
+	 * Generate email template ability.
+	 *
+	 * @since 1.1.0
+	 * @param array $params Ability parameters.
+	 * @return array|\WP_Error Result or error.
+	 */
+	public function ability_content_email_template( $params ) {
+		$type        = isset( $params['type'] ) ? sanitize_text_field( $params['type'] ) : '';
+		$context     = isset( $params['context'] ) ? sanitize_textarea_field( $params['context'] ) : '';
+		$order_id    = isset( $params['order_id'] ) ? absint( $params['order_id'] ) : 0;
+		$customer_id = isset( $params['customer_id'] ) ? absint( $params['customer_id'] ) : 0;
+		$tone        = isset( $params['tone'] ) ? sanitize_text_field( $params['tone'] ) : 'professional';
+
+		if ( empty( $type ) ) {
+			return new \WP_Error( 'missing_param', __( 'Email type is required.', 'assistify-for-woocommerce' ) );
+		}
+
+		$valid_types = array(
+			'order_followup',
+			'shipping_delay',
+			'refund_confirmation',
+			'promotion',
+			'review_request',
+			'abandoned_cart',
+			'welcome',
+			'custom',
+		);
+
+		if ( ! in_array( $type, $valid_types, true ) ) {
+			return new \WP_Error( 'invalid_type', __( 'Invalid email type.', 'assistify-for-woocommerce' ) );
+		}
+
+		// Build context from order/customer if provided.
+		$email_context = array(
+			'type' => $type,
+		);
+
+		if ( $order_id ) {
+			$order = wc_get_order( $order_id );
+			if ( $order ) {
+				$email_context['order_number']   = $order->get_order_number();
+				$email_context['order_total']    = $order->get_formatted_order_total();
+				$email_context['order_date']     = $order->get_date_created()->date_i18n( get_option( 'date_format' ) );
+				$email_context['customer_name']  = $order->get_billing_first_name();
+				$email_context['items']          = array();
+				foreach ( $order->get_items() as $item ) {
+					$email_context['items'][] = $item->get_name();
+				}
+			}
+		}
+
+		if ( $customer_id ) {
+			$customer = new \WC_Customer( $customer_id );
+			if ( $customer->get_id() ) {
+				$email_context['customer_name']  = $customer->get_first_name();
+				$email_context['customer_email'] = $customer->get_email();
+			}
+		}
+
+		// Build prompt.
+		$prompt = $this->build_email_template_prompt( $type, $email_context, $context, $tone );
+
+		$generated = $this->generate_content_with_ai( $prompt );
+
+		if ( is_wp_error( $generated ) ) {
+			return $generated;
+		}
+
+		// Parse subject and body.
+		$subject = '';
+		$body    = $generated;
+
+		if ( preg_match( '/^Subject:\s*(.+?)(?:\n|$)/i', $generated, $matches ) ) {
+			$subject = trim( $matches[1] );
+			$body    = trim( preg_replace( '/^Subject:\s*.+?(?:\n|$)/i', '', $generated ) );
+		}
+
+		return array(
+			'success'     => true,
+			'type'        => 'email_template',
+			'email_type'  => $type,
+			'subject'     => $subject,
+			'body'        => $body,
+			'tone'        => $tone,
+			'context'     => $email_context,
+			'tip'         => __( 'Copy this template to use in your email campaigns or AutomateWoo workflows.', 'assistify-for-woocommerce' ),
+		);
+	}
+
+	/**
+	 * Build prompt for email template.
+	 *
+	 * @since 1.1.0
+	 * @param string $type         Email type.
+	 * @param array  $email_context Context data.
+	 * @param string $extra_context Extra context from user.
+	 * @param string $tone         Email tone.
+	 * @return string Prompt.
+	 */
+	private function build_email_template_prompt( $type, $email_context, $extra_context, $tone ) {
+		$store_name = get_bloginfo( 'name' );
+
+		$type_descriptions = array(
+			'order_followup'      => 'A follow-up email after order delivery to check satisfaction',
+			'shipping_delay'      => 'An email notifying customer about a shipping delay',
+			'refund_confirmation' => 'An email confirming a refund has been processed',
+			'promotion'           => 'A promotional email about a sale or special offer',
+			'review_request'      => 'An email asking customer to leave a product review',
+			'abandoned_cart'      => 'A reminder email about items left in cart',
+			'welcome'             => 'A welcome email for new customers or subscribers',
+			'custom'              => 'A custom email based on provided context',
+		);
+
+		$type_desc = isset( $type_descriptions[ $type ] ) ? $type_descriptions[ $type ] : 'A custom email';
+
+		$tone_guides = array(
+			'professional' => 'Professional and business-appropriate',
+			'friendly'     => 'Warm and friendly, like talking to a friend',
+			'urgent'       => 'Creating appropriate urgency without being pushy',
+			'apologetic'   => 'Sincere and apologetic where appropriate',
+		);
+
+		$tone_guide = isset( $tone_guides[ $tone ] ) ? $tone_guides[ $tone ] : $tone_guides['professional'];
+
+		$context_str = '';
+		if ( ! empty( $email_context['customer_name'] ) ) {
+			$context_str .= 'Customer Name: ' . $email_context['customer_name'] . "\n";
+		}
+		if ( ! empty( $email_context['order_number'] ) ) {
+			$context_str .= 'Order Number: ' . $email_context['order_number'] . "\n";
+		}
+		if ( ! empty( $email_context['order_total'] ) ) {
+			$context_str .= 'Order Total: ' . $email_context['order_total'] . "\n";
+		}
+		if ( ! empty( $email_context['items'] ) ) {
+			$context_str .= 'Items: ' . implode( ', ', $email_context['items'] ) . "\n";
+		}
+		if ( ! empty( $extra_context ) ) {
+			$context_str .= 'Additional Info: ' . $extra_context . "\n";
+		}
+
+		return sprintf(
+			"Generate an e-commerce email template.\n\n" .
+			"Store: %s\n" .
+			"Email Type: %s\n" .
+			"Description: %s\n" .
+			"Tone: %s\n\n" .
+			"Context:\n%s\n" .
+			"Requirements:\n" .
+			"- Start with 'Subject: [subject line]' on the first line\n" .
+			"- Write a compelling subject line (under 50 characters)\n" .
+			"- Use {{customer_name}} placeholder for personalization\n" .
+			"- Use {{order_number}} if relevant\n" .
+			"- Keep the email concise (150-250 words)\n" .
+			"- Include a clear call-to-action if appropriate\n" .
+			"- Sign off with the store name\n" .
+			"- Do NOT use emojis\n\n" .
+			'Return the subject line and email body.',
+			$store_name,
+			$type,
+			$type_desc,
+			$tone_guide,
+			$context_str
+		);
+	}
+
+	/**
+	 * Generate category description ability.
+	 *
+	 * @since 1.1.0
+	 * @param array $params Ability parameters.
+	 * @return array|\WP_Error Result or error.
+	 */
+	public function ability_content_category_description( $params ) {
+		$category_id = isset( $params['category_id'] ) ? absint( $params['category_id'] ) : 0;
+		$length      = isset( $params['length'] ) ? sanitize_text_field( $params['length'] ) : 'medium';
+		$include_seo = isset( $params['include_seo'] ) ? (bool) $params['include_seo'] : true;
+		$apply       = isset( $params['apply'] ) ? (bool) $params['apply'] : false;
+
+		if ( ! $category_id ) {
+			return new \WP_Error( 'missing_param', __( 'Category ID is required.', 'assistify-for-woocommerce' ) );
+		}
+
+		$term = get_term( $category_id, 'product_cat' );
+		if ( ! $term || is_wp_error( $term ) ) {
+			return new \WP_Error( 'category_not_found', __( 'Category not found.', 'assistify-for-woocommerce' ) );
+		}
+
+		// Get category products for context.
+		$products = wc_get_products(
+			array(
+				'category' => array( $term->slug ),
+				'limit'    => 10,
+			)
+		);
+
+		$product_names = array();
+		foreach ( $products as $product ) {
+			$product_names[] = $product->get_name();
+		}
+
+		// Build prompt.
+		$prompt = $this->build_category_description_prompt( $term, $product_names, $length, $include_seo );
+
+		$generated = $this->generate_content_with_ai( $prompt );
+
+		if ( is_wp_error( $generated ) ) {
+			return $generated;
+		}
+
+		$result = array(
+			'success'       => true,
+			'type'          => 'category_description',
+			'category_id'   => $category_id,
+			'category_name' => $term->name,
+			'category_slug' => $term->slug,
+			'generated'     => $generated,
+			'length'        => $length,
+			'applied'       => false,
+			'edit_url'      => admin_url( 'term.php?taxonomy=product_cat&tag_ID=' . $category_id ),
+		);
+
+		// Apply if requested.
+		if ( $apply ) {
+			$updated = wp_update_term(
+				$category_id,
+				'product_cat',
+				array( 'description' => $generated )
+			);
+
+			if ( ! is_wp_error( $updated ) ) {
+				$result['applied'] = true;
+			}
+		} else {
+			$result['tip'] = __( 'Use apply: true to set this as the category description.', 'assistify-for-woocommerce' );
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Build prompt for category description.
+	 *
+	 * @since 1.1.0
+	 * @param object $term          Term object.
+	 * @param array  $product_names Sample product names.
+	 * @param string $length        Description length.
+	 * @param bool   $include_seo   Include SEO keywords.
+	 * @return string Prompt.
+	 */
+	private function build_category_description_prompt( $term, $product_names, $length, $include_seo ) {
+		$store_name = get_bloginfo( 'name' );
+
+		$length_words = array(
+			'short'  => '50-75',
+			'medium' => '100-150',
+			'long'   => '200-300',
+		);
+
+		$word_count = isset( $length_words[ $length ] ) ? $length_words[ $length ] : $length_words['medium'];
+
+		$products_context = ! empty( $product_names )
+			? 'Sample products in this category: ' . implode( ', ', $product_names )
+			: '';
+
+		$seo_instruction = $include_seo
+			? "- Include relevant SEO keywords naturally\n- Optimize for search engines\n"
+			: '';
+
+		return sprintf(
+			"Generate an SEO-optimized product category description.\n\n" .
+			"Store: %s\n" .
+			"Category: %s\n" .
+			"%s\n\n" .
+			"Requirements:\n" .
+			"- Write %s words\n" .
+			"- Describe what customers will find in this category\n" .
+			"- Highlight key benefits of products\n" .
+			"%s" .
+			"- Write in a helpful, informative tone\n" .
+			"- Do NOT use emojis\n\n" .
+			'Return ONLY the category description, nothing else.',
+			$store_name,
+			$term->name,
+			$products_context,
+			$word_count,
+			$seo_instruction
+		);
+	}
+
+	/**
+	 * Generate custom content ability.
+	 *
+	 * @since 1.1.0
+	 * @param array $params Ability parameters.
+	 * @return array|\WP_Error Result or error.
+	 */
+	public function ability_content_custom_prompt( $params ) {
+		$prompt     = isset( $params['prompt'] ) ? sanitize_textarea_field( $params['prompt'] ) : '';
+		$max_length = isset( $params['max_length'] ) ? absint( $params['max_length'] ) : 500;
+		$format     = isset( $params['format'] ) ? sanitize_text_field( $params['format'] ) : 'text';
+
+		if ( empty( $prompt ) ) {
+			return new \WP_Error( 'missing_param', __( 'Prompt is required.', 'assistify-for-woocommerce' ) );
+		}
+
+		$format_instructions = array(
+			'text'     => 'Plain text without any formatting',
+			'html'     => 'HTML format with appropriate tags (p, ul, li, strong, etc.)',
+			'markdown' => 'Markdown format',
+			'list'     => 'A bulleted list format',
+		);
+
+		$format_instruction = isset( $format_instructions[ $format ] ) ? $format_instructions[ $format ] : $format_instructions['text'];
+
+		$store_name = get_bloginfo( 'name' );
+
+		$full_prompt = sprintf(
+			"You are an AI assistant for the e-commerce store '%s'.\n\n" .
+			"User Request:\n%s\n\n" .
+			"Requirements:\n" .
+			"- Maximum length: %d words\n" .
+			"- Output format: %s\n" .
+			"- Be helpful and accurate\n" .
+			"- Do NOT include any explanation, just the requested content\n\n" .
+			'Generate the requested content:',
+			$store_name,
+			$prompt,
+			$max_length,
+			$format_instruction
+		);
+
+		$generated = $this->generate_content_with_ai( $full_prompt );
+
+		if ( is_wp_error( $generated ) ) {
+			return $generated;
+		}
+
+		return array(
+			'success'   => true,
+			'type'      => 'custom_content',
+			'prompt'    => wp_trim_words( $prompt, 20 ),
+			'generated' => $generated,
+			'format'    => $format,
+			'tip'       => __( 'Copy this content to use wherever you need it.', 'assistify-for-woocommerce' ),
+		);
 	}
 }

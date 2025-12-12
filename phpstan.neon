@@ -22,8 +22,12 @@ parameters:
         - '#Constant ASSISTIFY_\w+ not found#'
         # WordPress constant
         - '#Constant WP_MEMORY_LIMIT not found#'
-        # WC_Order_Item stub incomplete
+        # WC_Order_Item stub incomplete - these methods exist on WC_Order_Item_Product
         - '#Call to an undefined method WC_Order_Item::get_total#'
+        - '#Call to an undefined method WC_Order_Item::get_product\(\)#'
+        - '#Call to an undefined method WC_Order_Item::get_product_id\(\)#'
+        # Action callbacks that also work as direct method calls may return values
+        - '#Action callback returns .* but should not return anything#'
         # WooCommerce stub incomplete
         - '#Access to an undefined property WooCommerce::\$payment_gateways#'
         # WooCommerce Subscriptions - no official stubs available

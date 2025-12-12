@@ -834,11 +834,11 @@ class Assistify_Admin {
 				'id'   => 'assistify_advanced_settings',
 			),
 
-			// Privacy & Data Settings.
+			// Privacy & AI Compliance Settings.
 			array(
-				'title' => esc_html__( 'Privacy & Data', 'assistify-for-woocommerce' ),
+				'title' => esc_html__( 'Privacy & AI Compliance', 'assistify-for-woocommerce' ),
 				'type'  => 'title',
-				'desc'  => esc_html__( 'A consent notice is always shown to customers before they can use the chat (GDPR compliance). Sensitive data like credit cards is automatically redacted (PCI compliance).', 'assistify-for-woocommerce' ),
+				'desc'  => esc_html__( 'Configure GDPR, AI transparency, and data handling settings. Customer consent is required before chat use. Sensitive data (credit cards, passwords) is automatically redacted before sending to AI providers.', 'assistify-for-woocommerce' ),
 				'id'    => 'assistify_privacy_settings',
 			),
 			array(
@@ -859,8 +859,35 @@ class Assistify_Admin {
 				'default' => 'yes',
 			),
 			array(
+				'title'   => esc_html__( 'Show AI Attribution', 'assistify-for-woocommerce' ),
+				'desc'    => esc_html__( 'Display AI provider attribution in chat footer for transparency compliance.', 'assistify-for-woocommerce' ),
+				'id'      => 'assistify_show_ai_attribution',
+				'type'    => 'checkbox',
+				'default' => 'yes',
+			),
+			array(
+				'title'   => esc_html__( 'Label AI-Generated Content', 'assistify-for-woocommerce' ),
+				'desc'    => esc_html__( 'Add "AI-generated" label to content created by AI (product descriptions, etc.).', 'assistify-for-woocommerce' ),
+				'id'      => 'assistify_label_ai_content',
+				'type'    => 'checkbox',
+				'default' => 'no',
+			),
+			array(
+				'title'             => esc_html__( 'Audit Log Retention (Days)', 'assistify-for-woocommerce' ),
+				'desc'              => esc_html__( 'How long to keep AI activity logs. Set to 0 to disable logging.', 'assistify-for-woocommerce' ),
+				'id'                => 'assistify_audit_log_retention',
+				'type'              => 'number',
+				'default'           => '90',
+				'custom_attributes' => array(
+					'min'  => '0',
+					'max'  => '365',
+					'step' => '30',
+				),
+				'desc_tip'          => true,
+			),
+			array(
 				'title'   => esc_html__( 'Remove Data on Uninstall', 'assistify-for-woocommerce' ),
-				'desc'    => esc_html__( 'Remove all plugin data when uninstalling.', 'assistify-for-woocommerce' ),
+				'desc'    => esc_html__( 'Remove all plugin data (settings, logs, sessions) when uninstalling.', 'assistify-for-woocommerce' ),
 				'id'      => 'assistify_remove_data_on_uninstall',
 				'type'    => 'checkbox',
 				'default' => 'no',

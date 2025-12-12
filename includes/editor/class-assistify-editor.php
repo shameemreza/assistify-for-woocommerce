@@ -417,7 +417,7 @@ class Assistify_Editor {
 		<div class="assistify-sidebar-panel">
 			<p class="description">
 				<?php
-				/* translators: %s: post type (product/post/page) */
+				/* translators: %s: post type label */
 				printf( esc_html__( 'Generate AI content for this %s.', 'assistify-for-woocommerce' ), esc_html( $type_label ) );
 				?>
 			</p>

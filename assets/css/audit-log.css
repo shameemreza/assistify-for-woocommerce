@@ -1,0 +1,326 @@
+/**
+ * Audit Log Styles
+ *
+ * @package Assistify_For_WooCommerce
+ * @since 1.1.0
+ */
+
+/* Page Wrapper */
+.assistify-audit-log-wrap {
+	max-width: 1400px;
+}
+
+/* Stats Cards */
+.assistify-audit-stats {
+	display: flex;
+	gap: 20px;
+	margin: 20px 0;
+}
+
+.assistify-stat-card {
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 4px;
+	padding: 20px 30px;
+	min-width: 180px;
+	text-align: center;
+}
+
+.assistify-stat-card.assistify-stat-success {
+	border-left: 4px solid #00a32a;
+}
+
+.assistify-stat-card.assistify-stat-failed {
+	border-left: 4px solid #d63638;
+}
+
+.assistify-stat-number {
+	display: block;
+	font-size: 32px;
+	font-weight: 600;
+	color: #1d2327;
+	line-height: 1.2;
+}
+
+.assistify-stat-label {
+	display: block;
+	font-size: 13px;
+	color: #646970;
+	margin-top: 5px;
+}
+
+/* Filters */
+.assistify-audit-filters {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	margin: 20px 0;
+	flex-wrap: wrap;
+}
+
+.assistify-audit-filters select,
+.assistify-audit-filters input[type="search"] {
+	min-height: 32px;
+	min-width: 150px;
+}
+
+.assistify-audit-filters input[type="search"] {
+	min-width: 200px;
+}
+
+/* Table */
+.assistify-audit-table {
+	margin-top: 20px;
+}
+
+.assistify-audit-table .column-time {
+	width: 140px;
+}
+
+.assistify-audit-table .column-user {
+	width: 150px;
+}
+
+.assistify-audit-table .column-action {
+	width: 150px;
+}
+
+.assistify-audit-table .column-status {
+	width: 100px;
+}
+
+.assistify-audit-table .column-details {
+	width: 100px;
+}
+
+.assistify-audit-table .assistify-loading {
+	text-align: center;
+	padding: 40px;
+	color: #646970;
+}
+
+/* Status Badges */
+.assistify-status-badge {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 12px;
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.assistify-status-badge.status-success {
+	background: #d7f4df;
+	color: #006b1b;
+}
+
+.assistify-status-badge.status-failed {
+	background: #fcebea;
+	color: #8a2424;
+}
+
+.assistify-status-badge.status-pending {
+	background: #fff8e5;
+	color: #996800;
+}
+
+/* Category Badges */
+.assistify-category-badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 3px;
+	font-size: 11px;
+	background: #f0f0f1;
+	color: #50575e;
+	text-transform: uppercase;
+}
+
+/* User Info */
+.assistify-user-info {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.assistify-user-avatar {
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+}
+
+.assistify-user-name {
+	font-weight: 500;
+}
+
+.assistify-user-type {
+	font-size: 11px;
+	color: #646970;
+}
+
+/* Time Display */
+.assistify-time {
+	color: #646970;
+	font-size: 13px;
+}
+
+.assistify-time-full {
+	display: block;
+	font-size: 11px;
+	color: #8c8f94;
+}
+
+/* Details Button */
+.assistify-view-details {
+	cursor: pointer;
+	color: #2271b1;
+	text-decoration: none;
+}
+
+.assistify-view-details:hover {
+	color: #135e96;
+	text-decoration: underline;
+}
+
+/* Pagination */
+.assistify-audit-pagination {
+	display: flex;
+	gap: 15px;
+	align-items: center;
+	margin-top: 20px;
+}
+
+#assistify-page-info {
+	color: #646970;
+}
+
+/* Modal */
+.assistify-modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.6);
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.assistify-modal-content {
+	background: #fff;
+	border-radius: 8px;
+	max-width: 700px;
+	width: 90%;
+	max-height: 80vh;
+	overflow-y: auto;
+	position: relative;
+	padding: 30px;
+}
+
+.assistify-modal-close {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	background: none;
+	border: none;
+	font-size: 24px;
+	cursor: pointer;
+	color: #646970;
+	line-height: 1;
+}
+
+.assistify-modal-close:hover {
+	color: #1d2327;
+}
+
+.assistify-modal h2 {
+	margin: 0 0 20px;
+	padding-bottom: 15px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+/* Detail Content */
+.assistify-detail-row {
+	display: flex;
+	margin-bottom: 15px;
+	padding-bottom: 15px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.assistify-detail-row:last-child {
+	border-bottom: none;
+}
+
+.assistify-detail-label {
+	flex: 0 0 140px;
+	font-weight: 500;
+	color: #1d2327;
+}
+
+.assistify-detail-value {
+	flex: 1;
+	color: #50575e;
+}
+
+.assistify-detail-code {
+	background: #f6f7f7;
+	padding: 15px;
+	border-radius: 4px;
+	font-family: Consolas, Monaco, monospace;
+	font-size: 12px;
+	white-space: pre-wrap;
+	word-break: break-all;
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+/* Empty State */
+.assistify-no-logs {
+	text-align: center;
+	padding: 60px 20px;
+	color: #646970;
+}
+
+.assistify-no-logs-icon {
+	width: 64px;
+	height: 64px;
+	margin: 0 auto 15px;
+	opacity: 0.4;
+}
+
+.assistify-no-logs-icon svg {
+	width: 100%;
+	height: 100%;
+	stroke: #8c8f94;
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+	.assistify-audit-stats {
+		flex-direction: column;
+	}
+
+	.assistify-audit-filters {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.assistify-audit-filters select,
+	.assistify-audit-filters input[type="search"] {
+		width: 100%;
+	}
+
+	.assistify-modal-content {
+		padding: 20px;
+	}
+
+	.assistify-detail-row {
+		flex-direction: column;
+		gap: 5px;
+	}
+
+	.assistify-detail-label {
+		flex: none;
+	}
+}
+

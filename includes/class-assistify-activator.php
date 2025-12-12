@@ -130,6 +130,31 @@ class Assistify_Activator {
 			INDEX idx_created (created_at)
 		) {$charset_collate};";
 
+		// Audit log table.
+		$sql[] = "CREATE TABLE IF NOT EXISTS {$wpdb->prefix}afw_audit_log (
+			id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+			user_id BIGINT UNSIGNED NOT NULL,
+			user_type VARCHAR(20) NOT NULL DEFAULT 'admin',
+			action_type VARCHAR(100) NOT NULL,
+			action_category VARCHAR(50) NOT NULL,
+			description TEXT NOT NULL,
+			ability_id VARCHAR(100) DEFAULT NULL,
+			parameters LONGTEXT DEFAULT NULL,
+			result LONGTEXT DEFAULT NULL,
+			status VARCHAR(20) NOT NULL DEFAULT 'success',
+			ip_address VARCHAR(100) DEFAULT NULL,
+			session_id VARCHAR(64) DEFAULT NULL,
+			object_type VARCHAR(50) DEFAULT NULL,
+			object_id BIGINT UNSIGNED DEFAULT NULL,
+			created_at DATETIME NOT NULL,
+			INDEX idx_user_id (user_id),
+			INDEX idx_action_type (action_type),
+			INDEX idx_action_category (action_category),
+			INDEX idx_status (status),
+			INDEX idx_created_at (created_at),
+			INDEX idx_object (object_type, object_id)
+		) {$charset_collate};";
+
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
 		foreach ( $sql as $query ) {

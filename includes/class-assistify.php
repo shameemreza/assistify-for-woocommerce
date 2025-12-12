@@ -170,6 +170,20 @@ final class Assistify {
 		// Load Privacy/GDPR class.
 		require_once ASSISTIFY_PLUGIN_DIR . 'includes/class-assistify-privacy.php';
 
+		// Load Audit Logger.
+		require_once ASSISTIFY_PLUGIN_DIR . 'includes/class-audit-logger.php';
+		Audit_Logger::instance();
+
+		// Load Action Confirmation System.
+		require_once ASSISTIFY_PLUGIN_DIR . 'includes/class-action-confirmation.php';
+		Action_Confirmation::instance();
+
+		// Load Audit Log Admin Page.
+		if ( is_admin() ) {
+			require_once ASSISTIFY_PLUGIN_DIR . 'includes/admin/class-audit-log-page.php';
+			Admin\Audit_Log_Page::instance();
+		}
+
 		// Load Analytics class.
 		$this->load_analytics();
 

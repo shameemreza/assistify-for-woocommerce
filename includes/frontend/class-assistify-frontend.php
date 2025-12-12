@@ -1482,6 +1482,8 @@ Use a friendly, conversational tone. Format with line breaks for readability.',
 					'autoOpenEnabled' => get_option( 'assistify_auto_open_enabled', 'no' ) === 'yes',
 					'soundEnabled'    => get_option( 'assistify_sound_enabled', 'yes' ) === 'yes',
 					'customSoundUrl'  => esc_url( get_option( 'assistify_custom_sound_url', '' ) ),
+					'showAiAttribution' => get_option( 'assistify_show_ai_attribution', 'yes' ) === 'yes',
+					'aiProviderName'    => $this->get_ai_provider_display_name(),
 				),
 			)
 		);
@@ -1609,6 +1611,27 @@ Use a friendly, conversational tone. Format with line breaks for readability.',
 	}
 
 	/**
+	 * Get AI provider display name for transparency.
+	 *
+	 * @since 1.1.0
+	 * @return string Provider display name.
+	 */
+	private function get_ai_provider_display_name() {
+		$provider = get_option( 'assistify_ai_provider', 'openai' );
+
+		$provider_names = array(
+			'openai'    => 'OpenAI',
+			'anthropic' => 'Anthropic',
+			'google'    => 'Google AI',
+			'xai'       => 'xAI',
+			'deepseek'  => 'DeepSeek',
+		);
+
+		return isset( $provider_names[ $provider ] ) ? $provider_names[ $provider ] : 'AI';
+	}
+
+
+	/**
 	 * Render the chat widget in the footer.
 	 *
 	 * @since 1.0.0
@@ -1689,6 +1712,20 @@ Use a friendly, conversational tone. Format with line breaks for readability.',
 						</svg>
 					</button>
 				</form>
+
+				<?php if ( 'yes' === get_option( 'assistify_show_ai_attribution', 'yes' ) ) : ?>
+				<div class="assistify-chat-footer">
+					<span class="assistify-powered-by">
+						<?php
+						printf(
+							/* translators: %s: AI provider name (e.g., OpenAI, Anthropic) */
+							esc_html__( 'Assistify • %s', 'assistify-for-woocommerce' ),
+							esc_html( $this->get_ai_provider_display_name() )
+						);
+						?>
+					</span>
+				</div>
+				<?php endif; ?>
 			</div>
 		</div>
 		<?php

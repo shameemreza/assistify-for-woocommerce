@@ -1,0 +1,5973 @@
+# Copyright (C) 2025 Shameem Reza
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Assistify for WooCommerce 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/assistify-for-woocommerce\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-12-12T17:14:30+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: assistify-for-woocommerce\n"
+
+#. Plugin Name of the plugin
+#: assistify-for-woocommerce.php
+#: assistify-for-woocommerce.php:158
+#: includes/class-assistify-privacy.php:59
+msgid "Assistify for WooCommerce"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: assistify-for-woocommerce.php
+msgid "https://github.com/shameemreza/assistify-for-woocommerce"
+msgstr ""
+
+#. Description of the plugin
+#: assistify-for-woocommerce.php
+msgid "A unified, native WooCommerce AI Assistant that provides dual-interface chat for both store owners and customers with deep WooCommerce integration."
+msgstr ""
+
+#. Author of the plugin
+#: assistify-for-woocommerce.php
+msgid "Shameem Reza"
+msgstr ""
+
+#. Author URI of the plugin
+#: assistify-for-woocommerce.php
+msgid "https://shameem.blog"
+msgstr ""
+
+#. translators: 1: Required PHP version, 2: Current PHP version.
+#: assistify-for-woocommerce.php:101
+#, php-format
+msgid "Assistify for WooCommerce requires PHP version %1$s or higher. Your current version is %2$s."
+msgstr ""
+
+#. translators: 1: Required WordPress version, 2: Current WordPress version.
+#: assistify-for-woocommerce.php:108
+#, php-format
+msgid "Assistify for WooCommerce requires WordPress version %1$s or higher. Your current version is %2$s."
+msgstr ""
+
+#. translators: 1: Plugin name, 2: WooCommerce.
+#: assistify-for-woocommerce.php:157
+#, php-format
+msgid "%1$s requires %2$s to be installed and active."
+msgstr ""
+
+#: assistify-for-woocommerce.php:159
+msgid "WooCommerce"
+msgstr ""
+
+#. translators: 1: Required WooCommerce version, 2: Current WooCommerce version.
+#: assistify-for-woocommerce.php:194
+#, php-format
+msgid "Assistify for WooCommerce requires WooCommerce version %1$s or higher. Your current version is %2$s."
+msgstr ""
+
+#. translators: 1: Required PHP version, 2: Required WordPress version.
+#: assistify-for-woocommerce.php:286
+#, php-format
+msgid "Assistify for WooCommerce requires PHP %1$s and WordPress %2$s or higher."
+msgstr ""
+
+#: assistify-for-woocommerce.php:290
+msgid "Plugin Activation Error"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:97
+msgid "Get Order"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:98
+msgid "Get details of a specific order."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:104
+#: includes/abilities/class-abilities-registry.php:193
+#: includes/abilities/class-abilities-registry.php:222
+#: includes/abilities/class-abilities-registry.php:1784
+msgid "The order ID."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:115
+msgid "List Orders"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:116
+msgid "List orders with optional filters."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:122
+msgid "Filter by order status."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:127
+#: includes/abilities/class-abilities-registry.php:844
+#: includes/abilities/class-abilities-registry.php:864
+#: includes/abilities/class-abilities-registry.php:1107
+#: includes/abilities/class-abilities-registry.php:1279
+msgid "Number of orders to return."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:133
+#: includes/integrations/class-wc-bookings-integration.php:141
+#: includes/integrations/class-wc-memberships-integration.php:146
+#: includes/integrations/class-wc-subscriptions-integration.php:141
+msgid "Filter by customer ID."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:144
+msgid "Get Last Order"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:145
+msgid "Get the most recent order with full details."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:151
+msgid "Optional filter by status (e.g., on-hold, processing)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:162
+msgid "Search Orders"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:163
+msgid "Search orders by various criteria."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:169
+msgid "Search query (order number, customer name, email)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:174
+#: includes/abilities/class-abilities-registry.php:401
+#: includes/abilities/class-abilities-registry.php:1255
+#: includes/integrations/class-wc-bookings-integration.php:229
+#: includes/integrations/class-wc-memberships-integration.php:220
+#: includes/integrations/class-wc-memberships-integration.php:266
+#: includes/integrations/class-wc-memberships-integration.php:321
+#: includes/integrations/class-wc-subscriptions-integration.php:212
+msgid "Number of results to return."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:186
+msgid "Update Order Status"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:187
+msgid "Update the status of an order."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:198
+msgid "New order status (pending, processing, on-hold, completed, cancelled, refunded, failed)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:203
+msgid "Optional note to add with the status change."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:215
+msgid "Add Order Note"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:216
+msgid "Add a note to an order."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:227
+msgid "The note content."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:232
+msgid "Whether this is a note for the customer (true) or private (false)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:244
+#: includes/class-action-confirmation.php:296
+msgid "Process Refund"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:245
+msgid "Process a refund for an order. Can refund full or partial amount."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:251
+msgid "The order ID to refund."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:256
+msgid "Refund amount. Leave empty for full refund."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:261
+msgid "Reason for the refund."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:267
+msgid "Whether to restock refunded items."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:273
+msgid "Whether to attempt to refund payment via gateway."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:288
+msgid "Get Product"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:289
+msgid "Get details of a specific product."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:295
+#: includes/abilities/class-abilities-registry.php:1738
+#: includes/abilities/class-abilities-registry.php:1761
+msgid "The product ID."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:306
+msgid "List Products"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:307
+msgid "List products with optional filters including category, status, product type, virtual, and downloadable."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:313
+#: includes/abilities/class-abilities-registry.php:380
+#: includes/abilities/class-abilities-registry.php:639
+#: includes/abilities/class-abilities-registry.php:1900
+msgid "Filter by category slug."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:318
+msgid "Filter by product status (publish, draft, pending, private)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:324
+msgid "Filter by product type (simple, variable, grouped, external, subscription, variable-subscription)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:329
+msgid "Filter by virtual products (true = only virtual, false = only non-virtual). Virtual products do not require shipping."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:334
+msgid "Filter by downloadable products (true = only downloadable, false = only non-downloadable). Downloadable products are digital files."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:339
+msgid "Number of products to return. Use -1 for all products (be careful with large catalogs)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:345
+msgid "Order by: date, title, price, popularity, rating."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:351
+#: includes/abilities/class-abilities-registry.php:1225
+msgid "Order direction: ASC or DESC."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:363
+msgid "Search Products"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:364
+msgid "Search products by name, SKU, or description with optional filters including virtual and downloadable."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:370
+msgid "Search query (product name, SKU, or description)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:375
+msgid "Filter by product type (simple, variable, grouped, external, subscription)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:385
+msgid "Filter by virtual products (true = only virtual, false = only non-virtual)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:390
+#: includes/abilities/class-abilities-registry.php:634
+msgid "Filter by downloadable products (true = only downloadable, false = only non-downloadable)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:395
+msgid "Filter by product status."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:413
+#: includes/class-action-confirmation.php:312
+msgid "Update Product"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:414
+msgid "Update an existing product's details including virtual/downloadable status, shipping dimensions, and tax settings."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:420
+msgid "The product ID to update."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:425
+msgid "New product name."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:430
+msgid "New regular price."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:435
+msgid "New sale price (empty to remove sale)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:440
+msgid "New product description."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:445
+msgid "New short description."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:450
+msgid "New SKU."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:455
+msgid "New stock quantity."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:460
+msgid "New stock status (instock, outofstock, onbackorder)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:465
+msgid "New product status (publish, draft, pending, private)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:470
+msgid "Whether the product is featured."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:475
+msgid "Catalog visibility (visible, catalog, search, hidden)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:480
+msgid "Whether the product is virtual (no shipping required). Set to true for services, memberships, etc."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:485
+msgid "Whether the product is downloadable (digital file). Set to true for eBooks, software, etc."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:490
+msgid "Product weight for shipping calculations."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:495
+msgid "Product length for shipping calculations."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:500
+msgid "Product width for shipping calculations."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:505
+msgid "Product height for shipping calculations."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:510
+msgid "Tax status (taxable, shipping, none)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:515
+msgid "Tax class (standard, reduced-rate, zero-rate, or custom class)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:527
+#: includes/class-action-confirmation.php:316
+msgid "Create Product"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:528
+msgid "Create a new product in WooCommerce."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:534
+msgid "Product name."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:539
+msgid "Product type (simple, variable, grouped, external). Default: simple."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:545
+msgid "Regular price."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:550
+msgid "Sale price."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:555
+msgid "Product description."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:560
+msgid "Short description."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:565
+msgid "Product SKU."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:570
+msgid "Whether to manage stock."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:576
+msgid "Stock quantity (if manage_stock is true)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:581
+msgid "Stock status (instock, outofstock, onbackorder)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:587
+msgid "Array of category IDs or slugs."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:592
+msgid "Product status (publish, draft, pending, private). Default: draft."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:598
+msgid "Whether the product is virtual."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:604
+msgid "Whether the product is downloadable."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:617
+msgid "Count Products"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:618
+msgid "Count products matching specific criteria. Useful for questions like \"how many virtual products do I have?\""
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:624
+msgid "Filter by product type (simple, variable, grouped, external)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:629
+msgid "Filter by virtual products (true = only virtual, false = only physical)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:644
+msgid "Filter by product status (publish, draft, pending, private). Default: publish."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:650
+msgid "Filter by stock status (instock, outofstock, onbackorder)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:655
+msgid "Filter by featured products."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:660
+msgid "Filter by on-sale products."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:671
+msgid "Low Stock Products"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:672
+msgid "Get products with low stock levels."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:678
+msgid "Stock threshold to consider as low."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:684
+#: includes/abilities/class-abilities-registry.php:739
+#: includes/abilities/class-abilities-registry.php:884
+#: includes/abilities/class-abilities-registry.php:1181
+#: includes/abilities/class-abilities-registry.php:1894
+#: includes/abilities/class-abilities-registry.php:1919
+#: includes/abilities/class-abilities-registry.php:2014
+#: includes/abilities/class-abilities-registry.php:2098
+msgid "Number of products to return."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:697
+msgid "Sales Analytics"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:698
+msgid "Get sales data for a date range."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:704
+msgid "Period: today, week, month, year."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:710
+msgid "Start date (YYYY-MM-DD)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:715
+msgid "End date (YYYY-MM-DD)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:726
+msgid "Top Products"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:727
+msgid "Get top selling products."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:733
+#: includes/abilities/class-abilities-registry.php:793
+#: includes/abilities/class-abilities-registry.php:1055
+msgid "Period: week, month, year, all."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:751
+msgid "Revenue Analytics"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:752
+msgid "Get detailed revenue metrics including gross, net, taxes, shipping, and refunds."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:758
+msgid "Period: today, week, month, quarter, year."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:764
+msgid "Custom start date (YYYY-MM-DD)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:769
+msgid "Custom end date (YYYY-MM-DD)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:774
+msgid "Include comparison with previous period."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:786
+msgid "Top Customers"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:787
+msgid "Get top customers by total spent or order count."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:799
+msgid "Order by: total_spent, order_count."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:805
+#: includes/abilities/class-abilities-registry.php:963
+#: includes/abilities/class-abilities-registry.php:989
+#: includes/abilities/class-abilities-registry.php:1231
+msgid "Number of customers to return."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:818
+msgid "Daily Summary"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:819
+msgid "Get today's store summary: orders, revenue, new customers, etc."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:825
+msgid "Date to get summary for (YYYY-MM-DD). Defaults to today."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:837
+msgid "Orders Ready to Ship"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:838
+msgid "Get orders with \"processing\" status ready for fulfillment."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:857
+msgid "Pending Payment Orders"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:858
+msgid "Get orders awaiting payment (pending and on-hold)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:877
+msgid "Out of Stock Products"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:878
+msgid "Get products that are out of stock."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:897
+msgid "Stock Value Report"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:898
+msgid "Get total inventory value based on stock quantity and prices."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:910
+msgid "Recent Refunds"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:911
+msgid "Get recent refunds summary."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:917
+#: includes/abilities/class-abilities-registry.php:957
+#: includes/abilities/class-abilities-registry.php:1009
+#: includes/abilities/class-abilities-registry.php:1101
+msgid "Number of days to look back."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:930
+msgid "Payment Methods Stats"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:931
+msgid "Get revenue breakdown by payment method."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:937
+msgid "Period: week, month, year."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:950
+msgid "Recent Customers"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:951
+msgid "Get recently registered customers."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:976
+msgid "Repeat Customers"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:977
+msgid "Get customers with multiple orders."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:983
+msgid "Minimum number of orders."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1002
+msgid "Reviews Summary"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1003
+msgid "Get recent product reviews and ratings summary."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1015
+#: includes/abilities/class-abilities-registry.php:1127
+msgid "Number of reviews to return."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1028
+msgid "Order Comparison"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1029
+msgid "Compare orders and revenue between two periods."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1035
+msgid "Comparison period: week, month, quarter, year."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1048
+msgid "Category Sales"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1049
+msgid "Get sales performance by product category."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1061
+msgid "Number of categories to return."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1074
+msgid "Average Order Value"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1075
+msgid "Get average order value trends."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1081
+msgid "Period: week, month, quarter, year."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1094
+msgid "Failed Orders"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1095
+msgid "Get orders with failed payment status."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1120
+msgid "Pending Reviews"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1121
+msgid "Get product reviews awaiting moderation."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1140
+msgid "Check Product Availability"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1141
+msgid "Check if a product is in stock and available."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1147
+msgid "The product ID to check."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1152
+msgid "The product name to search for."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1164
+msgid "Related Products"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1165
+msgid "Get related or similar products."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1171
+msgid "The product ID to find related products for."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1176
+msgid "Category to find products from."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1194
+msgid "Get Customer"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1195
+msgid "Get details of a specific customer."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1201
+#: includes/abilities/class-abilities-registry.php:1274
+#: includes/abilities/class-abilities-registry.php:1802
+#: includes/abilities/class-abilities-registry.php:2118
+msgid "The customer/user ID."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1212
+msgid "List Customers"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1213
+msgid "List customers with optional filters."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1219
+msgid "Order by: registered, order_count, total_spent."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1243
+msgid "Search Customers"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1244
+msgid "Search customers by name or email."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1250
+msgid "Search query (name, email, or username)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1267
+msgid "Get Customer Orders"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1268
+msgid "Get orders for a specific customer."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1295
+msgid "Get Store Settings"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1296
+msgid "Get WooCommerce store settings including general, tax, shipping, and checkout settings."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1302
+msgid "Settings group: general, products, tax, shipping, checkout, accounts, emails, advanced, or all."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1314
+msgid "Get System Status"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1315
+msgid "Get WooCommerce system status including environment info, database status, active plugins, and theme info."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1326
+msgid "Get Payment Gateways"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1327
+msgid "List all available payment gateways and their status (enabled/disabled)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1338
+msgid "Get Shipping Zones"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1339
+msgid "List all shipping zones and their methods."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1350
+msgid "Get Shipping Classes"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1351
+msgid "List all product shipping classes."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1362
+msgid "Get Tax Rates"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1363
+msgid "List all tax rates configured in the store."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1369
+msgid "Filter by tax class (standard, reduced-rate, zero-rate, or custom)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1380
+msgid "Get Tax Classes"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1381
+msgid "List all available tax classes."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1396
+msgid "List Coupons"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1397
+msgid "List all coupons with optional filters."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1403
+msgid "Filter by status: publish, draft, pending, trash."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1409
+#: includes/abilities/class-abilities-registry.php:1939
+msgid "Number of coupons to return."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1421
+msgid "Get Coupon"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1422
+msgid "Get details of a specific coupon by ID or code."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1428
+msgid "The coupon ID."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1433
+msgid "The coupon code."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1444
+#: includes/class-action-confirmation.php:304
+msgid "Create Coupon"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1445
+msgid "Create a new coupon with specified settings."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1451
+msgid "Coupon code (required)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1456
+msgid "Discount type: percent, fixed_cart, fixed_product."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1462
+msgid "Discount amount."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1467
+msgid "Coupon description."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1472
+msgid "Expiration date (YYYY-MM-DD)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1477
+msgid "Total usage limit."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1482
+msgid "Usage limit per user."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1487
+msgid "Whether coupon grants free shipping."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1493
+msgid "Minimum order amount required."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1498
+msgid "Maximum order amount allowed."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1503
+msgid "Whether coupon can only be used alone."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1509
+msgid "Whether to exclude sale items."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1522
+msgid "Update Coupon"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1523
+msgid "Update an existing coupon's settings."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1529
+msgid "The coupon ID to update."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1534
+msgid "New coupon code."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1539
+msgid "New discount amount."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1544
+msgid "New discount type."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1549
+msgid "New expiration date (YYYY-MM-DD) or empty to remove."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1554
+msgid "New total usage limit."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1559
+msgid "New status: publish, draft, pending."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1571
+#: includes/class-action-confirmation.php:308
+msgid "Delete Coupon"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1572
+msgid "Delete a coupon (move to trash or permanently delete)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1578
+msgid "The coupon ID to delete."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1583
+msgid "Permanently delete instead of moving to trash."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1601
+msgid "List Pages"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1602
+msgid "List WordPress pages with optional filters."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1608
+msgid "Search pages by title or content."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1613
+msgid "Number of pages to return."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1619
+msgid "Page status (publish, draft, private)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1631
+msgid "List Posts"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1632
+msgid "List WordPress blog posts with optional filters."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1638
+msgid "Search posts by title or content."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1643
+msgid "Filter by category slug or ID."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1648
+msgid "Filter by tag slug."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1653
+msgid "Number of posts to return."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1665
+msgid "List Categories"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1666
+msgid "List WordPress post categories."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1672
+msgid "Hide categories with no posts."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1684
+msgid "List Tags"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1685
+msgid "List WordPress post tags."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1691
+msgid "Hide tags with no posts."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1697
+msgid "Number of tags to return."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1709
+msgid "List Navigation Menus"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1710
+msgid "List WordPress navigation menus and their items."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1716
+msgid "Specific menu ID to get items for."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1731
+msgid "Get Product URL"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1732
+msgid "Get the frontend URL for a product."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1743
+msgid "Search by product name to get its URL."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1754
+msgid "Get Product Edit URL"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1755
+msgid "Get the admin edit URL for a product."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1766
+msgid "Search by product name to get its edit URL."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1777
+msgid "Get Order URL"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1778
+msgid "Get the admin URL for viewing/editing an order."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1795
+msgid "Get Customer URL"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1796
+msgid "Get the admin URL for viewing a customer profile."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1813
+msgid "Get Category URL"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1814
+msgid "Get the frontend URL for a product category."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1820
+msgid "The category ID."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1825
+msgid "Search by category name."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1836
+msgid "Get WooCommerce Settings URL"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1837
+msgid "Get the admin URL for various WooCommerce settings pages."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1843
+msgid "Settings section: general, products, tax, shipping, payments, accounts, emails, integration, advanced, assistify."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1854
+msgid "Get Page URL"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1855
+msgid "Get the URL for a WordPress page."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1861
+msgid "The page ID."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1866
+msgid "Search by page title."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1871
+msgid "Search by page slug."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1887
+msgid "Products On Sale"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1888
+msgid "Get products that are currently on sale."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1912
+msgid "Featured Products"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1913
+msgid "Get featured products."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1932
+msgid "Available Coupons"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1933
+msgid "Get currently available public coupon codes."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1952
+msgid "Find Product by SKU"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1953
+msgid "Find a product using its SKU code."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1959
+msgid "The product SKU to search for."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1975
+msgid "Coupon Usage Statistics"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1976
+msgid "Get detailed coupon usage statistics and performance."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1982
+#: includes/abilities/class-abilities-registry.php:2008
+#: includes/abilities/class-abilities-registry.php:2039
+#: includes/abilities/class-abilities-registry.php:2078
+msgid "Number of days to analyze."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:1988
+msgid "Number of top coupons to return."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2001
+msgid "Sales by Product"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2002
+msgid "Get sales performance for individual products."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2020
+msgid "Specific product ID to get stats for."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2032
+msgid "Sales by Location"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2033
+msgid "Get sales breakdown by customer location (country/state)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2045
+msgid "Number of locations to return."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2058
+msgid "Processing Orders Count"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2059
+msgid "Get count of orders awaiting processing/fulfillment."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2071
+msgid "Tax Collected Report"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2072
+msgid "Get summary of tax collected over a period."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2091
+msgid "Most Stocked Products"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2092
+msgid "Get products with highest stock quantities."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2111
+msgid "Customer Lifetime Value"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2112
+msgid "Get lifetime value and order history for a customer."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2123
+msgid "Customer email address."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2139
+msgid "Generate Product Title"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2140
+msgid "Generate an SEO-optimized product title using AI."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2146
+msgid "Product ID to generate title for."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2151
+msgid "Current product name or basic description."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2156
+msgid "Keywords to include in the title."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2161
+#: includes/abilities/class-abilities-registry.php:2197
+#: includes/abilities/class-abilities-registry.php:2234
+msgid "Tone: professional, casual, luxury, playful."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2167
+msgid "Whether to apply the generated title to the product."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2180
+msgid "Generate Product Description"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2181
+msgid "Generate a full SEO-optimized product description using AI."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2187
+msgid "Product ID to generate description for."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2192
+msgid "Keywords to include."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2203
+msgid "Length: short, medium, long."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2209
+msgid "Whether to apply the generated description to the product."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2222
+#: includes/editor/class-assistify-editor.php:403
+msgid "Generate Short Description"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2223
+msgid "Generate a compelling short description (2-3 sentences) using AI."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2229
+msgid "Product ID to generate short description for."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2240
+msgid "Whether to apply the generated short description to the product."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2253
+msgid "Generate Meta Description"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2254
+msgid "Generate an SEO meta description (155-160 chars) for Yoast/RankMath."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2260
+msgid "Product ID to generate meta description for."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2265
+msgid "Focus keywords for SEO."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2270
+msgid "Whether to apply to Yoast/RankMath meta."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2283
+msgid "Generate Product Tags"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2284
+msgid "Generate relevant product tags using AI."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2290
+msgid "Product ID to generate tags for."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2295
+msgid "Number of tags to generate."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2301
+msgid "Whether to apply the generated tags to the product."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2314
+msgid "Generate Review Response"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2315
+msgid "Generate a professional response to a customer review."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2321
+msgid "Review comment ID to respond to."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2326
+msgid "Response tone (professional, friendly, apologetic, grateful)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2332
+msgid "Whether to post the response as a reply."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2345
+msgid "Generate Email Template"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2346
+msgid "Generate email content for customer communication."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2352
+msgid "Email type (order_followup, shipping_delay, refund_confirmation, promotion, review_request, abandoned_cart, welcome, custom)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2357
+msgid "Additional context or specific details for the email."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2362
+msgid "Order ID for order-related emails."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2367
+msgid "Customer ID for personalization."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2372
+msgid "Email tone (professional, friendly, urgent, apologetic)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2385
+msgid "Generate Category Description"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2386
+msgid "Generate SEO-optimized description for a product category."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2392
+msgid "Product category ID."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2397
+msgid "Description length (short, medium, long)."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2403
+msgid "Include SEO keywords in the description."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2409
+msgid "Whether to apply the description to the category."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2422
+msgid "Generate Custom Content"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2423
+msgid "Generate custom content using any prompt."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2429
+msgid "The prompt or instructions for content generation."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2434
+msgid "Maximum length of generated content in words."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2440
+msgid "Output format (text, html, markdown, list)."
+msgstr ""
+
+#. translators: %s: ability ID.
+#: includes/abilities/class-abilities-registry.php:2591
+#, php-format
+msgid "Ability not found: %s"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2601
+msgid "You do not have permission to execute this ability."
+msgstr ""
+
+#. translators: %s: parameter name.
+#: includes/abilities/class-abilities-registry.php:2648
+#, php-format
+msgid "Missing required parameter: %s"
+msgstr ""
+
+#. translators: %1$s: parameter name, %2$s: expected type.
+#: includes/abilities/class-abilities-registry.php:2679
+#, php-format
+msgid "Invalid type for parameter %1$s. Expected %2$s."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2789
+#: includes/abilities/class-abilities-registry.php:3665
+#: includes/abilities/class-abilities-registry.php:3730
+#: includes/abilities/class-abilities-registry.php:4019
+#: includes/abilities/class-abilities-registry.php:7197
+msgid "Order not found."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2861
+msgid "Order received but payment not yet initiated. Customer may have abandoned checkout."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2863
+msgid "Payment received. Order is being prepared for shipment."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2864
+msgid "Order fulfilled and completed."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2865
+msgid "Order was cancelled by customer or admin."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2866
+msgid "Order has been fully refunded."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2867
+msgid "Payment failed or was declined."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2883
+msgid "Awaiting bank transfer payment. Check bank account for incoming payment."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2885
+msgid "Awaiting check payment. Check mail for incoming payment."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2887
+msgid "Cash on delivery - payment will be collected upon delivery."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2889
+msgid "Order is on hold pending payment verification or manual review."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2972
+msgid "Check bank account for incoming transfer. Once received, change status to Processing."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2974
+msgid "Check mail for incoming payment. Once received and deposited, change status to Processing."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2976
+msgid "No payment action needed. Collect payment upon delivery."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2978
+msgid "Check PayPal account for payment status. Payment may be pending review."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:2980
+msgid "Contact customer to confirm payment or retry payment."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:3090
+msgid "No orders found."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:3181
+#: includes/abilities/class-abilities-registry.php:4250
+#: includes/abilities/class-abilities-registry.php:7133
+#: includes/abilities/class-abilities-registry.php:7170
+#: includes/abilities/class-abilities-registry.php:8223
+#: includes/abilities/class-abilities-registry.php:8296
+#: includes/abilities/class-abilities-registry.php:8362
+#: includes/abilities/class-abilities-registry.php:8424
+#: includes/abilities/class-abilities-registry.php:8511
+#: includes/editor/class-assistify-editor.php:1233
+msgid "Product not found."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:3335
+msgid "No products found matching the criteria."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:3387
+msgid "virtual"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:3390
+msgid "downloadable"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:3393
+msgid "featured"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:3396
+msgid "on sale"
+msgstr ""
+
+#. translators: %s: category name
+#: includes/abilities/class-abilities-registry.php:3406
+#, php-format
+msgid "in category \"%s\""
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:3409
+msgid "products"
+msgstr ""
+
+#. translators: %1$d: count, %2$s: product type description
+#: includes/abilities/class-abilities-registry.php:3413
+#, php-format
+msgid "Found %1$d %2$s."
+msgid_plural "Found %1$d %2$s."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: status name.
+#: includes/abilities/class-abilities-registry.php:3680
+#, php-format
+msgid "Invalid order status: %s"
+msgstr ""
+
+#. translators: %1$d: order ID, %2$s: old status, %3$s: new status.
+#: includes/abilities/class-abilities-registry.php:3709
+#, php-format
+msgid "Order #%1$d status changed from %2$s to %3$s."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:3742
+msgid "Failed to add note to order."
+msgstr ""
+
+#. translators: %d: order ID.
+#: includes/abilities/class-abilities-registry.php:3753
+#, php-format
+msgid "Note added to order #%d successfully."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:3773
+#: includes/abilities/class-abilities-registry.php:3971
+#: includes/abilities/class-abilities-registry.php:7224
+#: includes/abilities/class-abilities-registry.php:8139
+#: includes/abilities/class-abilities-registry.php:8148
+msgid "Customer not found."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:4027
+msgid "Order has no total to refund."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:4039
+msgid "Order has already been fully refunded."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:4051
+msgid "Invalid refund amount."
+msgstr ""
+
+#. translators: %s: maximum refund amount.
+#: includes/abilities/class-abilities-registry.php:4060
+#, php-format
+msgid "Refund amount exceeds maximum available: %s"
+msgstr ""
+
+#. translators: %1$s: refund amount, %2$s: reason.
+#: includes/abilities/class-abilities-registry.php:4089
+#, php-format
+msgid "Refund of %1$s processed via Assistify. Reason: %2$s"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:4091
+msgid "No reason provided"
+msgstr ""
+
+#. translators: %1$s: refund amount, %2$d: order ID.
+#: includes/abilities/class-abilities-registry.php:4108
+#, php-format
+msgid "Successfully refunded %1$s for order #%2$d."
+msgstr ""
+
+#. translators: %s: SKU.
+#: includes/abilities/class-abilities-registry.php:4295
+#: includes/abilities/class-abilities-registry.php:4486
+#, php-format
+msgid "SKU \"%s\" is already in use by another product."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:4397
+#: includes/abilities/class-abilities-registry.php:6744
+msgid "No valid fields provided to update."
+msgstr ""
+
+#. translators: %1$d: product ID, %2$s: updated fields.
+#: includes/abilities/class-abilities-registry.php:4421
+#, php-format
+msgid "Product #%1$d updated. Fields changed: %2$s"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:4543
+msgid "Failed to create product."
+msgstr ""
+
+#. translators: %1$s: product name, %2$d: product ID.
+#: includes/abilities/class-abilities-registry.php:4566
+#, php-format
+msgid "Product \"%1$s\" created successfully with ID #%2$d."
+msgstr ""
+
+#. translators: %d: Number of products out of stock.
+#: includes/abilities/class-abilities-registry.php:5123
+#, php-format
+msgid "%d products are out of stock and need restocking."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:5126
+msgid "All products are in stock!"
+msgstr ""
+
+#. translators: %d: Number of days.
+#: includes/abilities/class-abilities-registry.php:5255
+#: includes/abilities/class-abilities-registry.php:5381
+#: includes/abilities/class-abilities-registry.php:5550
+#: includes/abilities/class-abilities-registry.php:5875
+#: includes/abilities/class-abilities-registry.php:7746
+#: includes/abilities/class-abilities-registry.php:7848
+#: includes/abilities/class-abilities-registry.php:7972
+#: includes/abilities/class-abilities-registry.php:8049
+#, php-format
+msgid "Last %d days"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:5292
+#: includes/abilities/class-abilities-registry.php:8180
+msgid "Unknown"
+msgstr ""
+
+#. translators: %d: Number of repeat customers.
+#: includes/abilities/class-abilities-registry.php:5480
+#, php-format
+msgid "You have %d loyal repeat customers!"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:5483
+msgid "Focus on customer retention to build repeat business."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:5537
+#: includes/abilities/class-abilities-registry.php:5916
+#: includes/abilities/class-abilities-registry.php:7792
+#: includes/integrations/class-wc-bookings-integration.php:840
+#: includes/integrations/class-wc-bookings-integration.php:1401
+#: includes/integrations/class-wc-bookings-integration.php:1453
+msgid "Unknown Product"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:5640
+msgid "Current Period"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:5648
+msgid "Previous Period"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:5882
+msgid "Consider reaching out to these customers to recover lost sales."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:5883
+msgid "No failed orders - great job!"
+msgstr ""
+
+#. translators: %d: Number of pending reviews.
+#: includes/abilities/class-abilities-registry.php:5932
+#, php-format
+msgid "%d reviews awaiting moderation."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:5935
+msgid "No pending reviews - all caught up!"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:5971
+msgid "Product not found. Please provide a valid product name or ID."
+msgstr ""
+
+#. translators: %d: Stock quantity.
+#: includes/abilities/class-abilities-registry.php:6002
+#, php-format
+msgid "In stock - %d available"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:6004
+msgid "In stock"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:6007
+msgid "Available on backorder"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:6009
+msgid "Out of stock"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:6455
+#: includes/admin/class-assistify-admin.php:701
+msgid "Standard"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:6556
+msgid "Either coupon_id or code is required."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:6563
+#: includes/abilities/class-abilities-registry.php:6689
+#: includes/abilities/class-abilities-registry.php:6776
+msgid "Coupon not found."
+msgstr ""
+
+#. translators: %s: coupon code.
+#: includes/abilities/class-abilities-registry.php:6608
+#, php-format
+msgid "Coupon code \"%s\" already exists."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:6660
+msgid "Failed to create coupon."
+msgstr ""
+
+#. translators: %s: coupon code.
+#: includes/abilities/class-abilities-registry.php:6670
+#, php-format
+msgid "Coupon \"%s\" created successfully."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:6701
+msgid "Coupon code already in use."
+msgstr ""
+
+#. translators: %s: coupon code.
+#: includes/abilities/class-abilities-registry.php:6757
+#, php-format
+msgid "Coupon \"%s\" updated successfully."
+msgstr ""
+
+#. translators: %s: coupon code.
+#: includes/abilities/class-abilities-registry.php:6787
+#, php-format
+msgid "Coupon \"%s\" permanently deleted."
+msgstr ""
+
+#. translators: %s: coupon code.
+#: includes/abilities/class-abilities-registry.php:6790
+#, php-format
+msgid "Coupon \"%s\" moved to trash."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7191
+msgid "Order ID is required."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7218
+#: includes/integrations/class-wc-bookings-integration.php:1116
+#: includes/integrations/class-wc-bookings-integration.php:1174
+#: includes/integrations/class-wc-memberships-integration.php:1003
+#: includes/integrations/class-wc-memberships-integration.php:1057
+#: includes/integrations/class-wc-memberships-integration.php:1114
+#: includes/integrations/class-wc-memberships-integration.php:1193
+#: includes/integrations/class-wc-memberships-integration.php:1251
+#: includes/integrations/class-wc-subscriptions-integration.php:1230
+#: includes/integrations/class-wc-subscriptions-integration.php:1283
+msgid "Customer ID is required."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7257
+#: includes/abilities/class-abilities-registry.php:9117
+msgid "Category not found."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7279
+msgid "Section is required."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7289
+msgid "General Settings"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7293
+msgid "Product Settings"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7297
+msgid "Tax Settings"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7301
+msgid "Shipping Settings"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7305
+msgid "Payment Settings"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7309
+msgid "Account Settings"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7313
+msgid "Email Settings"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7317
+msgid "Integration Settings"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7321
+#: includes/admin/class-assistify-admin.php:816
+msgid "Advanced Settings"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7325
+msgid "Assistify Settings"
+msgstr ""
+
+#. translators: %s: Available sections.
+#: includes/abilities/class-abilities-registry.php:7334
+#, php-format
+msgid "Invalid section. Available: %s"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7380
+msgid "Page not found."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7412
+msgid "No products are currently on sale."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7476
+msgid "No featured products found."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7525
+#: includes/abilities/class-abilities-registry.php:7603
+msgid "No coupons are currently available."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7612
+msgid "Copy the coupon code and apply at checkout."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7625
+msgid "SKU is required."
+msgstr ""
+
+#. translators: %s: SKU code.
+#: includes/abilities/class-abilities-registry.php:7636
+#: includes/abilities/class-abilities-registry.php:7649
+#, php-format
+msgid "No product found with SKU: %s"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:7821
+msgid "No sales found for this product in the specified period."
+msgstr ""
+
+#. translators: 1: Processing count, 2: On-hold count, 3: Pending count.
+#: includes/abilities/class-abilities-registry.php:7999
+#, php-format
+msgid "%1$d processing, %2$d on-hold, %3$d pending payment"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8125
+msgid "Customer ID or email is required."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8229
+msgid "Product ID or product name is required."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8267
+msgid "Use apply: true to save this title to the product."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8291
+#: includes/abilities/class-abilities-registry.php:8357
+#: includes/abilities/class-abilities-registry.php:8419
+#: includes/abilities/class-abilities-registry.php:8506
+msgid "Product ID is required."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8336
+msgid "Use apply: true to save this description to the product."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8400
+msgid "Use apply: true to save this short description to the product."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8484
+msgid "No SEO plugin detected. Install Yoast SEO or RankMath to apply meta descriptions."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8487
+msgid "Use apply: true to save to Yoast SEO or RankMath."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8554
+msgid "Use apply: true to add these tags to the product."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8760
+msgid "AI API key is not configured."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8819
+msgid "Review ID is required."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8825
+msgid "Review not found."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8830
+msgid "Product"
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8876
+msgid "Use apply: true to post this response as a reply."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8946
+msgid "Email type is required."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:8961
+msgid "Invalid email type."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:9017
+msgid "Copy this template to use in your email campaigns or AutomateWoo workflows."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:9112
+msgid "Category ID is required."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:9166
+msgid "Use apply: true to set this as the category description."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:9235
+msgid "Prompt is required."
+msgstr ""
+
+#: includes/abilities/class-abilities-registry.php:9276
+msgid "Copy this content to use wherever you need it."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:82
+msgid "Sorry, something went wrong. Please try again."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:83
+#: includes/admin/class-audit-log-page.php:120
+#: includes/frontend/class-assistify-frontend.php:1463
+msgid "Loading..."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:84
+msgid "Ask Ayana anything..."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:85
+msgid "Chat with Ayana"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:144
+#: includes/editor/class-assistify-editor.php:463
+msgid "Settings"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:166
+msgid "View documentation"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:166
+msgid "Docs"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:167
+msgid "Get support"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:167
+msgid "Get Support"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:181
+msgid "Assistify"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:328
+msgid "Invalid OpenAI API key format. Keys should start with \"sk-\" followed by at least 40 characters."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:338
+msgid "Invalid Anthropic API key format. Keys should start with \"sk-ant-\" followed by at least 80 characters."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:348
+msgid "Invalid Google API key format. Keys are typically 39 characters long."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:358
+msgid "Invalid xAI API key format. Keys should start with \"xai-\" followed by at least 70 characters."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:368
+msgid "Invalid DeepSeek API key format. Keys should start with \"sk-\" followed by at least 28 characters."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:378
+msgid "API key appears too short. Please check your API key."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:396
+#: includes/admin/class-assistify-admin.php:966
+#: includes/admin/class-assistify-admin.php:1291
+#: includes/frontend/class-assistify-frontend.php:53
+msgid "Security check failed. Please refresh the page."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:403
+#: includes/admin/class-assistify-admin.php:1298
+msgid "You do not have permission to perform this action."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:439
+msgid "API connection successful! Your AI provider is configured correctly."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:453
+msgid "AI Provider Settings"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:455
+msgid "Configure your AI provider and API settings. The same API key works for both text and image generation."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:459
+msgid "AI Provider"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:460
+msgid "Select your preferred AI provider."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:466
+msgid "OpenAI"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:467
+msgid "Anthropic"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:468
+msgid "Google"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:469
+msgid "xAI"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:470
+msgid "DeepSeek"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:475
+msgid "API Key"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:476
+msgid "Enter your API key from your selected provider."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:483
+msgid "Text Model"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:484
+msgid "Select the AI model for text generation (chat, content)."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:493
+msgid "Image Model"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:494
+msgid "Select the AI model for image generation."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:509
+msgid "Admin Chat Settings"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:511
+msgid "Configure the admin chat assistant."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:515
+msgid "Enable Admin Chat"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:516
+msgid "Enable the AI assistant in the WordPress admin area."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:528
+msgid "Customer Chat Settings"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:530
+msgid "Configure the customer-facing chat widget."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:534
+msgid "Enable Customer Chat"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:535
+msgid "Enable the AI chat widget for customers on the frontend."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:541
+msgid "Allow Guest Chat"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:542
+msgid "Allow non-logged-in visitors to use the chat."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:548
+msgid "Chat Position"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:549
+msgid "Choose where the chat widget appears on the screen."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:555
+msgid "Bottom Right"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:556
+msgid "Bottom Left"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:561
+msgid "Assistant Name"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:562
+msgid "Name shown to customers as the AI assistant."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:569
+msgid "Primary Color"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:570
+msgid "Main color for the chat widget."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:577
+msgid "Enable Notification Sound"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:578
+msgid "Play a sound when AI responds."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:584
+msgid "Custom Sound URL"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:585
+msgid "Optional: URL to a custom notification sound (MP3/WAV)."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:592
+msgid "Auto-Open Chat"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:593
+msgid "Automatically open chat after user is idle (once per day)."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:599
+msgid "Auto-Open Delay"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:600
+msgid "Seconds of idle time before auto-opening chat."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:612
+msgid "Product Context Limit"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:613
+msgid "Maximum products to include in AI context for recommendations."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:631
+msgid "Content Generation Settings"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:633
+msgid "Configure defaults for AI-powered content generation."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:637
+msgid "Default Tone"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:638
+msgid "Default writing style for generated content."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:644
+msgid "Professional - Trustworthy and feature-focused"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:645
+msgid "Casual - Friendly and conversational"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:646
+msgid "Luxury - Elegant and sophisticated"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:647
+msgid "Playful - Fun and energetic"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:652
+msgid "Content Length (Words)"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:653
+msgid "Target word count for generated content (product descriptions, post content, page content)."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:672
+msgid "Image Generation Settings"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:674
+msgid "Configure default image output settings. Image generation is automatically enabled when an Image Model is selected above. Note: Anthropic and DeepSeek do not support image generation."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:678
+msgid "Default Size"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:679
+msgid "Default image dimensions for generation."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:685
+msgid "1024×1024 (Square)"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:686
+msgid "1024×1536 (Portrait)"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:687
+msgid "1536×1024 (Landscape)"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:688
+msgid "Auto (Let AI decide)"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:693
+msgid "Default Quality"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:694
+msgid "Image quality level. Higher quality costs more."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:700
+msgid "Auto (Recommended)"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:702
+msgid "HD (Higher cost)"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:707
+msgid "Default Style"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:708
+msgid "Image style for generation."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:714
+msgid "Natural - Realistic photos"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:715
+msgid "Vivid - More dramatic and artistic"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:726
+msgid "Background Removal"
+msgstr ""
+
+#. translators: %s: Link to remove.bg API page
+#: includes/admin/class-assistify-admin.php:730
+#, php-format
+msgid "Remove image backgrounds using Remove.bg API. Get your API key at %s (50 free API calls/month)."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:736
+msgid "Remove.bg API Key"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:737
+msgid "Enter your Remove.bg API key for background removal feature."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:744
+msgid "Output Size"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:745
+msgid "Default size for background-removed images."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:751
+msgid "Auto (Match original)"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:752
+msgid "Preview (Up to 500x500)"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:753
+msgid "Small (Up to 625x400)"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:754
+msgid "Regular (Up to 1500x1000)"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:755
+msgid "HD (Up to 2500x2500)"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:756
+msgid "4K (Up to 4096x4096)"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:767
+msgid "Health Monitoring"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:769
+msgid "Configure store health monitoring and email alerts. Alerts are sent to the admin email when issues are detected."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:773
+msgid "Enable Health Monitoring"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:774
+msgid "Monitor store health and display status in admin dashboard."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:780
+msgid "Critical Issue Alerts"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:781
+msgid "Send email when critical issues are detected (PHP errors, security issues)."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:787
+msgid "Payment Failure Alerts"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:788
+msgid "Send email when multiple payment failures occur within an hour."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:794
+msgid "Low Stock Alerts"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:795
+msgid "Send email when products are running low in stock."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:801
+msgid "Alert Email"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:802
+msgid "Email address for health alerts. Leave empty to use WooCommerce admin email."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:818
+msgid "Developer and debugging options."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:822
+msgid "Enable Debug Logging"
+msgstr ""
+
+#. translators: %s: Link to WooCommerce logs
+#: includes/admin/class-assistify-admin.php:825
+#, php-format
+msgid "Log API requests and errors for troubleshooting. View logs in %s."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:826
+msgid "WooCommerce > Status > Logs"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:839
+msgid "Privacy & Data"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:841
+msgid "A consent notice is always shown to customers before they can use the chat (GDPR compliance). Sensitive data like credit cards is automatically redacted (PCI compliance)."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:845
+msgid "Consent Notice Text"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:846
+msgid "Customize the consent text shown to customers. Leave empty for default."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:851
+#: includes/frontend/class-assistify-frontend.php:1470
+msgid "This chat is powered by AI to help you find products, answer questions, and assist with your orders. By continuing, you agree that your messages will be processed to provide responses."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:855
+msgid "Show Privacy Link"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:856
+msgid "Display a privacy policy link in the consent notice."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:862
+msgid "Remove Data on Uninstall"
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:863
+msgid "Remove all plugin data when uninstalling."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:973
+msgid "You do not have permission to use this feature."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:982
+#: includes/frontend/class-assistify-frontend.php:87
+msgid "Please enter a message."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:990
+msgid "Please configure your AI provider API key in the settings."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:1193
+msgid "Agent could not complete the request. Please try again."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:1307
+msgid "Invalid confirmation token."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:1363
+#: includes/admin/class-assistify-admin.php:1941
+#: includes/admin/class-assistify-admin.php:1983
+#: includes/admin/class-assistify-admin.php:2036
+#: includes/admin/class-assistify-admin.php:2107
+#: includes/admin/class-assistify-admin.php:2166
+#: includes/editor/class-assistify-editor.php:946
+#: includes/editor/class-assistify-editor.php:1000
+msgid "Security check failed."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:1377
+msgid "Action cancelled. Is there anything else I can help you with?"
+msgstr ""
+
+#. translators: %1$s: Admin name, %2$s: Store name, %3$s: Currency code, %4$s: Currency symbol.
+#: includes/admin/class-assistify-admin.php:1800
+#, php-format
+msgid ""
+"You are Ayana, the AI assistant for \"%2$s\" WooCommerce store. You help %1$s manage their business.\n"
+"\n"
+"## CRITICAL CONTEXT - READ FIRST:\n"
+"- %1$s is ALREADY LOGGED IN to WordPress Admin Dashboard\n"
+"- They are chatting with you FROM INSIDE the admin panel\n"
+"- NEVER say \"Log in to WordPress\" or \"Go to your dashboard\" - they are already there!\n"
+"- Just provide direct links and brief instructions\n"
+"\n"
+"## Your Capabilities:\n"
+"- **View Data**: Orders, products, customers, analytics, coupons, settings - use the LIVE DATA provided\n"
+"- **Provide Links**: Give direct admin URLs for any action\n"
+"- **Generate Content**: Product titles, descriptions, meta descriptions, tags\n"
+"\n"
+"## Store Info:\n"
+"- Currency: %3$s (%4$s)\n"
+"- Platform: WooCommerce\n"
+"\n"
+"## Response Style - BE CONCISE:\n"
+"1. Use the LIVE STORE DATA provided - never say \"I cannot access\" if data is given\n"
+"2. For actions: Give ONE direct link + brief instruction (1-2 sentences max)\n"
+"3. NEVER list numbered steps like \"Step 1, Step 2...\" - just give the link\n"
+"4. Format: **bold** for emphasis, bullets for lists\n"
+"5. Keep responses SHORT and actionable\n"
+"\n"
+"## Example Good Response:\n"
+"User: \"Disable guest checkout\"\n"
+"Good: \"Go to [Checkout Settings](link) and uncheck \"Allow guest checkout\", then save.\"\n"
+"Bad: \"Step 1: Log in... Step 2: Navigate to... Step 3: Click on...\"\n"
+"\n"
+"## Coupon Display:\n"
+"- **Code**: `COUPONCODE` (in backticks)\n"
+"- Show discount, expiry, usage\n"
+"\n"
+"## Content Generation:\n"
+"- **Product Title**: SEO-optimized, under 60 characters\n"
+"- **Description**: HTML with features/benefits\n"
+"- **Short Description**: 2-3 sentences\n"
+"- **Meta Description**: 150-160 characters for SEO\n"
+"\n"
+"## Tone:\n"
+"Direct, helpful, efficient. No fluff."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:1946
+#: includes/admin/class-assistify-admin.php:1988
+#: includes/admin/class-assistify-admin.php:2041
+#: includes/admin/class-assistify-admin.php:2112
+#: includes/admin/class-assistify-admin.php:2171
+#: includes/editor/class-assistify-editor.php:481
+#: includes/editor/class-assistify-editor.php:838
+#: includes/editor/class-assistify-editor.php:951
+#: includes/editor/class-assistify-editor.php:1005
+#: includes/health-monitor/class-health-page.php:63
+#: includes/health-monitor/class-health-page.php:205
+#: includes/health-monitor/class-health-page.php:514
+msgid "Permission denied."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:1994
+#: includes/admin/class-assistify-admin.php:2047
+#: includes/admin/class-assistify-admin.php:2118
+msgid "Session ID required."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:2011
+#: includes/admin/class-assistify-admin.php:2135
+msgid "Session not found."
+msgstr ""
+
+#: includes/admin/class-assistify-admin.php:2094
+msgid "Failed to create session."
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:77
+#: includes/admin/class-audit-log-page.php:78
+#: includes/admin/class-audit-log-page.php:147
+msgid "AI Activity Log"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:121
+msgid "No activity logs found."
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:122
+msgid "Error loading logs."
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:123
+#: includes/admin/class-audit-log-page.php:196
+msgid "Success"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:124
+#: includes/admin/class-audit-log-page.php:175
+#: includes/admin/class-audit-log-page.php:197
+#: includes/health-monitor/class-health-page.php:146
+msgid "Failed"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:125
+#: includes/admin/class-audit-log-page.php:198
+msgid "Pending"
+msgstr ""
+
+#. translators: %s: time elapsed
+#: includes/admin/class-audit-log-page.php:127
+#, php-format
+msgid "%s ago"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:128
+#: includes/health-monitor/views/dashboard-widget.php:90
+#: includes/health-monitor/views/dashboard-widget.php:96
+msgid "View Details"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:129
+msgid "Parameters"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:130
+msgid "Result"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:149
+msgid "Track all AI-triggered actions and activity in your store."
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:156
+msgid "Total Actions (30 days)"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:171
+msgid "Successful"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:182
+msgid "All Categories"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:183
+msgid "Orders"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:184
+msgid "Products"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:185
+msgid "Customers"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:186
+msgid "Coupons"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:187
+#: includes/editor/class-assistify-editor.php:306
+msgid "Content"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:188
+msgid "Images"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:189
+#: includes/integrations/class-wc-subscriptions-integration.php:108
+msgid "Subscriptions"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:190
+#: includes/integrations/class-wc-bookings-integration.php:108
+msgid "Bookings"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:191
+#: includes/integrations/class-wc-memberships-integration.php:108
+msgid "Memberships"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:195
+msgid "All Statuses"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:201
+msgid "Search..."
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:204
+msgid "Filter"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:208
+msgid "Export CSV"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:216
+msgid "Time"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:217
+msgid "User"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:218
+msgid "Action"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:219
+#: includes/editor/class-assistify-editor.php:306
+msgid "Description"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:220
+msgid "Status"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:221
+msgid "Details"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:227
+msgid "Loading activity logs..."
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:236
+msgid "← Previous"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:240
+msgid "Next →"
+msgstr ""
+
+#: includes/admin/class-audit-log-page.php:248
+msgid "Action Details"
+msgstr ""
+
+#. translators: %d: HTTP response code.
+#: includes/ai-providers/class-ai-provider-abstract.php:241
+#: includes/ai-providers/class-ai-provider-google.php:164
+#, php-format
+msgid "API request failed with status code %d."
+msgstr ""
+
+#: includes/ai-providers/class-ai-provider-anthropic.php:149
+#: includes/ai-providers/class-ai-provider-deepseek.php:93
+#: includes/ai-providers/class-ai-provider-google.php:191
+#: includes/ai-providers/class-ai-provider-openai.php:141
+#: includes/ai-providers/class-ai-provider-xai.php:127
+#: includes/image-providers/class-image-provider-google.php:120
+#: includes/image-providers/class-image-provider-openai.php:115
+#: includes/image-providers/class-image-provider-xai.php:100
+msgid "No API key provided."
+msgstr ""
+
+#: includes/ai-providers/class-ai-provider-anthropic.php:183
+#: includes/ai-providers/class-ai-provider-anthropic.php:273
+msgid "Anthropic provider is not configured. Please add your API key."
+msgstr ""
+
+#: includes/ai-providers/class-ai-provider-anthropic.php:235
+msgid "Invalid response from Anthropic API."
+msgstr ""
+
+#: includes/ai-providers/class-ai-provider-deepseek.php:129
+#: includes/ai-providers/class-ai-provider-deepseek.php:194
+msgid "DeepSeek provider is not configured. Please add your API key."
+msgstr ""
+
+#: includes/ai-providers/class-ai-provider-deepseek.php:163
+msgid "Invalid response from DeepSeek API."
+msgstr ""
+
+#. translators: %s: Provider ID.
+#: includes/ai-providers/class-ai-provider-factory.php:62
+#, php-format
+msgid "Invalid AI provider: %s"
+msgstr ""
+
+#: includes/ai-providers/class-ai-provider-google.php:225
+#: includes/ai-providers/class-ai-provider-google.php:317
+msgid "Google Gemini provider is not configured. Please add your API key."
+msgstr ""
+
+#: includes/ai-providers/class-ai-provider-google.php:283
+msgid "Invalid response from Google Gemini API."
+msgstr ""
+
+#: includes/ai-providers/class-ai-provider-openai.php:167
+#: includes/ai-providers/class-ai-provider-openai.php:232
+msgid "OpenAI provider is not configured. Please add your API key."
+msgstr ""
+
+#: includes/ai-providers/class-ai-provider-openai.php:201
+msgid "Invalid response from OpenAI API."
+msgstr ""
+
+#: includes/ai-providers/class-ai-provider-xai.php:163
+#: includes/ai-providers/class-ai-provider-xai.php:228
+msgid "xAI provider is not configured. Please add your API key."
+msgstr ""
+
+#: includes/ai-providers/class-ai-provider-xai.php:197
+msgid "Invalid response from xAI API."
+msgstr ""
+
+#: includes/analytics/class-traffic-tracker.php:351
+msgid "Traffic Source"
+msgstr ""
+
+#: includes/analytics/class-traffic-tracker.php:354
+msgid "Source:"
+msgstr ""
+
+#: includes/analytics/class-traffic-tracker.php:363
+msgid "Campaign:"
+msgstr ""
+
+#: includes/analytics/class-traffic-tracker.php:367
+msgid "Referrer:"
+msgstr ""
+
+#: includes/analytics/class-traffic-tracker.php:373
+msgid "Landing Page:"
+msgstr ""
+
+#: includes/class-action-confirmation.php:189
+msgid "This confirmation has expired. Please try again."
+msgstr ""
+
+#: includes/class-action-confirmation.php:197
+msgid "This confirmation belongs to a different user."
+msgstr ""
+
+#. translators: %s: expected confirmation code
+#: includes/class-action-confirmation.php:209
+#, php-format
+msgid "Invalid confirmation code. Please type \"%s\" to confirm."
+msgstr ""
+
+#. translators: %s: ability ID
+#: includes/class-action-confirmation.php:233
+#, php-format
+msgid "Confirmed and executed: %s"
+msgstr ""
+
+#. translators: %s: ability ID
+#: includes/class-action-confirmation.php:269
+#, php-format
+msgid "Cancelled action: %s"
+msgstr ""
+
+#: includes/class-action-confirmation.php:300
+msgid "Cancel Order"
+msgstr ""
+
+#: includes/class-action-confirmation.php:320
+msgid "Delete Product"
+msgstr ""
+
+#: includes/class-action-confirmation.php:324
+#: includes/integrations/class-wc-subscriptions-integration.php:420
+msgid "Pause Subscription"
+msgstr ""
+
+#: includes/class-action-confirmation.php:328
+#: includes/integrations/class-wc-subscriptions-integration.php:472
+msgid "Cancel Subscription"
+msgstr ""
+
+#: includes/class-action-confirmation.php:332
+#: includes/integrations/class-wc-bookings-integration.php:436
+msgid "Cancel Booking"
+msgstr ""
+
+#: includes/class-action-confirmation.php:336
+#: includes/integrations/class-wc-memberships-integration.php:443
+msgid "Cancel Membership"
+msgstr ""
+
+#: includes/class-action-confirmation.php:340
+msgid "Cancel Your Subscription"
+msgstr ""
+
+#: includes/class-action-confirmation.php:346
+msgid "Confirm Action"
+msgstr ""
+
+#. translators: %d: order ID
+#: includes/class-action-confirmation.php:356
+#, php-format
+msgid "Order #%d"
+msgstr ""
+
+#. translators: %d: subscription ID
+#: includes/class-action-confirmation.php:369
+#, php-format
+msgid "Subscription #%d"
+msgstr ""
+
+#. translators: %d: booking ID
+#: includes/class-action-confirmation.php:376
+#, php-format
+msgid "Booking #%d"
+msgstr ""
+
+#. translators: %s: coupon code
+#: includes/class-action-confirmation.php:386
+#, php-format
+msgid "Code: %s"
+msgstr ""
+
+#: includes/class-action-confirmation.php:408
+msgid "This will process a refund and cannot be easily undone. The customer will be refunded."
+msgstr ""
+
+#: includes/class-action-confirmation.php:409
+msgid "This will cancel the order. Inventory may be restocked."
+msgstr ""
+
+#: includes/class-action-confirmation.php:410
+msgid "This will permanently delete the coupon."
+msgstr ""
+
+#: includes/class-action-confirmation.php:411
+msgid "This will move the product to trash."
+msgstr ""
+
+#: includes/class-action-confirmation.php:412
+msgid "This will cancel the subscription. The customer will lose access."
+msgstr ""
+
+#: includes/class-action-confirmation.php:413
+msgid "This will cancel the booking. The customer will be notified."
+msgstr ""
+
+#: includes/class-action-confirmation.php:414
+msgid "This will cancel the membership. The customer will lose access."
+msgstr ""
+
+#: includes/class-action-confirmation.php:415
+msgid "This will cancel your subscription. You will lose access to benefits."
+msgstr ""
+
+#: includes/class-action-confirmation.php:418
+msgid "This action cannot be easily undone. Please confirm."
+msgstr ""
+
+#: includes/class-action-confirmation.php:421
+msgid "Please confirm this action."
+msgstr ""
+
+#: includes/class-assistify-privacy.php:71
+msgid "AI Chat Assistant"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:73
+msgid "When you use our AI chat assistant, we collect and process the following data:"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:75
+msgid "What data we collect"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:77
+msgid "Chat messages and conversations with the AI assistant"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:78
+msgid "Session identifiers to maintain conversation context"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:79
+msgid "Timestamps of when conversations occurred"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:80
+msgid "For logged-in users: your user ID to associate conversations with your account"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:83
+msgid "How we use this data"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:85
+msgid "To provide AI-powered customer support and assistance"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:86
+msgid "To maintain conversation history during your session"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:87
+msgid "To improve our support services"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:90
+msgid "Third-party AI services"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:91
+msgid "Your chat messages are processed by third-party AI services (such as OpenAI, Anthropic, or Google) to generate responses. These services receive only the conversation content necessary to provide assistance. We do not send sensitive personal data like payment information or passwords to these services."
+msgstr ""
+
+#: includes/class-assistify-privacy.php:93
+msgid "Data retention"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:94
+msgid "Chat conversations are stored on our servers. You can request export or deletion of your chat data through the standard WordPress data request process."
+msgstr ""
+
+#: includes/class-assistify-privacy.php:96
+msgid "Your rights"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:97
+msgid "Under GDPR and similar regulations, you have the right to:"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:99
+msgid "Access your chat conversation data"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:100
+msgid "Request deletion of your chat data"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:101
+msgid "Export your chat data in a portable format"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:116
+#: includes/class-assistify-privacy.php:132
+msgid "Assistify Chat Data"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:216
+msgid "Chat Type"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:220
+msgid "Started"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:224
+msgid "Last Activity"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:228
+msgid "Conversation"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:235
+msgid "AI Chat Sessions"
+msgstr ""
+
+#: includes/class-assistify-privacy.php:236
+msgid "Your conversations with the AI assistant."
+msgstr ""
+
+#. translators: %d: Number of deleted chat sessions
+#: includes/class-assistify-privacy.php:320
+#, php-format
+msgid "Removed %d chat session(s) and associated messages."
+msgstr ""
+
+#. translators: %d: Number of deleted action log records
+#: includes/class-assistify-privacy.php:338
+#, php-format
+msgid "Removed %d action log record(s)."
+msgstr ""
+
+#: includes/class-assistify.php:127
+msgid "Cloning is forbidden."
+msgstr ""
+
+#: includes/class-assistify.php:138
+msgid "Unserializing is forbidden."
+msgstr ""
+
+#. translators: %s: content type being generated
+#: includes/class-audit-logger.php:230
+#, php-format
+msgid "Generated AI %s"
+msgstr ""
+
+#: includes/class-audit-logger.php:254
+msgid "Generated AI image"
+msgstr ""
+
+#: includes/class-audit-logger.php:687
+#: includes/integrations/class-wc-memberships-integration.php:1315
+msgid "Unknown User"
+msgstr ""
+
+#: includes/class-audit-logger.php:864
+msgid "Viewed order details"
+msgstr ""
+
+#: includes/class-audit-logger.php:865
+msgid "Listed orders"
+msgstr ""
+
+#: includes/class-audit-logger.php:866
+msgid "Searched orders"
+msgstr ""
+
+#: includes/class-audit-logger.php:867
+msgid "Updated order status"
+msgstr ""
+
+#: includes/class-audit-logger.php:868
+msgid "Processed order refund"
+msgstr ""
+
+#: includes/class-audit-logger.php:869
+msgid "Added order note"
+msgstr ""
+
+#: includes/class-audit-logger.php:872
+msgid "Viewed product details"
+msgstr ""
+
+#: includes/class-audit-logger.php:873
+msgid "Listed products"
+msgstr ""
+
+#: includes/class-audit-logger.php:874
+msgid "Searched products"
+msgstr ""
+
+#: includes/class-audit-logger.php:875
+msgid "Updated product"
+msgstr ""
+
+#: includes/class-audit-logger.php:876
+msgid "Created product"
+msgstr ""
+
+#: includes/class-audit-logger.php:879
+msgid "Viewed customer details"
+msgstr ""
+
+#: includes/class-audit-logger.php:880
+msgid "Listed customers"
+msgstr ""
+
+#: includes/class-audit-logger.php:881
+msgid "Searched customers"
+msgstr ""
+
+#: includes/class-audit-logger.php:884
+msgid "Viewed coupon details"
+msgstr ""
+
+#: includes/class-audit-logger.php:885
+msgid "Listed coupons"
+msgstr ""
+
+#: includes/class-audit-logger.php:886
+msgid "Created coupon"
+msgstr ""
+
+#: includes/class-audit-logger.php:887
+msgid "Updated coupon"
+msgstr ""
+
+#: includes/class-audit-logger.php:888
+msgid "Deleted coupon"
+msgstr ""
+
+#: includes/class-audit-logger.php:891
+msgid "Generated product title"
+msgstr ""
+
+#: includes/class-audit-logger.php:892
+msgid "Generated product description"
+msgstr ""
+
+#: includes/class-audit-logger.php:893
+msgid "Generated short description"
+msgstr ""
+
+#: includes/class-audit-logger.php:894
+msgid "Generated meta description"
+msgstr ""
+
+#: includes/class-audit-logger.php:895
+msgid "Generated product tags"
+msgstr ""
+
+#: includes/class-audit-logger.php:898
+msgid "Generated image from text"
+msgstr ""
+
+#: includes/class-audit-logger.php:899
+msgid "Generated featured image"
+msgstr ""
+
+#: includes/class-audit-logger.php:900
+msgid "Generated product image"
+msgstr ""
+
+#: includes/class-audit-logger.php:901
+msgid "Edited image with AI"
+msgstr ""
+
+#: includes/class-audit-logger.php:902
+msgid "Removed image background"
+msgstr ""
+
+#. translators: %s: ability identifier
+#: includes/class-audit-logger.php:908
+#, php-format
+msgid "Executed ability: %s"
+msgstr ""
+
+#. translators: %1$s: order ID, %2$s: new status
+#: includes/class-intent-classifier.php:1881
+#, php-format
+msgid "Change Order #%1$s status to \"%2$s\""
+msgstr ""
+
+#: includes/class-intent-classifier.php:1888
+msgid "full amount"
+msgstr ""
+
+#. translators: %1$s: amount, %2$s: order ID
+#: includes/class-intent-classifier.php:1891
+#, php-format
+msgid "Refund %1$s from Order #%2$s"
+msgstr ""
+
+#: includes/class-intent-classifier.php:1897
+msgid "New Product"
+msgstr ""
+
+#. translators: %s: product name
+#: includes/class-intent-classifier.php:1900
+#, php-format
+msgid "Create new product: \"%s\""
+msgstr ""
+
+#. translators: %s: formatted price
+#: includes/class-intent-classifier.php:1909
+#, php-format
+msgid "price to %s"
+msgstr ""
+
+#. translators: %d: stock quantity
+#: includes/class-intent-classifier.php:1913
+#, php-format
+msgid "stock to %d"
+msgstr ""
+
+#. translators: %s: product status
+#: includes/class-intent-classifier.php:1917
+#, php-format
+msgid "status to %s"
+msgstr ""
+
+#: includes/class-intent-classifier.php:1919
+msgid "details"
+msgstr ""
+
+#. translators: %1$s: product ID, %2$s: changes list
+#: includes/class-intent-classifier.php:1922
+#, php-format
+msgid "Update Product #%1$s: %2$s"
+msgstr ""
+
+#: includes/class-intent-classifier.php:1928
+msgid "NEW_COUPON"
+msgstr ""
+
+#. translators: %1$s: coupon code, %2$s: discount amount, %3$s: suffix (% or empty)
+#: includes/class-intent-classifier.php:1934
+#, php-format
+msgid "Create coupon \"%1$s\" for %2$s%3$s off"
+msgstr ""
+
+#. translators: %s: coupon ID
+#: includes/class-intent-classifier.php:1944
+#, php-format
+msgid "Update Coupon #%s"
+msgstr ""
+
+#: includes/class-intent-classifier.php:1951
+msgid "Permanently delete"
+msgstr ""
+
+#: includes/class-intent-classifier.php:1951
+msgid "Move to trash"
+msgstr ""
+
+#. translators: %1$s: action (delete/trash), %2$s: coupon ID
+#: includes/class-intent-classifier.php:1954
+#, php-format
+msgid "%1$s Coupon #%2$s"
+msgstr ""
+
+#. translators: %s: order ID
+#: includes/class-intent-classifier.php:1963
+#, php-format
+msgid "Add note to Order #%s"
+msgstr ""
+
+#: includes/class-intent-classifier.php:1968
+msgid "Perform action"
+msgstr ""
+
+#: includes/class-intent-classifier.php:2003
+msgid "This action has expired. Please try again."
+msgstr ""
+
+#. translators: %s: action preview
+#: includes/class-intent-classifier.php:2022
+#, php-format
+msgid "Action completed: %s"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:201
+#: includes/editor/class-assistify-editor.php:406
+msgid "page"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:201
+#: includes/editor/class-assistify-editor.php:411
+msgid "post"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:216
+#: includes/editor/class-assistify-editor.php:374
+#: assets/js/editor/sidebar-panel.js:796
+msgid "Assistify AI"
+msgstr ""
+
+#. translators: %s: post type label
+#: includes/editor/class-assistify-editor.php:218
+#: includes/editor/class-assistify-editor.php:421
+#: assets/js/editor/sidebar-panel.js:304
+#, php-format,js-format
+msgid "Generate AI content for this %s."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:219
+#: includes/editor/class-assistify-editor.php:425
+#: assets/js/editor/sidebar-panel.js:314
+msgid "Generate Title"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:220
+#: includes/editor/class-assistify-editor.php:407
+#: includes/editor/class-assistify-editor.php:412
+#: assets/js/editor/sidebar-panel.js:318
+msgid "Generate Content"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:221
+#: includes/editor/class-assistify-editor.php:408
+#: includes/editor/class-assistify-editor.php:413
+#: assets/js/editor/sidebar-panel.js:322
+msgid "Generate Excerpt"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:222
+#: includes/editor/class-assistify-editor.php:433
+#: assets/js/editor/sidebar-panel.js:326
+msgid "Generate SEO Meta"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:223
+#: assets/js/editor/sidebar-panel.js:330
+#: assets/js/editor/sidebar-panel.js:665
+msgid "Generate Image"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:224
+#: includes/editor/class-assistify-editor.php:312
+#: includes/editor/class-assistify-editor.php:437
+#: assets/js/editor/sidebar-panel.js:376
+msgid "Instructions (optional)"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:225
+msgid "Describe what you want..."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:226
+#: includes/editor/class-assistify-editor.php:441
+#: assets/js/editor/sidebar-panel.js:407
+msgid "Generate"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:227
+#: includes/editor/class-assistify-editor.php:321
+#: includes/editor/class-assistify-editor.php:459
+msgid "Generating..."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:228
+msgid "Apply"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:229
+#: includes/editor/class-assistify-editor.php:451
+#: assets/js/editor/sidebar-panel.js:544
+msgid "Regenerate"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:230
+#: includes/editor/class-assistify-editor.php:315
+#: assets/js/editor/sidebar-panel.js:501
+msgid "Copy"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:231
+#: includes/editor/class-assistify-editor.php:316
+#: assets/js/editor/sidebar-panel.js:500
+msgid "Copied!"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:232
+#: includes/editor/class-assistify-editor.php:442
+#: assets/js/editor/sidebar-panel.js:412
+#: assets/js/editor/sidebar-panel.js:660
+msgid "Cancel"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:233
+msgid "Error generating content. Please try again."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:234
+msgid "No existing content. Please provide instructions."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:235
+msgid "Configure in Settings"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:237
+msgid "Generate from content"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:238
+msgid "Write custom prompt"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:305
+msgid "Title"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:307
+msgid "Short Description"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:307
+msgid "Excerpt"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:308
+msgid "Tags"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:309
+msgid "SEO Meta"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:313
+#: assets/js/editor/sidebar-panel.js:160
+#: assets/js/editor/sidebar-panel.js:167
+msgid "Error generating content."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:314
+#: assets/js/editor/sidebar-panel.js:459
+msgid "Option"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:317
+#: assets/js/editor/sidebar-panel.js:514
+msgid "Use"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:318
+msgid "Generate with AI"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:319
+msgid "Generate Featured Image"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:320
+msgid "Generate Gallery Images"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:322
+#: assets/js/editor/sidebar-panel.js:204
+#: assets/js/editor/sidebar-panel.js:211
+msgid "Error generating image."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:401
+msgid "product"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:402
+msgid "Generate Description"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:430
+msgid "Generate Tags"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:438
+msgid "Add context or specific requirements. Leave empty to generate based on existing content."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:439
+msgid "e.g., Focus on luxury appeal, mention eco-friendly materials..."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:448
+#: assets/js/editor/sidebar-panel.js:535
+msgid "Choose an option"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:452
+#: assets/js/editor/sidebar-panel.js:555
+msgid "Close"
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:492
+msgid "Invalid request."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:498
+#: includes/editor/class-assistify-editor.php:966
+#: includes/editor/class-assistify-editor.php:1193
+#: includes/editor/class-assistify-editor.php:1257
+msgid "Post not found."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:741
+msgid "AI API key is not configured. Please configure it in WooCommerce > Settings > Assistify."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:746
+msgid "AI Provider Factory not found. Please check plugin installation."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:762
+msgid "Failed to create AI provider. Please check your settings."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:814
+msgid "AI returned an empty response. Please try again."
+msgstr ""
+
+#. translators: %s: provider name
+#: includes/editor/class-assistify-editor.php:848
+#, php-format
+msgid "Your selected AI provider (%s) does not support image generation. Please select OpenAI, Google, or xAI, and choose an image model in settings."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:915
+msgid "Invalid image action."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:959
+#: includes/editor/class-assistify-editor.php:1013
+msgid "Missing required parameters."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:984
+msgid "Product image set successfully."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:1020
+msgid "This action is only available for products."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:1042
+msgid "Image already in gallery."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:1064
+msgid "Image added to gallery."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:1082
+msgid "Please provide a description for the image."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:1095
+msgid "Image provider is not configured. Please add your API key in settings."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:1170
+msgid "Failed to upload generated images."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:1302
+#: includes/editor/class-assistify-editor.php:1364
+msgid "Please provide a source image."
+msgstr ""
+
+#. translators: %s: Provider name.
+#: includes/editor/class-assistify-editor.php:1316
+#, php-format
+msgid "%s does not support image variations. Try OpenAI."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:1368
+msgid "Please provide edit instructions."
+msgstr ""
+
+#. translators: %s: Provider name.
+#: includes/editor/class-assistify-editor.php:1382
+#, php-format
+msgid "%s does not support image editing. Try OpenAI or Google Imagen."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:1429
+msgid "Please provide an image to process."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:1438
+msgid "Background removal is not configured. Please add your Remove.bg API key in settings."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:1501
+#: includes/editor/class-assistify-editor.php:1753
+msgid "Upload failed - no file created."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:1670
+msgid "No image data available."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:1824
+msgid "Failed to download image."
+msgstr ""
+
+#: includes/editor/class-assistify-editor.php:1834
+msgid "Failed to save temporary file."
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:61
+msgid "Chat is currently unavailable."
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:70
+msgid "Please log in to use the chat feature."
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:105
+msgid "Chat service is currently unavailable. Please try again later."
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:142
+msgid "Sorry, I couldn't process your request. Please try again."
+msgstr ""
+
+#. translators: %d: seconds until rate limit resets.
+#: includes/frontend/class-assistify-frontend.php:191
+#, php-format
+msgid "You've sent too many messages. Please wait %d seconds."
+msgstr ""
+
+#. translators: %1$s: Store name, %2$s: Currency symbol.
+#: includes/frontend/class-assistify-frontend.php:270
+#, php-format
+msgid ""
+"You are Ayana, a friendly AI customer support assistant for %1$s.\n"
+"\n"
+"Your personality:\n"
+"- Warm, helpful, and conversational\n"
+"- Professional yet approachable\n"
+"- Patient and understanding\n"
+"\n"
+"Your capabilities:\n"
+"- Answer product questions and give recommendations\n"
+"- Help with order tracking for logged-in customers\n"
+"- Explain shipping options and delivery times\n"
+"- Clarify return and refund policies\n"
+"- Provide store information and contact details\n"
+"- Share actual page/product links when customers ask\n"
+"- Share available coupon codes and current sales\n"
+"- Recommend featured products\n"
+"\n"
+"CRITICAL RULES - YOU MUST FOLLOW THESE:\n"
+"1. NEVER make up or invent order data, tracking numbers, or any information\n"
+"2. ONLY use information explicitly provided in the \"Customer Information\" section below\n"
+"3. If no order data is provided, tell the customer they have no orders\n"
+"4. If a customer asks about orders but none are listed, say: \"I don't see any orders in your account.\"\n"
+"5. Always introduce yourself as Ayana in your first response\n"
+"\n"
+"ORDER TRACKING (for logged-in customers):\n"
+"- ONLY mention orders that are explicitly listed in the Customer Information below\n"
+"- If no orders are listed, clearly state: \"You don't have any orders yet.\"\n"
+"- Share order status, items, and tracking ONLY if that data is provided\n"
+"- Use the exact \"View details\" URL provided for each order\n"
+"- DO NOT invent order numbers, tracking numbers, or product names\n"
+"\n"
+"PRODUCT RECOMMENDATIONS:\n"
+"- When customer asks for products, recommend specific products WITH links\n"
+"- ONLY recommend products from the Store Information provided below\n"
+"- Be enthusiastic about products - highlight features, prices, availability\n"
+"- If a product is out of stock, suggest similar alternatives from the list\n"
+"\n"
+"COUPON CODES (IMPORTANT):\n"
+"- When customer asks about discounts, coupons, promo codes, or deals:\n"
+"- Share the EXACT coupon codes from \"AVAILABLE COUPON CODES\" section below\n"
+"- Display codes prominently like: **Use code `COUPONCODE`** (in backticks for easy copying)\n"
+"- Include the discount amount and any minimum spend requirements\n"
+"- If no coupons are available, say \"We don't have any coupon codes available right now, but check back soon!\"\n"
+"\n"
+"SALE ITEMS:\n"
+"- When customer asks what's on sale, share products from \"PRODUCTS ON SALE\" section\n"
+"- Include the original price, sale price, and discount percentage\n"
+"- Always include product links so they can buy directly\n"
+"\n"
+"GENERAL:\n"
+"- Be helpful, friendly, and SALES-FOCUSED\n"
+"- Format links as markdown: [Product Name](URL)\n"
+"- Never ask for sensitive info (passwords, payment details)\n"
+"- For complex issues (refunds, payment problems), suggest contacting human support\n"
+"- Currency: %2$s\n"
+"\n"
+"Use a friendly, conversational tone. Format with line breaks for readability."
+msgstr ""
+
+#. translators: %s: Store location.
+#: includes/frontend/class-assistify-frontend.php:366
+#, php-format
+msgid "Store location: %s"
+msgstr ""
+
+#. translators: %s: Shipping zones.
+#: includes/frontend/class-assistify-frontend.php:377
+#, php-format
+msgid "Ships to: %s"
+msgstr ""
+
+#. translators: %s: Payment methods.
+#: includes/frontend/class-assistify-frontend.php:390
+#, php-format
+msgid "Payment methods: %s"
+msgstr ""
+
+#. translators: %d: Number of products.
+#: includes/frontend/class-assistify-frontend.php:428
+#, php-format
+msgid "Store Products (%d items - share direct links when asked):"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:444
+msgid "Product Categories:"
+msgstr ""
+
+#. translators: %s: Contact page URL.
+#: includes/frontend/class-assistify-frontend.php:454
+#, php-format
+msgid "Contact page: %s"
+msgstr ""
+
+#. translators: %s: Privacy policy URL.
+#: includes/frontend/class-assistify-frontend.php:462
+#, php-format
+msgid "Privacy policy: %s"
+msgstr ""
+
+#. translators: %s: Terms URL.
+#: includes/frontend/class-assistify-frontend.php:470
+#, php-format
+msgid "Terms & Conditions: %s"
+msgstr ""
+
+#. translators: %s: Refund policy URL.
+#: includes/frontend/class-assistify-frontend.php:478
+#, php-format
+msgid "Returns & Refunds: %s"
+msgstr ""
+
+#. translators: %s: Shop URL.
+#: includes/frontend/class-assistify-frontend.php:486
+#, php-format
+msgid "Shop/Products: %s"
+msgstr ""
+
+#. translators: %s: Account URL.
+#: includes/frontend/class-assistify-frontend.php:494
+#, php-format
+msgid "My Account: %s"
+msgstr ""
+
+#. translators: %s: FAQ URL.
+#: includes/frontend/class-assistify-frontend.php:503
+#, php-format
+msgid "FAQ/Help: %s"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:509
+msgid "Important Links (share these when customers ask):"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:534
+msgid "Store Information (use to answer customer questions):"
+msgstr ""
+
+#. translators: %s: Customer first name.
+#: includes/frontend/class-assistify-frontend.php:560
+#, php-format
+msgid "Customer name: %s"
+msgstr ""
+
+#. translators: %1$d: Order count, %2$s: Total spent.
+#: includes/frontend/class-assistify-frontend.php:583
+#, php-format
+msgid "CUSTOMER ORDER HISTORY: Customer has placed %1$d orders (total spent: %2$s)"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:593
+msgid "ORDERS LIST (ONLY mention these orders, do NOT invent any):"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:596
+msgid "CUSTOMER ORDER HISTORY: This customer has NO orders. They have not placed any orders yet. Do NOT mention any orders or tracking information."
+msgstr ""
+
+#. translators: %s: Dashboard URL.
+#: includes/frontend/class-assistify-frontend.php:634
+#, php-format
+msgid "Dashboard: %s"
+msgstr ""
+
+#. translators: %s: Orders URL.
+#: includes/frontend/class-assistify-frontend.php:636
+#, php-format
+msgid "Orders: %s"
+msgstr ""
+
+#. translators: %s: Downloads URL.
+#: includes/frontend/class-assistify-frontend.php:638
+#, php-format
+msgid "Downloads: %s"
+msgstr ""
+
+#. translators: %s: Addresses URL.
+#: includes/frontend/class-assistify-frontend.php:640
+#, php-format
+msgid "Addresses: %s"
+msgstr ""
+
+#. translators: %s: Payment methods URL.
+#: includes/frontend/class-assistify-frontend.php:642
+#, php-format
+msgid "Payment Methods: %s"
+msgstr ""
+
+#. translators: %s: Account details URL.
+#: includes/frontend/class-assistify-frontend.php:644
+#, php-format
+msgid "Account Details: %s"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:646
+msgid "MY ACCOUNT PAGES (share these links when customer asks):"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:650
+msgid "CUSTOMER DATA: No customer data available. Customer is not logged in or no data found."
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:653
+msgid "CUSTOMER INFORMATION - USE ONLY THIS DATA (do NOT invent or assume anything not listed here):"
+msgstr ""
+
+#. translators: %d: Number of additional items.
+#: includes/frontend/class-assistify-frontend.php:678
+#, php-format
+msgid " + %d more items"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:687
+msgid "Standard shipping"
+msgstr ""
+
+#. translators: %s: Payment method title.
+#: includes/frontend/class-assistify-frontend.php:754
+#, php-format
+msgid "Payment Method: %s"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:780
+msgid "PAYMENT REQUIRED: Please make a bank transfer to complete your order."
+msgstr ""
+
+#. translators: %s: Order number.
+#: includes/frontend/class-assistify-frontend.php:786
+#, php-format
+msgid "Use Order #%s as payment reference."
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:791
+msgid "PAYMENT REQUIRED: Please send a check to complete your order."
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:800
+msgid "Payment will be collected upon delivery."
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:807
+msgid "Your PayPal payment is pending. Please check your PayPal account."
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:814
+msgid "Your order is awaiting payment confirmation."
+msgstr ""
+
+#. translators: %s: Bank name.
+#: includes/frontend/class-assistify-frontend.php:841
+#, php-format
+msgid "Bank: %s"
+msgstr ""
+
+#. translators: %s: Account holder name.
+#: includes/frontend/class-assistify-frontend.php:845
+#, php-format
+msgid "Account Name: %s"
+msgstr ""
+
+#. translators: %s: Account number.
+#: includes/frontend/class-assistify-frontend.php:849
+#, php-format
+msgid "Account Number: %s"
+msgstr ""
+
+#. translators: %s: Sort code/routing number.
+#: includes/frontend/class-assistify-frontend.php:853
+#, php-format
+msgid "Sort Code: %s"
+msgstr ""
+
+#. translators: %s: IBAN.
+#: includes/frontend/class-assistify-frontend.php:857
+#, php-format
+msgid "IBAN: %s"
+msgstr ""
+
+#. translators: %s: BIC/SWIFT.
+#: includes/frontend/class-assistify-frontend.php:861
+#, php-format
+msgid "BIC/SWIFT: %s"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:873
+msgid "Bank Account Details:"
+msgstr ""
+
+#. translators: %s: Store address.
+#: includes/frontend/class-assistify-frontend.php:906
+#, php-format
+msgid "Mail check to: %s"
+msgstr ""
+
+#. translators: %s: Download URL.
+#: includes/frontend/class-assistify-frontend.php:939
+#, php-format
+msgid " - Download: %s"
+msgstr ""
+
+#. translators: %s: Expiry date.
+#: includes/frontend/class-assistify-frontend.php:945
+#, php-format
+msgid " (Expires: %s)"
+msgstr ""
+
+#. translators: %s: Number of downloads remaining.
+#: includes/frontend/class-assistify-frontend.php:951
+#, php-format
+msgid " [%s downloads left]"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:962
+msgid "CUSTOMER DOWNLOADS (digital products they purchased):"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:991
+msgid "Billing Address:"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1010
+msgid "Shipping Address:"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1018
+msgid "SAVED ADDRESSES:"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1037
+msgid "CART: Customer's cart is currently empty."
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1055
+msgid "CURRENT CART:"
+msgstr ""
+
+#. translators: %s: Cart subtotal.
+#: includes/frontend/class-assistify-frontend.php:1060
+#, php-format
+msgid "Subtotal: %s"
+msgstr ""
+
+#. translators: %s: Applied coupon codes.
+#: includes/frontend/class-assistify-frontend.php:1066
+#, php-format
+msgid "Applied Coupons: %s"
+msgstr ""
+
+#. translators: %s: Cart total.
+#: includes/frontend/class-assistify-frontend.php:1071
+#, php-format
+msgid "Total: %s"
+msgstr ""
+
+#. translators: %s: Cart URL.
+#: includes/frontend/class-assistify-frontend.php:1077
+#, php-format
+msgid "View Cart: %s"
+msgstr ""
+
+#. translators: %s: Checkout URL.
+#: includes/frontend/class-assistify-frontend.php:1079
+#, php-format
+msgid "Checkout: %s"
+msgstr ""
+
+#. translators: %s: Store name.
+#: includes/frontend/class-assistify-frontend.php:1097
+#, php-format
+msgid "Store: %s"
+msgstr ""
+
+#. translators: %s: Store email.
+#: includes/frontend/class-assistify-frontend.php:1104
+#, php-format
+msgid "Email: %s"
+msgstr ""
+
+#. translators: %s: Store address.
+#: includes/frontend/class-assistify-frontend.php:1118
+#, php-format
+msgid "Address: %s"
+msgstr ""
+
+#. translators: %s: Contact page URL.
+#: includes/frontend/class-assistify-frontend.php:1128
+#, php-format
+msgid "Contact Page: %s"
+msgstr ""
+
+#. translators: %s: Store phone number.
+#: includes/frontend/class-assistify-frontend.php:1138
+#, php-format
+msgid "Phone: %s"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1145
+msgid "STORE CONTACT INFORMATION:"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1203
+msgid "Available Shipping Methods:"
+msgstr ""
+
+#. translators: %s: Minimum amount for free shipping.
+#: includes/frontend/class-assistify-frontend.php:1213
+#, php-format
+msgid "Free shipping available on orders over %s"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1222
+msgid "SHIPPING INFORMATION:"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1242
+msgid "Carrier"
+msgstr ""
+
+#. translators: %s: Delivery date.
+#: includes/frontend/class-assistify-frontend.php:1277
+#, php-format
+msgid "Estimated delivery: %s"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1285
+msgid "Order is being prepared for shipment"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1287
+msgid "Order is on hold - awaiting payment confirmation"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1289
+msgid "Order has been shipped - check tracking for delivery estimate"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1462
+msgid "An error occurred. Please try again."
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1464
+#: includes/frontend/class-assistify-frontend.php:1679
+msgid "Type your message..."
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1465
+msgid "Send"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1466
+#: includes/frontend/class-assistify-frontend.php:1651
+msgid "Chat with us"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1467
+msgid "AI Assistant"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1469
+msgid "Privacy Notice"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1471
+msgid "I Agree"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1472
+msgid "No Thanks"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1473
+msgid "Privacy Policy"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1474
+msgid "Need any help? I'm here if you have questions!"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1475
+msgid "I'm currently offline. Please contact us directly for assistance."
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1476
+msgid "Contact Us"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1624
+msgid "Chat widget"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1632
+msgid "Open chat"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1652
+msgid "Online"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1654
+msgid "We're here to help"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1659
+msgid "Close chat"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1667
+msgid "Chat messages"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1673
+msgid "Type your message"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1685
+msgid "Send message"
+msgstr ""
+
+#. translators: %s: Discount percentage.
+#: includes/frontend/class-assistify-frontend.php:1759
+#, php-format
+msgid "%s%% off"
+msgstr ""
+
+#. translators: %s: Discount amount.
+#: includes/frontend/class-assistify-frontend.php:1762
+#, php-format
+msgid "%s off your order"
+msgstr ""
+
+#. translators: %s: Discount amount.
+#: includes/frontend/class-assistify-frontend.php:1765
+#, php-format
+msgid "%s off per item"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1772
+msgid "Free Shipping"
+msgstr ""
+
+#. translators: %s: Minimum spend amount.
+#: includes/frontend/class-assistify-frontend.php:1779
+#, php-format
+msgid " (min spend %s)"
+msgstr ""
+
+#. translators: %s: Expiry date.
+#: includes/frontend/class-assistify-frontend.php:1785
+#, php-format
+msgid " - expires %s"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1792
+msgid "AVAILABLE COUPONS: No coupons are currently available."
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1795
+msgid "AVAILABLE COUPON CODES (share these with customers when they ask):"
+msgstr ""
+
+#. translators: 1: Product name, 2: Regular price, 3: Sale price, 4: Discount percentage, 5: Product URL.
+#: includes/frontend/class-assistify-frontend.php:1836
+#, php-format
+msgid "- %1$s: was %2$s, now %3$s (%4$d%% off) - %5$s"
+msgstr ""
+
+#. translators: 1: Number of products shown, 2: Total products on sale.
+#: includes/frontend/class-assistify-frontend.php:1849
+#, php-format
+msgid "PRODUCTS ON SALE (showing %1$d of %2$d):"
+msgstr ""
+
+#. translators: 1: Product name, 2: Price, 3: Product URL.
+#: includes/frontend/class-assistify-frontend.php:1883
+#, php-format
+msgid "- %1$s: %2$s - %3$s"
+msgstr ""
+
+#: includes/frontend/class-assistify-frontend.php:1892
+msgid "FEATURED PRODUCTS (recommend these to customers):"
+msgstr ""
+
+#: includes/health-monitor/class-health-monitor.php:606
+#: includes/health-monitor/class-health-page.php:103
+#: includes/health-monitor/class-health-page.php:104
+#: includes/health-monitor/class-health-page.php:183
+#: includes/health-monitor/views/health-page.php:43
+msgid "Store Health"
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:69
+msgid "Invalid issue key."
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:90
+msgid "Issue marked as resolved."
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:144
+msgid "Running..."
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:145
+msgid "Done!"
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:147
+msgid "Assistify is analyzing your store..."
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:148
+msgid "Refreshing health data..."
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:186
+msgid "Health monitoring is currently disabled."
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:188
+msgid "Enable it in settings"
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:252
+msgid "Health data refreshed."
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:259
+msgid "Unknown action."
+msgstr ""
+
+#. translators: %d: number of transients deleted
+#: includes/health-monitor/class-health-page.php:289
+#, php-format
+msgid "Cleared %d expired transient(s)."
+msgstr ""
+
+#. translators: %d: number of options optimized
+#: includes/health-monitor/class-health-page.php:343
+#, php-format
+msgid "Optimized %d autoloaded option(s)."
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:376
+msgid "No WooCommerce sessions table found (HPOS may be enabled)."
+msgstr ""
+
+#. translators: %d: number of sessions deleted
+#: includes/health-monitor/class-health-page.php:392
+#, php-format
+msgid "Cleared %d expired session(s)."
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:407
+msgid "WooCommerce log directory not found."
+msgstr ""
+
+#. translators: %d: number of log files deleted
+#: includes/health-monitor/class-health-page.php:427
+#, php-format
+msgid "Deleted %d old log file(s)."
+msgstr ""
+
+#. translators: %d: number of missing images
+#: includes/health-monitor/class-health-page.php:463
+#, php-format
+msgid "Found %d product(s) with missing images."
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:472
+msgid "All product images are intact."
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:950
+msgid "AI Provider Not Configured"
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:951
+msgid "Configure your AI provider in settings to get personalized recommendations."
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:1120
+msgid "Review Critical Issues"
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:1121
+msgid "Address any critical issues shown above to maintain store stability."
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:1125
+msgid "Keep Everything Updated"
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:1126
+msgid "Regularly update WordPress, WooCommerce, and all plugins for security."
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:1130
+msgid "Monitor Stock Levels"
+msgstr ""
+
+#: includes/health-monitor/class-health-page.php:1131
+msgid "Keep popular products in stock to avoid lost sales."
+msgstr ""
+
+#: includes/health-monitor/views/dashboard-widget.php:49
+msgid "Excellent"
+msgstr ""
+
+#: includes/health-monitor/views/dashboard-widget.php:51
+msgid "Good"
+msgstr ""
+
+#: includes/health-monitor/views/dashboard-widget.php:53
+#: includes/health-monitor/views/health-page.php:70
+msgid "Needs Attention"
+msgstr ""
+
+#: includes/health-monitor/views/dashboard-widget.php:55
+#: includes/health-monitor/views/health-page.php:73
+#: includes/health-monitor/views/health-page.php:127
+#: includes/health-monitor/views/health-page.php:138
+msgid "Critical Issues"
+msgstr ""
+
+#: includes/health-monitor/views/dashboard-widget.php:59
+msgid "Store health check complete."
+msgstr ""
+
+#: includes/health-monitor/views/dashboard-widget.php:66
+msgid "No issues found. Your store is running smoothly."
+msgstr ""
+
+#: includes/health-monitor/views/dashboard-widget.php:81
+msgid "View Updates"
+msgstr ""
+
+#: includes/health-monitor/views/dashboard-widget.php:84
+#: includes/health-monitor/views/health-page.php:478
+msgid "Manage Products"
+msgstr ""
+
+#: includes/health-monitor/views/dashboard-widget.php:87
+msgid "View Failed Orders"
+msgstr ""
+
+#: includes/health-monitor/views/dashboard-widget.php:93
+msgid "View Logs"
+msgstr ""
+
+#. translators: %d: number of additional issues
+#: includes/health-monitor/views/dashboard-widget.php:121
+#, php-format
+msgid "...and %d more issue(s)"
+msgstr ""
+
+#. translators: %s: time of last check
+#: includes/health-monitor/views/dashboard-widget.php:134
+#: includes/health-monitor/views/health-page.php:283
+#, php-format
+msgid "Last checked: %s"
+msgstr ""
+
+#: includes/health-monitor/views/dashboard-widget.php:143
+msgid "View Full Report"
+msgstr ""
+
+#: includes/health-monitor/views/dashboard-widget.php:146
+#: includes/health-monitor/views/health-page.php:288
+msgid "Powered by Assistify"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:47
+msgid "Refresh"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:64
+msgid "Excellent Health"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:67
+msgid "Good Health"
+msgstr ""
+
+#. translators: %d: number of critical issues
+#: includes/health-monitor/views/health-page.php:84
+#, php-format
+msgid "%d Critical"
+msgstr ""
+
+#. translators: %d: number of warnings
+#: includes/health-monitor/views/health-page.php:95
+#, php-format
+msgid "%d Warnings"
+msgstr ""
+
+#. translators: %d: number of suggestions
+#: includes/health-monitor/views/health-page.php:106
+#, php-format
+msgid "%d Suggestions"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:119
+msgid "Payment Success"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:123
+msgid "Failed Orders (24h)"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:150
+msgid "Warnings"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:162
+msgid "Suggestions"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:176
+msgid "Everything looks great!"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:177
+msgid "Your store is running smoothly. Keep up the good work!"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:187
+msgid "Quick Actions"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:191
+msgid "Clear Transients"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:195
+msgid "Optimize Autoload"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:199
+msgid "Clear Sessions"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:203
+msgid "Clear Old Logs"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:212
+msgid "AI Recommendations"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:216
+msgid "Get personalized recommendations based on your store data."
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:219
+msgid "Analyze My Store"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:223
+msgid "Analysis based on: health checks, sales data, order history, and inventory levels from your store."
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:229
+msgid "Category Scores"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:246
+msgid "Recent Failed Orders"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:250
+msgid "Order"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:251
+msgid "Gateway"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:252
+msgid "Total"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:270
+msgid "View all failed orders"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:306
+msgid "How to fix:"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:306
+msgid "Suggestion:"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:320
+msgid "View error details"
+msgstr ""
+
+#. translators: %s: log file name
+#: includes/health-monitor/views/health-page.php:342
+#, php-format
+msgid "View log: %s"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:356
+msgid "Open payment settings"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:379
+msgid "Mark as resolved"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:380
+msgid "Resolved"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:402
+#: includes/health-monitor/views/health-page.php:443
+#: includes/health-monitor/views/health-page.php:447
+msgid "View Log"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:411
+msgid "View Plugins"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:415
+msgid "View Themes"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:419
+msgid "Update WordPress"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:424
+msgid "Manage Stock"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:428
+msgid "View Products"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:433
+msgid "View Orders"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:438
+msgid "Optimize"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:452
+msgid "Check SSL"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:474
+msgid "Check Updates"
+msgstr ""
+
+#: includes/health-monitor/views/health-page.php:482
+msgid "Site Health"
+msgstr ""
+
+#. translators: %d: HTTP response code.
+#: includes/image-providers/class-image-provider-abstract.php:293
+#, php-format
+msgid "Image API request failed with status code %d."
+msgstr ""
+
+#: includes/image-providers/class-image-provider-abstract.php:386
+msgid "Failed to download generated image."
+msgstr ""
+
+#: includes/image-providers/class-image-provider-abstract.php:410
+#: includes/image-providers/class-image-provider-abstract.php:450
+#: includes/image-providers/class-removebg-provider.php:186
+msgid "Image file not found."
+msgstr ""
+
+#: includes/image-providers/class-image-provider-abstract.php:420
+msgid "Could not read image file."
+msgstr ""
+
+#. translators: %s: Maximum file size in MB.
+#: includes/image-providers/class-image-provider-abstract.php:460
+#, php-format
+msgid "Image file is too large. Maximum size is %s MB."
+msgstr ""
+
+#: includes/image-providers/class-image-provider-abstract.php:471
+msgid "Invalid image format. Please use PNG, JPEG, GIF, or WebP."
+msgstr ""
+
+#: includes/image-providers/class-image-provider-abstract.php:478
+msgid "Could not read image dimensions."
+msgstr ""
+
+#. translators: 1: Minimum width, 2: Minimum height.
+#: includes/image-providers/class-image-provider-abstract.php:488
+#, php-format
+msgid "Image is too small. Minimum dimensions are %1$dx%2$d pixels."
+msgstr ""
+
+#. translators: 1: Maximum width, 2: Maximum height.
+#: includes/image-providers/class-image-provider-abstract.php:500
+#, php-format
+msgid "Image dimensions are too large. Maximum dimensions are %1$dx%2$d pixels."
+msgstr ""
+
+#. translators: %s: Provider name.
+#: includes/image-providers/class-image-provider-abstract.php:524
+#, php-format
+msgid "Image editing is not supported by %s."
+msgstr ""
+
+#. translators: %s: Provider name.
+#: includes/image-providers/class-image-provider-abstract.php:544
+#, php-format
+msgid "Image variations are not supported by %s."
+msgstr ""
+
+#. translators: %s: Provider name.
+#: includes/image-providers/class-image-provider-abstract.php:563
+#, php-format
+msgid "Background removal is not supported by %s."
+msgstr ""
+
+#. translators: %s: Provider name.
+#: includes/image-providers/class-image-provider-abstract.php:583
+#, php-format
+msgid "Image upscaling is not supported by %s."
+msgstr ""
+
+#. translators: %s: Provider ID.
+#: includes/image-providers/class-image-provider-factory.php:60
+#, php-format
+msgid "Invalid image provider: %s"
+msgstr ""
+
+#. translators: %s: Provider ID.
+#: includes/image-providers/class-image-provider-factory.php:83
+#, php-format
+msgid "Image provider class not found for: %s"
+msgstr ""
+
+#: includes/image-providers/class-image-provider-google.php:138
+msgid "Invalid Google API key."
+msgstr ""
+
+#: includes/image-providers/class-image-provider-google.php:157
+#: includes/image-providers/class-image-provider-google.php:254
+#: includes/image-providers/class-image-provider-google.php:341
+msgid "Google Imagen is not configured. Please add your API key."
+msgstr ""
+
+#: includes/image-providers/class-image-provider-google.php:440
+msgid "Invalid response from Google Imagen API."
+msgstr ""
+
+#: includes/image-providers/class-image-provider-google.php:479
+#: includes/image-providers/class-image-provider-xai.php:257
+msgid "No images were generated."
+msgstr ""
+
+#: includes/image-providers/class-image-provider-openai.php:141
+#: includes/image-providers/class-image-provider-openai.php:229
+#: includes/image-providers/class-image-provider-openai.php:325
+msgid "OpenAI is not configured. Please add your API key."
+msgstr ""
+
+#: includes/image-providers/class-image-provider-openai.php:469
+msgid "Invalid response from OpenAI Image API. Please check your API key and try again."
+msgstr ""
+
+#: includes/image-providers/class-image-provider-openai.php:476
+msgid "No images were returned from the API."
+msgstr ""
+
+#: includes/image-providers/class-image-provider-xai.php:123
+msgid "Invalid xAI API key."
+msgstr ""
+
+#: includes/image-providers/class-image-provider-xai.php:142
+msgid "xAI Grok is not configured. Please add your API key."
+msgstr ""
+
+#: includes/image-providers/class-image-provider-xai.php:224
+msgid "Invalid response from xAI Image API."
+msgstr ""
+
+#: includes/image-providers/class-removebg-provider.php:86
+msgid "Remove.bg is not configured. Please add your API key in settings."
+msgstr ""
+
+#: includes/image-providers/class-removebg-provider.php:160
+msgid "Failed to download image for processing. If using local development, ensure the image URL is accessible."
+msgstr ""
+
+#: includes/image-providers/class-removebg-provider.php:169
+msgid "Failed to download image. Server returned error."
+msgstr ""
+
+#: includes/image-providers/class-removebg-provider.php:197
+msgid "Could not read image data."
+msgstr ""
+
+#. translators: %d: HTTP response code
+#: includes/image-providers/class-removebg-provider.php:271
+#, php-format
+msgid "Remove.bg API error: %d"
+msgstr ""
+
+#: includes/image-providers/class-removebg-provider.php:297
+msgid "Remove.bg is not configured."
+msgstr ""
+
+#: includes/image-providers/class-removebg-provider.php:318
+msgid "Failed to get account info."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:129
+msgid "List Bookings"
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:130
+msgid "List all bookings with optional filters."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:136
+msgid "Filter by status (unpaid, pending-confirmation, confirmed, paid, cancelled, complete)."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:146
+msgid "Filter by bookable product ID."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:151
+msgid "Filter from date (Y-m-d format)."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:156
+msgid "Filter to date (Y-m-d format)."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:161
+#: includes/integrations/class-wc-bookings-integration.php:324
+msgid "Number of bookings to return."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:174
+msgid "Get Booking"
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:175
+msgid "Get detailed information about a specific booking."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:181
+#: includes/integrations/class-wc-bookings-integration.php:293
+#: includes/integrations/class-wc-bookings-integration.php:423
+msgid "The booking ID."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:193
+msgid "Today's Bookings"
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:194
+msgid "Get all bookings scheduled for today."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:200
+#: includes/integrations/class-wc-bookings-integration.php:224
+#: includes/integrations/class-wc-bookings-integration.php:378
+#: includes/integrations/class-wc-memberships-integration.php:215
+#: includes/integrations/class-wc-memberships-integration.php:316
+#: includes/integrations/class-wc-memberships-integration.php:355
+#: includes/integrations/class-wc-subscriptions-integration.php:207
+#: includes/integrations/class-wc-subscriptions-integration.php:382
+msgid "Filter by status."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:212
+msgid "Search Bookings"
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:213
+msgid "Search bookings by customer name, email, or booking ID."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:219
+msgid "Search query (customer name, email, or booking ID)."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:242
+msgid "Booking Analytics"
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:243
+msgid "Get booking analytics including revenue, counts, and popular products."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:249
+#: includes/integrations/class-wc-memberships-integration.php:240
+#: includes/integrations/class-wc-subscriptions-integration.php:232
+msgid "Time period for analytics (7days, 30days, 90days, year)."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:262
+#: includes/integrations/class-wc-bookings-integration.php:462
+msgid "Check Availability"
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:263
+msgid "Check availability for a bookable product on a specific date."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:269
+#: includes/integrations/class-wc-bookings-integration.php:474
+msgid "The bookable product ID."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:274
+msgid "Date to check (Y-m-d format)."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:286
+msgid "Update Booking Status"
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:287
+msgid "Update the status of a booking."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:298
+msgid "New status (confirmed, cancelled, complete)."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:311
+msgid "Upcoming Bookings"
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:312
+msgid "List upcoming bookings within a specified timeframe."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:318
+msgid "Number of days ahead to check."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:337
+msgid "List Resources"
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:338
+msgid "List all bookable resources."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:344
+msgid "Number of resources to return."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:366
+msgid "My Bookings"
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:367
+msgid "Get customer's own bookings."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:373
+#: includes/integrations/class-wc-bookings-integration.php:398
+#: includes/integrations/class-wc-bookings-integration.php:418
+#: includes/integrations/class-wc-bookings-integration.php:443
+#: includes/integrations/class-wc-bookings-integration.php:469
+#: includes/integrations/class-wc-memberships-integration.php:350
+#: includes/integrations/class-wc-memberships-integration.php:375
+#: includes/integrations/class-wc-memberships-integration.php:400
+#: includes/integrations/class-wc-memberships-integration.php:425
+#: includes/integrations/class-wc-memberships-integration.php:450
+#: includes/integrations/class-wc-subscriptions-integration.php:377
+#: includes/integrations/class-wc-subscriptions-integration.php:402
+#: includes/integrations/class-wc-subscriptions-integration.php:427
+#: includes/integrations/class-wc-subscriptions-integration.php:453
+#: includes/integrations/class-wc-subscriptions-integration.php:479
+#: includes/integrations/class-wc-subscriptions-integration.php:505
+#: includes/integrations/class-wc-subscriptions-integration.php:530
+msgid "The customer ID (from context)."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:391
+msgid "My Upcoming Bookings"
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:392
+msgid "Get customer's upcoming bookings."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:411
+msgid "Get Booking Details"
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:412
+msgid "Get details of a specific booking."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:437
+msgid "Cancel a booking."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:448
+msgid "The booking ID to cancel."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:463
+msgid "Check availability for a bookable service."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:479
+msgid "Date to check (Y-m-d or natural language)."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:504
+#: includes/integrations/class-wc-bookings-integration.php:612
+#: includes/integrations/class-wc-bookings-integration.php:643
+#: includes/integrations/class-wc-bookings-integration.php:698
+#: includes/integrations/class-wc-bookings-integration.php:772
+#: includes/integrations/class-wc-bookings-integration.php:904
+#: includes/integrations/class-wc-bookings-integration.php:956
+#: includes/integrations/class-wc-bookings-integration.php:1016
+#: includes/integrations/class-wc-bookings-integration.php:1108
+#: includes/integrations/class-wc-bookings-integration.php:1166
+#: includes/integrations/class-wc-bookings-integration.php:1228
+#: includes/integrations/class-wc-bookings-integration.php:1261
+msgid "WooCommerce Bookings is not available."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:622
+#: includes/integrations/class-wc-bookings-integration.php:968
+msgid "Booking not found."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:885
+msgid "Cancellation Rate"
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:915
+#: includes/integrations/class-wc-bookings-integration.php:1343
+msgid "Bookable product not found."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:923
+#: includes/integrations/class-wc-bookings-integration.php:1364
+msgid "Invalid date format."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:977
+msgid "Invalid booking status."
+msgstr ""
+
+#. Translators: %1$s is the old status, %2$s is the new status.
+#: includes/integrations/class-wc-bookings-integration.php:991
+#, php-format
+msgid "Booking status updated from %1$s to %2$s."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:1143
+msgid "You do not have any bookings."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:1205
+msgid "You do not have any upcoming bookings."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:1240
+#: includes/integrations/class-wc-bookings-integration.php:1273
+msgid "Booking not found or does not belong to you."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:1282
+msgid "This booking cannot be cancelled."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:1292
+msgid "Your booking has been cancelled."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:1332
+msgid "Here are our bookable services. Please specify which one you'd like to check availability for."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:1356
+msgid "Please specify a date to check availability."
+msgstr ""
+
+#: includes/integrations/class-wc-bookings-integration.php:1412
+msgid "Guest"
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:129
+msgid "List Memberships"
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:130
+msgid "List all user memberships with optional filters."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:136
+msgid "Filter by status (active, paused, expired, cancelled, pending)."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:141
+msgid "Filter by membership plan ID."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:151
+msgid "Number of memberships to return."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:164
+msgid "Get Membership"
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:165
+msgid "Get detailed information about a specific user membership."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:171
+#: includes/integrations/class-wc-memberships-integration.php:286
+msgid "The user membership ID."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:183
+msgid "List Membership Plans"
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:184
+msgid "List all available membership plans."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:190
+msgid "Number of plans to return."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:203
+msgid "Search Memberships"
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:204
+msgid "Search memberships by customer name, email, or membership ID."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:210
+msgid "Search query (customer name, email, or membership ID)."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:233
+msgid "Membership Analytics"
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:234
+msgid "Get membership analytics including counts, popular plans, and trends."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:253
+msgid "Expiring Memberships"
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:254
+msgid "List memberships expiring within a specified timeframe."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:260
+msgid "Number of days to check for expiring memberships."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:279
+msgid "Update Membership Status"
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:280
+msgid "Update the status of a user membership."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:291
+msgid "New status (active, paused, cancelled, expired)."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:304
+msgid "Members by Plan"
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:305
+msgid "List members of a specific membership plan."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:311
+msgid "The membership plan ID."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:343
+msgid "My Memberships"
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:344
+msgid "Get customer's own memberships."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:368
+msgid "Get Membership Details"
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:369
+msgid "Get details of a specific membership."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:380
+#: includes/integrations/class-wc-memberships-integration.php:405
+msgid "The membership ID."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:393
+msgid "Membership Benefits"
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:394
+msgid "Get the benefits and perks of a membership."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:418
+msgid "Check Membership Access"
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:419
+msgid "Check if customer has access to specific content or plans."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:430
+msgid "The plan ID to check access for."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:444
+msgid "Cancel a membership."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:455
+msgid "The membership ID to cancel."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:481
+#: includes/integrations/class-wc-memberships-integration.php:549
+#: includes/integrations/class-wc-memberships-integration.php:580
+#: includes/integrations/class-wc-memberships-integration.php:610
+#: includes/integrations/class-wc-memberships-integration.php:678
+#: includes/integrations/class-wc-memberships-integration.php:797
+#: includes/integrations/class-wc-memberships-integration.php:864
+#: includes/integrations/class-wc-memberships-integration.php:928
+#: includes/integrations/class-wc-memberships-integration.php:995
+#: includes/integrations/class-wc-memberships-integration.php:1049
+#: includes/integrations/class-wc-memberships-integration.php:1106
+#: includes/integrations/class-wc-memberships-integration.php:1185
+#: includes/integrations/class-wc-memberships-integration.php:1243
+msgid "WooCommerce Memberships is not available."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:559
+#: includes/integrations/class-wc-memberships-integration.php:876
+msgid "Membership not found."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:739
+#: includes/integrations/class-wc-memberships-integration.php:1312
+#: includes/integrations/class-wc-memberships-integration.php:1363
+msgid "Unknown Plan"
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:890
+msgid "Invalid membership status."
+msgstr ""
+
+#. Translators: %1$s is the old status, %2$s is the new status.
+#: includes/integrations/class-wc-memberships-integration.php:903
+#, php-format
+msgid "Membership status updated from %1$s to %2$s."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:939
+#: includes/integrations/class-wc-memberships-integration.php:1141
+msgid "Membership plan not found."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:1026
+msgid "You do not have any memberships."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:1068
+msgid "Membership not found or does not belong to you."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:1084
+msgid "You do not have any active memberships."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:1133
+msgid "No active membership found."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:1270
+msgid "No membership found to cancel."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:1278
+msgid "This membership cannot be cancelled."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:1287
+msgid "Your membership has been cancelled."
+msgstr ""
+
+#: includes/integrations/class-wc-memberships-integration.php:1331
+#: includes/integrations/class-wc-memberships-integration.php:1371
+msgid "Never expires"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:129
+msgid "List Subscriptions"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:130
+msgid "List all subscriptions with optional filters."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:136
+msgid "Filter by status (active, on-hold, cancelled, expired, pending-cancel)."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:146
+msgid "Filter by product ID."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:151
+#: includes/integrations/class-wc-subscriptions-integration.php:348
+msgid "Number of subscriptions to return."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:157
+msgid "Order by field (date, total, ID)."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:163
+msgid "Sort order (ASC or DESC)."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:176
+msgid "Get Subscription"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:177
+msgid "Get detailed information about a specific subscription."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:183
+#: includes/integrations/class-wc-subscriptions-integration.php:292
+#: includes/integrations/class-wc-subscriptions-integration.php:312
+#: includes/integrations/class-wc-subscriptions-integration.php:510
+#: includes/integrations/class-wc-subscriptions-integration.php:535
+msgid "The subscription ID."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:195
+msgid "Search Subscriptions"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:196
+msgid "Search subscriptions by customer name, email, or subscription ID."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:202
+msgid "Search query (customer name, email, or subscription ID)."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:225
+msgid "Subscription Analytics"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:226
+msgid "Get subscription analytics including MRR, churn rate, and LTV."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:245
+msgid "Churn Risk Analysis"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:246
+msgid "Identify subscriptions at risk of churning based on payment failures and activity."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:252
+msgid "Number of at-risk subscriptions to return."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:265
+msgid "Failed Subscription Payments"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:266
+msgid "List subscriptions with failed renewal payments."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:272
+msgid "Number of failed subscriptions to return."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:285
+msgid "Retry Subscription Payment"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:286
+msgid "Retry a failed subscription renewal payment."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:305
+msgid "Update Subscription Status"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:306
+msgid "Update the status of a subscription."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:317
+msgid "New status (active, on-hold, cancelled)."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:322
+msgid "Optional note to add to the subscription."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:335
+msgid "Expiring Subscriptions"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:336
+msgid "List subscriptions expiring within a specified timeframe."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:342
+msgid "Number of days to check for expiring subscriptions."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:370
+msgid "My Subscriptions"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:371
+msgid "Get customer's own subscriptions."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:395
+msgid "Next Payment"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:396
+msgid "Get the next payment date and amount for a subscription."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:407
+msgid "Optional specific subscription ID."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:421
+msgid "Pause an active subscription (put on hold)."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:432
+msgid "The subscription ID to pause."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:446
+msgid "Resume Subscription"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:447
+msgid "Resume a paused (on-hold) subscription."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:458
+msgid "The subscription ID to resume."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:473
+msgid "Cancel an active subscription."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:484
+msgid "The subscription ID to cancel."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:498
+msgid "Update Subscription Address"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:499
+msgid "Get the URL to update shipping address for a subscription."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:523
+msgid "Update Payment Method"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:524
+msgid "Get the URL to update payment method for a subscription."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:560
+#: includes/integrations/class-wc-subscriptions-integration.php:620
+#: includes/integrations/class-wc-subscriptions-integration.php:651
+#: includes/integrations/class-wc-subscriptions-integration.php:735
+#: includes/integrations/class-wc-subscriptions-integration.php:873
+#: includes/integrations/class-wc-subscriptions-integration.php:974
+#: includes/integrations/class-wc-subscriptions-integration.php:1028
+#: includes/integrations/class-wc-subscriptions-integration.php:1098
+#: includes/integrations/class-wc-subscriptions-integration.php:1159
+#: includes/integrations/class-wc-subscriptions-integration.php:1222
+#: includes/integrations/class-wc-subscriptions-integration.php:1275
+#: includes/integrations/class-wc-subscriptions-integration.php:1350
+#: includes/integrations/class-wc-subscriptions-integration.php:1411
+#: includes/integrations/class-wc-subscriptions-integration.php:1470
+#: includes/integrations/class-wc-subscriptions-integration.php:1521
+#: includes/integrations/class-wc-subscriptions-integration.php:1566
+msgid "WooCommerce Subscriptions is not available."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:630
+#: includes/integrations/class-wc-subscriptions-integration.php:1038
+#: includes/integrations/class-wc-subscriptions-integration.php:1111
+msgid "Subscription not found."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:833
+msgid "Monthly Recurring Revenue"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:838
+msgid "Annual Recurring Revenue"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:845
+msgid "Churn Rate"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:850
+msgid "Average Revenue Per User"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:855
+msgid "Estimated Lifetime Value"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:891
+msgid "Subscription is on hold - likely payment failure."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:906
+msgid "Subscription is pending cancellation."
+msgstr ""
+
+#. Translators: %d is the number of failed payment attempts.
+#: includes/integrations/class-wc-subscriptions-integration.php:934
+#, php-format
+msgid "%d failed payment attempt(s) recorded."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1001
+msgid "Payment declined"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1046
+msgid "Payment can only be retried for on-hold subscriptions."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1055
+msgid "No payment gateway found for this subscription."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1071
+msgid "Payment retry initiated via Assistify AI."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1075
+msgid "Renewal order created for payment retry."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1083
+msgid "Unable to create renewal order."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1120
+msgid "Invalid subscription status."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1128
+msgid "Status updated via Assistify AI."
+msgstr ""
+
+#. Translators: %1$s is the old status, %2$s is the new status.
+#: includes/integrations/class-wc-subscriptions-integration.php:1134
+#, php-format
+msgid "Subscription status updated from %1$s to %2$s."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1252
+msgid "You do not have any subscriptions."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1294
+#: includes/integrations/class-wc-subscriptions-integration.php:1362
+#: includes/integrations/class-wc-subscriptions-integration.php:1423
+#: includes/integrations/class-wc-subscriptions-integration.php:1482
+#: includes/integrations/class-wc-subscriptions-integration.php:1533
+#: includes/integrations/class-wc-subscriptions-integration.php:1578
+msgid "Subscription not found or does not belong to you."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1303
+#: includes/integrations/class-wc-subscriptions-integration.php:1320
+#: includes/integrations/class-wc-subscriptions-integration.php:1704
+#: includes/integrations/class-wc-subscriptions-integration.php:1705
+msgid "N/A"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1329
+msgid "You do not have any active subscriptions with upcoming payments."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1370
+msgid "This subscription cannot be paused at this time."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1379
+msgid "You have reached the maximum number of suspensions allowed for this subscription."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1385
+msgid "Customer paused subscription via Assistify."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1389
+msgid "Your subscription has been paused. You can resume it anytime."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1431
+msgid "Only paused subscriptions can be resumed."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1439
+msgid "This subscription cannot be resumed at this time."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1444
+msgid "Customer resumed subscription via Assistify."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1448
+msgid "Your subscription has been resumed and is now active."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1490
+msgid "This subscription cannot be cancelled at this time."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1495
+msgid "Customer cancelled subscription via Assistify."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1499
+msgid "Your subscription has been cancelled. We're sorry to see you go!"
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1542
+msgid "You can update your shipping address using the link below."
+msgstr ""
+
+#: includes/integrations/class-wc-subscriptions-integration.php:1598
+msgid "You can update your payment method using the link below."
+msgstr ""
+
+#. Translators: %1$s is the billing interval, %2$s is the billing period (e.g., "every 1 month").
+#: includes/integrations/class-wc-subscriptions-integration.php:1699
+#, php-format
+msgid "Every %1$s %2$s"
+msgstr ""
+
+#: includes/rest-api/class-rest-api-controller.php:52
+msgid "Sorry, you are not allowed to access this resource."
+msgstr ""
+
+#: includes/rest-api/class-rest-api-controller.php:82
+msgid "Invalid nonce provided."
+msgstr ""
+
+#. translators: %d: cooldown seconds.
+#: includes/rest-api/class-rest-api-controller.php:181
+#, php-format
+msgid "Rate limit exceeded. Please try again in %d seconds."
+msgstr ""
+
+#: includes/rest-api/class-rest-chat-controller.php:81
+#: includes/rest-api/class-rest-chat-controller.php:129
+msgid "Chat session ID."
+msgstr ""
+
+#: includes/rest-api/class-rest-chat-controller.php:102
+msgid "Chat context (admin or customer)."
+msgstr ""
+
+#: includes/rest-api/class-rest-chat-controller.php:123
+msgid "The message to send."
+msgstr ""
+
+#: includes/rest-api/class-rest-chat-controller.php:135
+msgid "Previous message history."
+msgstr ""
+
+#: includes/rest-api/class-rest-chat-controller.php:223
+msgid "Customer chat is currently disabled."
+msgstr ""
+
+#: includes/rest-api/class-rest-chat-controller.php:345
+msgid "Failed to create chat session."
+msgstr ""
+
+#. translators: %1$s: Store name, %2$s: Currency code, %3$s: Store context data.
+#: includes/rest-api/class-rest-chat-controller.php:407
+#, php-format
+msgid ""
+"You are an AI assistant for %1$s, a WooCommerce store. You help store administrators by providing ACCURATE information based ONLY on the actual store data provided below.\n"
+"\n"
+"Store currency: %2$s\n"
+"\n"
+"CRITICAL RULES:\n"
+"- ONLY use the data provided below. DO NOT make up or hallucinate any information.\n"
+"- If asked about something not in the provided data, say \"I don't have that information in my current context. Please check the WooCommerce dashboard directly.\"\n"
+"- NEVER invent order numbers, coupon codes, customer names, or any other data.\n"
+"- If the data section is empty, tell the user the data could not be retrieved.\n"
+"- Be concise and professional.\n"
+"- Format responses clearly with line breaks for readability.\n"
+"\n"
+"=== CURRENT STORE DATA ===\n"
+"%3$s\n"
+"=== END OF STORE DATA ===\n"
+"\n"
+"When answering questions:\n"
+"1. First check if the relevant data is available above\n"
+"2. If yes, provide the accurate information from the data\n"
+"3. If no, clearly state you don't have that specific information"
+msgstr ""
+
+#. translators: %1$s: Store name, %2$s: Customer context data.
+#: includes/rest-api/class-rest-chat-controller.php:571
+#, php-format
+msgid ""
+"You are a friendly customer support assistant for %1$s.\n"
+"\n"
+"CRITICAL RULES:\n"
+"- ONLY use the data provided below. DO NOT make up or hallucinate any information.\n"
+"- If asked about something not in the provided data, say \"I don't have that specific information. Please contact our support team or check your account.\"\n"
+"- NEVER invent order numbers, tracking numbers, product details, or coupon codes.\n"
+"- Be friendly, helpful, and concise.\n"
+"- If you can't help with something, suggest contacting human support.\n"
+"- Never share sensitive customer information.\n"
+"- Don't process payments or make account changes.\n"
+"\n"
+"=== STORE INFORMATION ===\n"
+"%2$s\n"
+"=== END OF STORE INFORMATION ===\n"
+"\n"
+"When answering questions:\n"
+"1. First check if the relevant data is available above\n"
+"2. If yes, provide the accurate information\n"
+"3. If no, politely explain you don't have that information and suggest alternatives"
+msgstr ""
+
+#: assets/js/editor/sidebar-panel.js:258
+msgid "Copied to clipboard. Paste in your SEO plugin."
+msgstr ""
+
+#: assets/js/editor/sidebar-panel.js:387
+msgid "Add context or leave empty to generate based on existing content."
+msgstr ""
+
+#: assets/js/editor/sidebar-panel.js:395
+msgid "e.g., Focus on benefits, use formal tone..."
+msgstr ""
+
+#: assets/js/editor/sidebar-panel.js:569
+msgid "Generate AI Image"
+msgstr ""
+
+#: assets/js/editor/sidebar-panel.js:579
+msgid "Image Description"
+msgstr ""
+
+#: assets/js/editor/sidebar-panel.js:582
+msgid "Describe the image you want, or leave empty to generate from post content..."
+msgstr ""
+
+#: assets/js/editor/sidebar-panel.js:601
+msgid "Size"
+msgstr ""
+
+#: assets/js/editor/sidebar-panel.js:615
+msgid "Style"
+msgstr ""
+
+#: assets/js/editor/sidebar-panel.js:626
+msgid "Set as featured image"
+msgstr ""
+
+#: assets/js/editor/sidebar-panel.js:679
+msgid "Generating image... This may take up to 30 seconds."
+msgstr ""
+
+#: assets/js/editor/sidebar-panel.js:739
+msgid "View Full"
+msgstr ""
+
+#: assets/js/editor/sidebar-panel.js:756
+msgid "Image(s) generated and added to Media Library!"
+msgstr ""
+
+#: assets/js/editor/sidebar-panel.js:778
+msgid "Generate More"
+msgstr ""
+
+#: assets/js/editor/sidebar-panel.js:783
+msgid "Done"
+msgstr ""

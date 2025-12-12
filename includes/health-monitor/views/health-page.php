@@ -278,9 +278,9 @@ if ( $assistify_score < 50 ) {
 	<div class="assistify-health-footer">
 		<p>
 			<?php
-			printf(
-				/* translators: %s: timestamp */
-				esc_html__( 'Last checked: %s', 'assistify-for-woocommerce' ),
+		printf(
+			/* translators: %s: time of last check */
+			esc_html__( 'Last checked: %s', 'assistify-for-woocommerce' ),
 				esc_html( $assistify_timestamp )
 			);
 			?>
