@@ -894,6 +894,195 @@ class Admin_Tools {
 			)
 		);
 
+		// Refund tool.
+		$this->register_tool(
+			'create_refund',
+			array(
+				'description' => 'Create a refund for an order. Can refund full order or specific amount.',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'order_id'        => array(
+							'type'        => 'integer',
+							'description' => 'The order ID to refund',
+						),
+						'amount'          => array(
+							'type'        => 'number',
+							'description' => 'Refund amount. If not specified, refunds full order total.',
+						),
+						'reason'          => array(
+							'type'        => 'string',
+							'description' => 'Reason for the refund (optional)',
+						),
+						'restock_items'   => array(
+							'type'        => 'boolean',
+							'description' => 'Whether to restock refunded items (default true)',
+						),
+						'notify_customer' => array(
+							'type'        => 'boolean',
+							'description' => 'Send refund notification email to customer (default true)',
+						),
+					),
+					'required'   => array( 'order_id' ),
+				),
+				'callback'    => array( $this, 'tool_create_refund' ),
+				'destructive' => true,
+			)
+		);
+
+		// Bulk order status update.
+		$this->register_tool(
+			'bulk_order_status',
+			array(
+				'description' => 'Update the status of multiple orders at once',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'order_ids' => array(
+							'type'        => 'array',
+							'items'       => array( 'type' => 'integer' ),
+							'description' => 'Array of order IDs to update',
+						),
+						'status'    => array(
+							'type'        => 'string',
+							'enum'        => array( 'pending', 'processing', 'on-hold', 'completed', 'cancelled', 'refunded', 'failed' ),
+							'description' => 'The new status for all orders',
+						),
+						'note'      => array(
+							'type'        => 'string',
+							'description' => 'Optional note to add to all orders',
+						),
+					),
+					'required'   => array( 'order_ids', 'status' ),
+				),
+				'callback'    => array( $this, 'tool_bulk_order_status' ),
+				'destructive' => false,
+			)
+		);
+
+		// Export orders to CSV.
+		$this->register_tool(
+			'export_orders',
+			array(
+				'description' => 'Export orders to a CSV file for a date range. Returns download URL.',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'start_date' => array(
+							'type'        => 'string',
+							'description' => 'Start date in YYYY-MM-DD format',
+						),
+						'end_date'   => array(
+							'type'        => 'string',
+							'description' => 'End date in YYYY-MM-DD format',
+						),
+						'status'     => array(
+							'type'        => 'string',
+							'description' => 'Filter by order status (optional)',
+						),
+						'columns'    => array(
+							'type'        => 'array',
+							'items'       => array( 'type' => 'string' ),
+							'description' => 'Columns to include (optional). Default: order_id, date, status, customer, email, total, items',
+						),
+					),
+					'required'   => array( 'start_date', 'end_date' ),
+				),
+				'callback'    => array( $this, 'tool_export_orders' ),
+				'destructive' => false,
+			)
+		);
+
+		// Schedule product sale.
+		$this->register_tool(
+			'schedule_sale',
+			array(
+				'description' => 'Schedule a sale price for a product with start and end dates',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'product_id' => array(
+							'type'        => 'integer',
+							'description' => 'The product ID',
+						),
+						'sale_price' => array(
+							'type'        => 'number',
+							'description' => 'The sale price',
+						),
+						'start_date' => array(
+							'type'        => 'string',
+							'description' => 'Sale start date in YYYY-MM-DD format (optional, defaults to now)',
+						),
+						'end_date'   => array(
+							'type'        => 'string',
+							'description' => 'Sale end date in YYYY-MM-DD format',
+						),
+					),
+					'required'   => array( 'product_id', 'sale_price', 'end_date' ),
+				),
+				'callback'    => array( $this, 'tool_schedule_sale' ),
+				'destructive' => false,
+			)
+		);
+
+		// Send custom email to customer.
+		$this->register_tool(
+			'send_customer_email',
+			array(
+				'description' => 'Send a custom email to a customer (by order ID or email address)',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'order_id' => array(
+							'type'        => 'integer',
+							'description' => 'Order ID to get customer email from (use this OR email)',
+						),
+						'email'    => array(
+							'type'        => 'string',
+							'description' => 'Direct email address (use this OR order_id)',
+						),
+						'subject'  => array(
+							'type'        => 'string',
+							'description' => 'Email subject line',
+						),
+						'message'  => array(
+							'type'        => 'string',
+							'description' => 'Email message body (plain text or HTML)',
+						),
+					),
+					'required'   => array( 'subject', 'message' ),
+				),
+				'callback'    => array( $this, 'tool_send_customer_email' ),
+				'destructive' => false,
+			)
+		);
+
+		// Sales trends comparison.
+		$this->register_tool(
+			'get_sales_trends',
+			array(
+				'description' => 'Compare sales between two periods to identify trends and patterns',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'period'  => array(
+							'type'        => 'string',
+							'enum'        => array( 'day', 'week', 'month', 'quarter' ),
+							'description' => 'Period to compare (this vs last)',
+						),
+						'metrics' => array(
+							'type'        => 'array',
+							'items'       => array( 'type' => 'string' ),
+							'description' => 'Metrics to compare: sales, orders, average_order, customers (optional, default all)',
+						),
+					),
+					'required'   => array( 'period' ),
+				),
+				'callback'    => array( $this, 'tool_get_sales_trends' ),
+				'destructive' => false,
+			)
+		);
+
 		// Read Tools (for getting specific data).
 		$this->register_tool(
 			'get_order_details',
@@ -1022,6 +1211,83 @@ class Admin_Tools {
 					'additionalProperties' => false,
 				),
 				'callback'    => array( $this, 'tool_get_store_settings' ),
+				'destructive' => false,
+			)
+		);
+
+		// System stack tools.
+		$this->register_tool(
+			'get_system_info',
+			array(
+				'description' => 'Get system information including PHP version, WordPress version, WooCommerce version, server info, etc.',
+				'parameters'  => array(
+					'type'                 => 'object',
+					'properties'           => new \stdClass(),
+					'additionalProperties' => false,
+				),
+				'callback'    => array( $this, 'tool_get_system_info' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_active_theme',
+			array(
+				'description' => 'Get information about the currently active theme',
+				'parameters'  => array(
+					'type'                 => 'object',
+					'properties'           => new \stdClass(),
+					'additionalProperties' => false,
+				),
+				'callback'    => array( $this, 'tool_get_active_theme' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_installed_themes',
+			array(
+				'description' => 'Get list of all installed themes with their status',
+				'parameters'  => array(
+					'type'                 => 'object',
+					'properties'           => new \stdClass(),
+					'additionalProperties' => false,
+				),
+				'callback'    => array( $this, 'tool_get_installed_themes' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'get_plugins',
+			array(
+				'description' => 'Get list of all installed plugins with their status (active/inactive), version, and update availability',
+				'parameters'  => array(
+					'type'       => 'object',
+					'properties' => array(
+						'status' => array(
+							'type'        => 'string',
+							'enum'        => array( 'all', 'active', 'inactive' ),
+							'description' => 'Filter by status: all, active, or inactive (default: all)',
+						),
+					),
+					'required'   => array(),
+				),
+				'callback'    => array( $this, 'tool_get_plugins' ),
+				'destructive' => false,
+			)
+		);
+
+		$this->register_tool(
+			'check_updates',
+			array(
+				'description' => 'Check for available updates for WordPress core, plugins, and themes',
+				'parameters'  => array(
+					'type'                 => 'object',
+					'properties'           => new \stdClass(),
+					'additionalProperties' => false,
+				),
+				'callback'    => array( $this, 'tool_check_updates' ),
 				'destructive' => false,
 			)
 		);
@@ -2674,6 +2940,280 @@ class Admin_Tools {
 	}
 
 	/**
+	 * Get system information.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_system_info( $args ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		global $wpdb;
+
+		// Get memory limit.
+		$memory_limit = ini_get( 'memory_limit' );
+
+		// Get max execution time.
+		$max_execution_time = ini_get( 'max_execution_time' );
+
+		// Check if HTTPS.
+		$is_ssl = is_ssl();
+
+		// Get database size.
+		$db_size = 0;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$tables = $wpdb->get_results( "SHOW TABLE STATUS LIKE '{$wpdb->prefix}%'" );
+		if ( $tables ) {
+			foreach ( $tables as $table ) {
+				// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- MySQL property names.
+				$db_size += $table->Data_length + $table->Index_length;
+			}
+		}
+
+		return array(
+			'success'           => true,
+			'wordpress'         => array(
+				'version'    => get_bloginfo( 'version' ),
+				'multisite'  => is_multisite(),
+				'site_url'   => get_site_url(),
+				'home_url'   => get_home_url(),
+				'debug_mode' => defined( 'WP_DEBUG' ) && WP_DEBUG,
+			),
+			'woocommerce'       => array(
+				'version'      => defined( 'WC_VERSION' ) ? WC_VERSION : 'N/A',
+				'hpos_enabled' => class_exists( 'Automattic\WooCommerce\Utilities\OrderUtil' )
+					&& method_exists( 'Automattic\WooCommerce\Utilities\OrderUtil', 'custom_orders_table_usage_is_enabled' )
+					&& \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled(),
+			),
+			'php'               => array(
+				'version'            => PHP_VERSION,
+				'memory_limit'       => $memory_limit,
+				'max_execution_time' => $max_execution_time . 's',
+				'post_max_size'      => ini_get( 'post_max_size' ),
+				'upload_max_size'    => ini_get( 'upload_max_filesize' ),
+			),
+			'server'            => array(
+				'software' => isset( $_SERVER['SERVER_SOFTWARE'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SERVER_SOFTWARE'] ) ) : 'Unknown',
+				'https'    => $is_ssl,
+			),
+			'database'          => array(
+				'version' => $wpdb->db_version(),
+				'prefix'  => $wpdb->prefix,
+				'size'    => size_format( $db_size, 2 ),
+			),
+			'assistify_version' => defined( 'ASSISTIFY_VERSION' ) ? ASSISTIFY_VERSION : '1.0.0',
+		);
+	}
+
+	/**
+	 * Get active theme information.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_active_theme( $args ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		$theme = wp_get_theme();
+
+		$parent_theme = null;
+		if ( $theme->parent() ) {
+			$parent       = $theme->parent();
+			$parent_theme = array(
+				'name'    => $parent->get( 'Name' ),
+				'version' => $parent->get( 'Version' ),
+			);
+		}
+
+		return array(
+			'success'       => true,
+			'name'          => $theme->get( 'Name' ),
+			'version'       => $theme->get( 'Version' ),
+			'author'        => $theme->get( 'Author' ),
+			'description'   => $theme->get( 'Description' ),
+			'template'      => $theme->get_template(),
+			'stylesheet'    => $theme->get_stylesheet(),
+			'is_child'      => $theme->parent() ? true : false,
+			'parent_theme'  => $parent_theme,
+			'theme_uri'     => $theme->get( 'ThemeURI' ),
+			'customize_url' => admin_url( 'customize.php' ),
+			'themes_url'    => admin_url( 'themes.php' ),
+		);
+	}
+
+	/**
+	 * Get all installed themes.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_installed_themes( $args ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		$themes       = wp_get_themes();
+		$active_theme = wp_get_theme();
+		$active_name  = $active_theme->get_stylesheet();
+
+		$results = array();
+
+		foreach ( $themes as $slug => $theme ) {
+			$results[] = array(
+				'slug'      => $slug,
+				'name'      => $theme->get( 'Name' ),
+				'version'   => $theme->get( 'Version' ),
+				'author'    => $theme->get( 'Author' ),
+				'is_active' => $slug === $active_name,
+				'is_child'  => $theme->parent() ? true : false,
+				'parent'    => $theme->parent() ? $theme->parent()->get( 'Name' ) : null,
+			);
+		}
+
+		return array(
+			'success'      => true,
+			'active_theme' => $active_name,
+			'total_count'  => count( $results ),
+			'themes'       => $results,
+			'themes_url'   => admin_url( 'themes.php' ),
+		);
+	}
+
+	/**
+	 * Get plugins list.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_plugins( $args ) {
+		$filter = sanitize_text_field( $args['status'] ?? 'all' );
+
+		if ( ! function_exists( 'get_plugins' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$all_plugins    = get_plugins();
+		$active_plugins = get_option( 'active_plugins', array() );
+
+		// Get update info.
+		$update_plugins = get_site_transient( 'update_plugins' );
+		$updates        = array();
+		if ( isset( $update_plugins->response ) && is_array( $update_plugins->response ) ) {
+			$updates = $update_plugins->response;
+		}
+
+		$results      = array();
+		$active_count = 0;
+
+		foreach ( $all_plugins as $plugin_file => $plugin_data ) {
+			$is_active   = in_array( $plugin_file, $active_plugins, true );
+			$has_update  = isset( $updates[ $plugin_file ] );
+			$new_version = $has_update ? $updates[ $plugin_file ]->new_version : null;
+
+			if ( 'active' === $filter && ! $is_active ) {
+				continue;
+			}
+			if ( 'inactive' === $filter && $is_active ) {
+				continue;
+			}
+
+			if ( $is_active ) {
+				++$active_count;
+			}
+
+			$results[] = array(
+				'file'        => $plugin_file,
+				'name'        => $plugin_data['Name'],
+				'version'     => $plugin_data['Version'],
+				'author'      => $plugin_data['AuthorName'] ?? $plugin_data['Author'],
+				'description' => wp_strip_all_tags( $plugin_data['Description'] ),
+				'is_active'   => $is_active,
+				'has_update'  => $has_update,
+				'new_version' => $new_version,
+			);
+		}
+
+		return array(
+			'success'        => true,
+			'filter'         => $filter,
+			'total_count'    => count( $all_plugins ),
+			'active_count'   => $active_count,
+			'inactive_count' => count( $all_plugins ) - $active_count,
+			'plugins'        => $results,
+			'plugins_url'    => admin_url( 'plugins.php' ),
+		);
+	}
+
+	/**
+	 * Check for available updates.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_check_updates( $args ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
+		// Force refresh update data.
+		wp_version_check();
+		wp_update_plugins();
+		wp_update_themes();
+
+		$result = array(
+			'success'          => true,
+			'wordpress_update' => null,
+			'plugin_updates'   => array(),
+			'theme_updates'    => array(),
+		);
+
+		// Check WordPress core update.
+		$core_updates = get_core_updates();
+		if ( isset( $core_updates[0] ) && 'upgrade' === $core_updates[0]->response ) {
+			$result['wordpress_update'] = array(
+				'current_version' => get_bloginfo( 'version' ),
+				'new_version'     => $core_updates[0]->version,
+				'update_url'      => admin_url( 'update-core.php' ),
+			);
+		}
+
+		// Check plugin updates.
+		$update_plugins = get_site_transient( 'update_plugins' );
+		if ( isset( $update_plugins->response ) && is_array( $update_plugins->response ) ) {
+			if ( ! function_exists( 'get_plugins' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+			$all_plugins = get_plugins();
+
+			foreach ( $update_plugins->response as $plugin_file => $plugin_data ) {
+				$current_version            = isset( $all_plugins[ $plugin_file ] ) ? $all_plugins[ $plugin_file ]['Version'] : 'Unknown';
+				$result['plugin_updates'][] = array(
+					'name'            => isset( $all_plugins[ $plugin_file ] ) ? $all_plugins[ $plugin_file ]['Name'] : $plugin_file,
+					'current_version' => $current_version,
+					'new_version'     => $plugin_data->new_version,
+				);
+			}
+		}
+
+		// Check theme updates.
+		$update_themes = get_site_transient( 'update_themes' );
+		if ( isset( $update_themes->response ) && is_array( $update_themes->response ) ) {
+			$all_themes = wp_get_themes();
+
+			foreach ( $update_themes->response as $theme_slug => $theme_data ) {
+				$current_version           = isset( $all_themes[ $theme_slug ] ) ? $all_themes[ $theme_slug ]->get( 'Version' ) : 'Unknown';
+				$result['theme_updates'][] = array(
+					'name'            => isset( $all_themes[ $theme_slug ] ) ? $all_themes[ $theme_slug ]->get( 'Name' ) : $theme_slug,
+					'current_version' => $current_version,
+					'new_version'     => $theme_data['new_version'],
+				);
+			}
+		}
+
+		// Summary.
+		$total_updates = count( $result['plugin_updates'] ) + count( $result['theme_updates'] );
+		if ( null !== $result['wordpress_update'] ) {
+			++$total_updates;
+		}
+
+		$result['total_updates'] = $total_updates;
+		$result['message']       = $total_updates > 0
+			? sprintf( '%d update(s) available.', $total_updates )
+			: 'Everything is up to date.';
+		$result['update_url']    = admin_url( 'update-core.php' );
+
+		return $result;
+	}
+
+	/**
 	 * Get sales summary.
 	 *
 	 * @param array $args Arguments.
@@ -3789,5 +4329,749 @@ class Admin_Tools {
 			default:
 				return '2000-01-01';
 		}
+	}
+
+	/**
+	 * Create a refund for an order.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_create_refund( $args ) {
+		$order_id        = intval( $args['order_id'] ?? 0 );
+		$amount          = isset( $args['amount'] ) ? floatval( $args['amount'] ) : null;
+		$reason          = sanitize_text_field( $args['reason'] ?? '' );
+		$restock         = isset( $args['restock_items'] ) ? (bool) $args['restock_items'] : true;
+		$notify_customer = isset( $args['notify_customer'] ) ? (bool) $args['notify_customer'] : true;
+
+		if ( ! $order_id ) {
+			return array(
+				'success' => false,
+				'message' => 'Order ID is required.',
+			);
+		}
+
+		$order = wc_get_order( $order_id );
+		if ( ! $order ) {
+			return array(
+				'success' => false,
+				'message' => sprintf( 'Order #%d not found.', $order_id ),
+			);
+		}
+
+		// Check if order can be refunded.
+		$order_total    = (float) $order->get_total();
+		$total_refunded = (float) $order->get_total_refunded();
+		$max_refund     = $order_total - $total_refunded;
+
+		if ( $max_refund <= 0 ) {
+			return array(
+				'success' => false,
+				'message' => sprintf( 'Order #%d has already been fully refunded.', $order_id ),
+			);
+		}
+
+		// Default to full remaining amount if not specified.
+		if ( null === $amount ) {
+			$amount = $max_refund;
+		}
+
+		// Validate amount.
+		if ( $amount <= 0 ) {
+			return array(
+				'success' => false,
+				'message' => 'Refund amount must be greater than zero.',
+			);
+		}
+
+		if ( $amount > $max_refund ) {
+			return array(
+				'success' => false,
+				'message' => sprintf( 'Refund amount (%.2f) exceeds maximum refundable amount (%.2f).', $amount, $max_refund ),
+			);
+		}
+
+		// Create the refund.
+		$refund = wc_create_refund(
+			array(
+				'amount'         => $amount,
+				'reason'         => $reason,
+				'order_id'       => $order_id,
+				'refund_payment' => false, // Manual refund - don't process via gateway.
+				'restock_items'  => $restock,
+			)
+		);
+
+		if ( is_wp_error( $refund ) ) {
+			return array(
+				'success' => false,
+				'message' => $refund->get_error_message(),
+			);
+		}
+
+		// Send notification if requested.
+		if ( $notify_customer ) {
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce core hook.
+			do_action( 'woocommerce_order_fully_refunded_notification', $order_id, $refund->get_id() );
+		}
+
+		// Add order note.
+		$note = sprintf( 'Refund of %s created via AI Assistant.', wc_price( $amount ) );
+		if ( '' !== $reason ) {
+			$note .= ' Reason: ' . $reason;
+		}
+		$order->add_order_note( $note );
+
+		return array(
+			'success'   => true,
+			'message'   => sprintf( 'Refund of %s created for order #%d.', wc_price( $amount ), $order_id ),
+			'refund_id' => $refund->get_id(),
+			'order_id'  => $order_id,
+			'amount'    => wc_price( $amount ),
+			'reason'    => $reason,
+			'restocked' => $restock,
+			'notified'  => $notify_customer,
+		);
+	}
+
+	/**
+	 * Update status for multiple orders.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_bulk_order_status( $args ) {
+		$order_ids = isset( $args['order_ids'] ) && is_array( $args['order_ids'] ) ? $args['order_ids'] : array();
+		$status    = sanitize_text_field( $args['status'] ?? '' );
+		$note      = sanitize_text_field( $args['note'] ?? '' );
+
+		if ( empty( $order_ids ) ) {
+			return array(
+				'success' => false,
+				'message' => 'At least one order ID is required.',
+			);
+		}
+
+		if ( empty( $status ) ) {
+			return array(
+				'success' => false,
+				'message' => 'Status is required.',
+			);
+		}
+
+		// Remove 'wc-' prefix if present.
+		$status = str_replace( 'wc-', '', $status );
+
+		$updated = array();
+		$failed  = array();
+
+		foreach ( $order_ids as $order_id ) {
+			$order_id = intval( $order_id );
+			$order    = wc_get_order( $order_id );
+
+			if ( ! $order ) {
+				$failed[] = array(
+					'order_id' => $order_id,
+					'reason'   => 'Order not found',
+				);
+				continue;
+			}
+
+			$old_status = $order->get_status();
+			$order->update_status( $status, $note );
+
+			$updated[] = array(
+				'order_id'   => $order_id,
+				'old_status' => $old_status,
+				'new_status' => $status,
+			);
+		}
+
+		$message = sprintf( '%d order(s) updated to "%s".', count( $updated ), $status );
+		if ( ! empty( $failed ) ) {
+			$message .= sprintf( ' %d order(s) failed.', count( $failed ) );
+		}
+
+		return array(
+			'success'       => true,
+			'message'       => $message,
+			'updated_count' => count( $updated ),
+			'failed_count'  => count( $failed ),
+			'updated'       => $updated,
+			'failed'        => $failed,
+		);
+	}
+
+	/**
+	 * Export orders to CSV.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_export_orders( $args ) {
+		$start_date = sanitize_text_field( $args['start_date'] ?? '' );
+		$end_date   = sanitize_text_field( $args['end_date'] ?? '' );
+		$status     = sanitize_text_field( $args['status'] ?? '' );
+		$columns    = isset( $args['columns'] ) && is_array( $args['columns'] ) ? $args['columns'] : array();
+
+		if ( empty( $start_date ) || empty( $end_date ) ) {
+			return array(
+				'success' => false,
+				'message' => 'Start date and end date are required.',
+			);
+		}
+
+		// Default columns.
+		if ( empty( $columns ) ) {
+			$columns = array( 'order_id', 'date', 'status', 'customer', 'email', 'total', 'items', 'payment_method' );
+		}
+
+		// Query orders.
+		$query_args = array(
+			'limit'        => -1,
+			'date_created' => $start_date . '...' . $end_date,
+			'orderby'      => 'date',
+			'order'        => 'DESC',
+		);
+
+		if ( '' !== $status ) {
+			$query_args['status'] = $status;
+		}
+
+		$orders = wc_get_orders( $query_args );
+
+		if ( empty( $orders ) ) {
+			return array(
+				'success' => false,
+				'message' => 'No orders found for the specified date range.',
+			);
+		}
+
+		// Build CSV content.
+		$csv_data = array();
+
+		// Header row.
+		$header = array();
+		foreach ( $columns as $col ) {
+			$header[] = ucwords( str_replace( '_', ' ', $col ) );
+		}
+		$csv_data[] = $header;
+
+		// Data rows.
+		foreach ( $orders as $order ) {
+			$row = array();
+			foreach ( $columns as $col ) {
+				switch ( $col ) {
+					case 'order_id':
+						$row[] = $order->get_id();
+						break;
+					case 'order_number':
+						$row[] = $order->get_order_number();
+						break;
+					case 'date':
+						$row[] = $order->get_date_created() ? $order->get_date_created()->format( 'Y-m-d H:i:s' ) : '';
+						break;
+					case 'status':
+						$row[] = wc_get_order_status_name( $order->get_status() );
+						break;
+					case 'customer':
+						$row[] = $order->get_formatted_billing_full_name();
+						break;
+					case 'email':
+						$row[] = $order->get_billing_email();
+						break;
+					case 'phone':
+						$row[] = $order->get_billing_phone();
+						break;
+					case 'total':
+						$row[] = $order->get_total();
+						break;
+					case 'subtotal':
+						$row[] = $order->get_subtotal();
+						break;
+					case 'shipping':
+						$row[] = $order->get_shipping_total();
+						break;
+					case 'tax':
+						$row[] = $order->get_total_tax();
+						break;
+					case 'discount':
+						$row[] = $order->get_total_discount();
+						break;
+					case 'items':
+						$items = array();
+						foreach ( $order->get_items() as $item ) {
+							$items[] = $item->get_name() . ' x' . $item->get_quantity();
+						}
+						$row[] = implode( '; ', $items );
+						break;
+					case 'payment_method':
+						$row[] = $order->get_payment_method_title();
+						break;
+					case 'shipping_method':
+						$row[] = $order->get_shipping_method();
+						break;
+					case 'billing_address':
+						$row[] = $order->get_formatted_billing_address();
+						break;
+					case 'shipping_address':
+						$row[] = $order->get_formatted_shipping_address();
+						break;
+					default:
+						$row[] = '';
+				}
+			}
+			$csv_data[] = $row;
+		}
+
+		// Generate CSV file.
+		$upload_dir = wp_upload_dir();
+		$filename   = 'orders-export-' . gmdate( 'Y-m-d-His' ) . '.csv';
+		$filepath   = $upload_dir['basedir'] . '/assistify-exports/' . $filename;
+
+		// Create directory if needed.
+		wp_mkdir_p( dirname( $filepath ) );
+
+		// Write CSV.
+		$file = fopen( $filepath, 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		if ( ! $file ) {
+			return array(
+				'success' => false,
+				'message' => 'Failed to create export file.',
+			);
+		}
+
+		foreach ( $csv_data as $row ) {
+			fputcsv( $file, $row ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fputcsv
+		}
+		fclose( $file ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+
+		$download_url = $upload_dir['baseurl'] . '/assistify-exports/' . $filename;
+
+		return array(
+			'success'      => true,
+			'message'      => sprintf( 'Exported %d orders to CSV.', count( $orders ) ),
+			'orders_count' => count( $orders ),
+			'filename'     => $filename,
+			'download_url' => $download_url,
+			'date_range'   => $start_date . ' to ' . $end_date,
+		);
+	}
+
+	/**
+	 * Schedule a product sale.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_schedule_sale( $args ) {
+		$product_id = intval( $args['product_id'] ?? 0 );
+		$sale_price = floatval( $args['sale_price'] ?? 0 );
+		$start_date = sanitize_text_field( $args['start_date'] ?? '' );
+		$end_date   = sanitize_text_field( $args['end_date'] ?? '' );
+
+		if ( ! $product_id ) {
+			return array(
+				'success' => false,
+				'message' => 'Product ID is required.',
+			);
+		}
+
+		if ( $sale_price <= 0 ) {
+			return array(
+				'success' => false,
+				'message' => 'Sale price must be greater than zero.',
+			);
+		}
+
+		if ( empty( $end_date ) ) {
+			return array(
+				'success' => false,
+				'message' => 'End date is required.',
+			);
+		}
+
+		$product = wc_get_product( $product_id );
+		if ( ! $product ) {
+			return array(
+				'success' => false,
+				'message' => sprintf( 'Product #%d not found.', $product_id ),
+			);
+		}
+
+		// Validate sale price against regular price.
+		$regular_price = floatval( $product->get_regular_price() );
+		if ( $regular_price > 0 && $sale_price >= $regular_price ) {
+			return array(
+				'success' => false,
+				'message' => sprintf( 'Sale price (%s) must be less than regular price (%s).', wc_price( $sale_price ), wc_price( $regular_price ) ),
+			);
+		}
+
+		// Set sale price.
+		$product->set_sale_price( $sale_price );
+
+		// Set sale dates.
+		if ( '' !== $start_date ) {
+			$product->set_date_on_sale_from( strtotime( $start_date ) );
+		} else {
+			$product->set_date_on_sale_from( time() );
+		}
+		$product->set_date_on_sale_to( strtotime( $end_date . ' 23:59:59' ) );
+
+		$product->save();
+
+		$start_display = '' !== $start_date ? $start_date : 'now';
+
+		return array(
+			'success'       => true,
+			'message'       => sprintf( 'Sale scheduled for "%s": %s (from %s to %s).', $product->get_name(), wc_price( $sale_price ), $start_display, $end_date ),
+			'product_id'    => $product_id,
+			'product_name'  => $product->get_name(),
+			'regular_price' => wc_price( $regular_price ),
+			'sale_price'    => wc_price( $sale_price ),
+			'start_date'    => $start_display,
+			'end_date'      => $end_date,
+			'edit_url'      => get_edit_post_link( $product_id, 'raw' ),
+		);
+	}
+
+	/**
+	 * Send custom email to customer.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_send_customer_email( $args ) {
+		$order_id = intval( $args['order_id'] ?? 0 );
+		$email    = sanitize_email( $args['email'] ?? '' );
+		$subject  = sanitize_text_field( $args['subject'] ?? '' );
+		$message  = wp_kses_post( $args['message'] ?? '' );
+
+		if ( empty( $subject ) ) {
+			return array(
+				'success' => false,
+				'message' => 'Email subject is required.',
+			);
+		}
+
+		if ( empty( $message ) ) {
+			return array(
+				'success' => false,
+				'message' => 'Email message is required.',
+			);
+		}
+
+		// Get email address.
+		$to_email      = '';
+		$customer_name = '';
+
+		if ( $order_id > 0 ) {
+			$order = wc_get_order( $order_id );
+			if ( ! $order ) {
+				return array(
+					'success' => false,
+					'message' => sprintf( 'Order #%d not found.', $order_id ),
+				);
+			}
+			$to_email      = $order->get_billing_email();
+			$customer_name = $order->get_formatted_billing_full_name();
+		} elseif ( '' !== $email ) {
+			$to_email = $email;
+		}
+
+		if ( empty( $to_email ) ) {
+			return array(
+				'success' => false,
+				'message' => 'Either order_id or email address is required.',
+			);
+		}
+
+		// Get store info for "from".
+		$from_name  = get_bloginfo( 'name' );
+		$from_email = get_option( 'woocommerce_email_from_address', get_option( 'admin_email' ) );
+
+		// Build email headers.
+		$headers = array(
+			'Content-Type: text/html; charset=UTF-8',
+			'From: ' . $from_name . ' <' . $from_email . '>',
+		);
+
+		// Wrap message in basic HTML template.
+		$html_message = '<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>' . esc_html( $subject ) . '</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+<div style="background: #f7f7f7; padding: 20px; border-radius: 5px;">
+' . nl2br( $message ) . '
+</div>
+<p style="font-size: 12px; color: #666; margin-top: 20px;">
+This email was sent from ' . esc_html( $from_name ) . '
+</p>
+</body>
+</html>';
+
+		// Send email.
+		$sent = wp_mail( $to_email, $subject, $html_message, $headers );
+
+		if ( ! $sent ) {
+			return array(
+				'success' => false,
+				'message' => 'Failed to send email. Please check your email configuration.',
+			);
+		}
+
+		// Add order note if applicable.
+		if ( $order_id > 0 && isset( $order ) ) {
+			$order->add_order_note( sprintf( 'Custom email sent to customer: "%s"', $subject ) );
+		}
+
+		return array(
+			'success'       => true,
+			'message'       => sprintf( 'Email sent to %s.', $to_email ),
+			'recipient'     => $to_email,
+			'customer_name' => $customer_name,
+			'subject'       => $subject,
+			'order_id'      => $order_id > 0 ? $order_id : null,
+		);
+	}
+
+	/**
+	 * Get sales trends comparison.
+	 *
+	 * @param array $args Arguments.
+	 * @return array Result.
+	 */
+	public function tool_get_sales_trends( $args ) {
+		$period  = sanitize_text_field( $args['period'] ?? 'week' );
+		$metrics = isset( $args['metrics'] ) && is_array( $args['metrics'] ) ? $args['metrics'] : array( 'sales', 'orders', 'average_order', 'customers' );
+
+		// Calculate date ranges.
+		$today = gmdate( 'Y-m-d' );
+
+		switch ( $period ) {
+			case 'day':
+				$current_start  = $today;
+				$current_end    = $today;
+				$previous_start = gmdate( 'Y-m-d', strtotime( '-1 day' ) );
+				$previous_end   = gmdate( 'Y-m-d', strtotime( '-1 day' ) );
+				$period_label   = 'Today vs Yesterday';
+				break;
+
+			case 'week':
+				$current_start  = gmdate( 'Y-m-d', strtotime( '-6 days' ) );
+				$current_end    = $today;
+				$previous_start = gmdate( 'Y-m-d', strtotime( '-13 days' ) );
+				$previous_end   = gmdate( 'Y-m-d', strtotime( '-7 days' ) );
+				$period_label   = 'This Week vs Last Week';
+				break;
+
+			case 'month':
+				$current_start  = gmdate( 'Y-m-d', strtotime( '-29 days' ) );
+				$current_end    = $today;
+				$previous_start = gmdate( 'Y-m-d', strtotime( '-59 days' ) );
+				$previous_end   = gmdate( 'Y-m-d', strtotime( '-30 days' ) );
+				$period_label   = 'This Month vs Last Month';
+				break;
+
+			case 'quarter':
+				$current_start  = gmdate( 'Y-m-d', strtotime( '-89 days' ) );
+				$current_end    = $today;
+				$previous_start = gmdate( 'Y-m-d', strtotime( '-179 days' ) );
+				$previous_end   = gmdate( 'Y-m-d', strtotime( '-90 days' ) );
+				$period_label   = 'This Quarter vs Last Quarter';
+				break;
+
+			default:
+				$current_start  = gmdate( 'Y-m-d', strtotime( '-6 days' ) );
+				$current_end    = $today;
+				$previous_start = gmdate( 'Y-m-d', strtotime( '-13 days' ) );
+				$previous_end   = gmdate( 'Y-m-d', strtotime( '-7 days' ) );
+				$period_label   = 'This Week vs Last Week';
+		}
+
+		// Get current period data.
+		$current_data = $this->get_period_metrics( $current_start, $current_end );
+
+		// Get previous period data.
+		$previous_data = $this->get_period_metrics( $previous_start, $previous_end );
+
+		// Calculate trends.
+		$trends = array();
+
+		if ( in_array( 'sales', $metrics, true ) ) {
+			$change          = $this->calculate_percentage_change( $previous_data['sales'], $current_data['sales'] );
+			$trends['sales'] = array(
+				'current'        => wc_price( $current_data['sales'] ),
+				'previous'       => wc_price( $previous_data['sales'] ),
+				'change_percent' => $change,
+				'trend'          => $this->get_trend_indicator( $change ),
+			);
+		}
+
+		if ( in_array( 'orders', $metrics, true ) ) {
+			$change           = $this->calculate_percentage_change( $previous_data['orders'], $current_data['orders'] );
+			$trends['orders'] = array(
+				'current'        => $current_data['orders'],
+				'previous'       => $previous_data['orders'],
+				'change_percent' => $change,
+				'trend'          => $this->get_trend_indicator( $change ),
+			);
+		}
+
+		if ( in_array( 'average_order', $metrics, true ) ) {
+			$current_avg             = $current_data['orders'] > 0 ? $current_data['sales'] / $current_data['orders'] : 0;
+			$previous_avg            = $previous_data['orders'] > 0 ? $previous_data['sales'] / $previous_data['orders'] : 0;
+			$change                  = $this->calculate_percentage_change( $previous_avg, $current_avg );
+			$trends['average_order'] = array(
+				'current'        => wc_price( $current_avg ),
+				'previous'       => wc_price( $previous_avg ),
+				'change_percent' => $change,
+				'trend'          => $this->get_trend_indicator( $change ),
+			);
+		}
+
+		if ( in_array( 'customers', $metrics, true ) ) {
+			$change              = $this->calculate_percentage_change( $previous_data['customers'], $current_data['customers'] );
+			$trends['customers'] = array(
+				'current'        => $current_data['customers'],
+				'previous'       => $previous_data['customers'],
+				'change_percent' => $change,
+				'trend'          => $this->get_trend_indicator( $change ),
+			);
+		}
+
+		// Generate summary.
+		$summary = $this->generate_trends_summary( $trends );
+
+		return array(
+			'success'        => true,
+			'period'         => $period_label,
+			'current_range'  => $current_start . ' to ' . $current_end,
+			'previous_range' => $previous_start . ' to ' . $previous_end,
+			'trends'         => $trends,
+			'summary'        => $summary,
+		);
+	}
+
+	/**
+	 * Get metrics for a date range.
+	 *
+	 * @param string $start_date Start date.
+	 * @param string $end_date   End date.
+	 * @return array Metrics.
+	 */
+	private function get_period_metrics( $start_date, $end_date ) {
+		$orders = wc_get_orders(
+			array(
+				'limit'        => -1,
+				'status'       => array( 'completed', 'processing' ),
+				'date_created' => $start_date . '...' . $end_date,
+			)
+		);
+
+		$total_sales = 0;
+		$customers   = array();
+
+		foreach ( $orders as $order ) {
+			$total_sales += $order->get_total();
+			$email        = $order->get_billing_email();
+			if ( '' !== $email ) {
+				$customers[ $email ] = true;
+			}
+		}
+
+		return array(
+			'sales'     => $total_sales,
+			'orders'    => count( $orders ),
+			'customers' => count( $customers ),
+		);
+	}
+
+	/**
+	 * Calculate percentage change.
+	 *
+	 * @param float $previous Previous value.
+	 * @param float $current  Current value.
+	 * @return string Formatted percentage.
+	 */
+	private function calculate_percentage_change( $previous, $current ) {
+		if ( 0 === (int) $previous || 0.0 === (float) $previous ) {
+			if ( $current > 0 ) {
+				return '+100%';
+			}
+			return '0%';
+		}
+
+		$change = ( ( $current - $previous ) / $previous ) * 100;
+		$prefix = $change >= 0 ? '+' : '';
+
+		return $prefix . round( $change, 1 ) . '%';
+	}
+
+	/**
+	 * Get trend indicator.
+	 *
+	 * @param string $change Percentage change string.
+	 * @return string Trend indicator.
+	 */
+	private function get_trend_indicator( $change ) {
+		$value = floatval( str_replace( array( '+', '%' ), '', $change ) );
+		if ( $value > 5 ) {
+			return 'up (strong)';
+		} elseif ( $value > 0 ) {
+			return 'up (slight)';
+		} elseif ( $value < -5 ) {
+			return 'down (strong)';
+		} elseif ( $value < 0 ) {
+			return 'down (slight)';
+		}
+		return 'stable';
+	}
+
+	/**
+	 * Generate summary from trends.
+	 *
+	 * @param array $trends Trends data.
+	 * @return string Summary text.
+	 */
+	private function generate_trends_summary( $trends ) {
+		$summaries = array();
+
+		if ( isset( $trends['sales'] ) ) {
+			$trend = $trends['sales']['trend'];
+			if ( strpos( $trend, 'up' ) !== false ) {
+				$summaries[] = 'Sales are up ' . $trends['sales']['change_percent'];
+			} elseif ( strpos( $trend, 'down' ) !== false ) {
+				$summaries[] = 'Sales are down ' . str_replace( '-', '', $trends['sales']['change_percent'] );
+			}
+		}
+
+		if ( isset( $trends['orders'] ) ) {
+			$trend = $trends['orders']['trend'];
+			if ( strpos( $trend, 'up' ) !== false ) {
+				$summaries[] = 'Orders increased by ' . $trends['orders']['change_percent'];
+			} elseif ( strpos( $trend, 'down' ) !== false ) {
+				$summaries[] = 'Orders decreased by ' . str_replace( '-', '', $trends['orders']['change_percent'] );
+			}
+		}
+
+		if ( isset( $trends['average_order'] ) ) {
+			$trend = $trends['average_order']['trend'];
+			if ( strpos( $trend, 'up' ) !== false ) {
+				$summaries[] = 'Average order value improved by ' . $trends['average_order']['change_percent'];
+			} elseif ( strpos( $trend, 'down' ) !== false ) {
+				$summaries[] = 'Average order value dropped by ' . str_replace( '-', '', $trends['average_order']['change_percent'] );
+			}
+		}
+
+		if ( empty( $summaries ) ) {
+			return 'Performance is stable compared to the previous period.';
+		}
+
+		return implode( '. ', $summaries ) . '.';
 	}
 }

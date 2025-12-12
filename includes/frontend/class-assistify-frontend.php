@@ -1464,9 +1464,10 @@ Use a friendly, conversational tone. Format with line breaks for readability.',
 					'placeholder'    => esc_html__( 'Type your message...', 'assistify-for-woocommerce' ),
 					'send'           => esc_html__( 'Send', 'assistify-for-woocommerce' ),
 					'chatTitle'      => esc_html__( 'Chat with us', 'assistify-for-woocommerce' ),
+					'subtitle'       => esc_html__( 'AI Assistant', 'assistify-for-woocommerce' ),
 					'assistantName'  => esc_html( $assistant_name ),
 					'consentTitle'   => esc_html__( 'Privacy Notice', 'assistify-for-woocommerce' ),
-					'consentText'    => esc_html__( 'This chat is powered by AI. By continuing, you agree that your messages will be processed to provide responses.', 'assistify-for-woocommerce' ),
+					'consentText'    => esc_html__( 'This chat is powered by AI to help you find products, answer questions, and assist with your orders. By continuing, you agree that your messages will be processed to provide responses.', 'assistify-for-woocommerce' ),
 					'consentAgree'   => esc_html__( 'I Agree', 'assistify-for-woocommerce' ),
 					'consentDecline' => esc_html__( 'No Thanks', 'assistify-for-woocommerce' ),
 					'privacyLink'    => esc_html__( 'Privacy Policy', 'assistify-for-woocommerce' ),
@@ -1647,10 +1648,10 @@ Use a friendly, conversational tone. Format with line breaks for readability.',
 				<div class="assistify-chat-header">
 					<div class="assistify-header-content">
 						<h3 class="assistify-chat-title">
-							<?php echo esc_html( get_option( 'assistify_assistant_name', 'Ayana' ) ); ?>
+							<?php esc_html_e( 'Chat with us', 'assistify-for-woocommerce' ); ?>
 							<span class="assistify-status-dot is-online" title="<?php esc_attr_e( 'Online', 'assistify-for-woocommerce' ); ?>"></span>
 						</h3>
-						<span class="assistify-header-subtitle"><?php esc_html_e( 'AI Assistant', 'assistify-for-woocommerce' ); ?></span>
+						<span class="assistify-header-subtitle"><?php esc_html_e( 'We\'re here to help', 'assistify-for-woocommerce' ); ?></span>
 					</div>
 					<button 
 						type="button" 

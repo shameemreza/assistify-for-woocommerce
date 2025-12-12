@@ -93,9 +93,13 @@
       this.loadSession();
       this.hasConsented = this.getConsent();
 
-      // Load previous messages if consented
-      if (this.hasConsented && this.messageHistory.length > 0) {
-        this.restoreMessages();
+      // If already consented, update header to show agent name
+      if (this.hasConsented) {
+        this.updateHeaderForConsent();
+        // Load previous messages
+        if (this.messageHistory.length > 0) {
+          this.restoreMessages();
+        }
       }
 
       this.bindEvents();
@@ -572,6 +576,8 @@
         self.setConsent(true);
         self.hasConsented = true;
         self.$messages.empty();
+        // Update header to show agent name after consent
+        self.updateHeaderForConsent();
         self.showWelcome();
         self.$input.focus();
       });
@@ -609,6 +615,20 @@
       } catch (e) {
         // Silent fail for private browsing
       }
+    },
+
+    /**
+     * Update header after consent to show agent name
+     */
+    updateHeaderForConsent: function () {
+      const assistantName = assistifyFrontend.strings.assistantName || "Ayana";
+      this.$title
+        .contents()
+        .first()
+        .replaceWith(assistantName + " ");
+      this.$widget
+        .find(".assistify-header-subtitle")
+        .text(assistifyFrontend.strings.subtitle || "AI Assistant");
     },
 
     /**

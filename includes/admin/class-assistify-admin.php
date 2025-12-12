@@ -762,23 +762,33 @@ class Assistify_Admin {
 				'id'   => 'assistify_removebg_settings',
 			),
 
-			// Privacy Settings.
+			// Privacy & Data Settings.
 			array(
-				'title' => esc_html__( 'Privacy Settings', 'assistify-for-woocommerce' ),
+				'title' => esc_html__( 'Privacy & Data', 'assistify-for-woocommerce' ),
 				'type'  => 'title',
-				'desc'  => esc_html__( 'Configure privacy and data handling options. Privacy policy text is automatically added to Settings > Privacy.', 'assistify-for-woocommerce' ),
+				'desc'  => esc_html__( 'A consent notice is always shown to customers before they can use the chat (GDPR compliance). Sensitive data like credit cards is automatically redacted (PCI compliance).', 'assistify-for-woocommerce' ),
 				'id'    => 'assistify_privacy_settings',
 			),
 			array(
+				'title'       => esc_html__( 'Consent Notice Text', 'assistify-for-woocommerce' ),
+				'desc'        => esc_html__( 'Customize the consent text shown to customers. Leave empty for default.', 'assistify-for-woocommerce' ),
+				'id'          => 'assistify_consent_text',
+				'type'        => 'textarea',
+				'default'     => '',
+				'css'         => 'width:100%; height:60px;',
+				'placeholder' => esc_attr__( 'This chat is powered by AI to help you find products, answer questions, and assist with your orders. By continuing, you agree that your messages will be processed to provide responses.', 'assistify-for-woocommerce' ),
+				'desc_tip'    => true,
+			),
+			array(
 				'title'   => esc_html__( 'Show Privacy Link', 'assistify-for-woocommerce' ),
-				'desc'    => esc_html__( 'Display a privacy policy link in the customer chat consent modal.', 'assistify-for-woocommerce' ),
+				'desc'    => esc_html__( 'Display a privacy policy link in the consent notice.', 'assistify-for-woocommerce' ),
 				'id'      => 'assistify_show_privacy_link',
 				'type'    => 'checkbox',
 				'default' => 'yes',
 			),
 			array(
 				'title'   => esc_html__( 'Remove Data on Uninstall', 'assistify-for-woocommerce' ),
-				'desc'    => esc_html__( 'Remove all plugin data when uninstalling the plugin.', 'assistify-for-woocommerce' ),
+				'desc'    => esc_html__( 'Remove all plugin data when uninstalling.', 'assistify-for-woocommerce' ),
 				'id'      => 'assistify_remove_data_on_uninstall',
 				'type'    => 'checkbox',
 				'default' => 'no',
