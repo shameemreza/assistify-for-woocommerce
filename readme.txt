@@ -239,3 +239,120 @@ Safety & Compliance:
 * Confirmation modals for destructive actions.
 * GDPR compliant with consent management.
 * HPOS compatible.
+
+== External Services ==
+
+This plugin connects to external AI services to provide its functionality. All connections require user-provided API keys and only occur when you actively use AI features. **No data is sent without your explicit action.**
+
+= OpenAI =
+
+When configured with OpenAI as your AI provider, this plugin sends requests to:
+**https://api.openai.com/v1**
+
+**What data is sent:**
+* Your chat messages and prompts
+* Product/order context needed for AI responses (titles, descriptions, prices)
+* Image generation prompts
+
+**When data is sent:**
+* When you send a message in admin or customer chat
+* When you generate product content (titles, descriptions)
+* When you generate images
+
+**Service links:**
+* [OpenAI Terms of Use](https://openai.com/policies/terms-of-use/)
+* [OpenAI Privacy Policy](https://openai.com/policies/privacy-policy/)
+
+= Anthropic (Claude) =
+
+When configured with Anthropic as your AI provider, this plugin sends requests to:
+**https://api.anthropic.com/v1**
+
+**What data is sent:**
+* Your chat messages and prompts
+* Product/order context needed for AI responses
+
+**When data is sent:**
+* When you send a message in admin or customer chat
+* When you generate product content
+
+**Service links:**
+* [Anthropic Terms of Service](https://www.anthropic.com/legal/consumer-terms)
+* [Anthropic Privacy Policy](https://www.anthropic.com/legal/privacy)
+
+= Google (Gemini) =
+
+When configured with Google as your AI provider, this plugin sends requests to:
+**https://generativelanguage.googleapis.com/v1beta**
+
+**What data is sent:**
+* Your chat messages and prompts
+* Product/order context needed for AI responses
+* Image generation prompts (when using Imagen models)
+
+**When data is sent:**
+* When you send a message in admin or customer chat
+* When you generate product content
+* When you generate images (Imagen models)
+
+**Service links:**
+* [Google Cloud Terms of Service](https://cloud.google.com/terms)
+* [Google Privacy Policy](https://policies.google.com/privacy)
+
+= xAI (Grok) =
+
+When configured with xAI as your AI provider, this plugin sends requests to:
+**https://api.x.ai/v1**
+
+**What data is sent:**
+* Your chat messages and prompts
+* Product/order context needed for AI responses
+* Image generation prompts (when using Grok image models)
+
+**When data is sent:**
+* When you send a message in admin or customer chat
+* When you generate product content
+* When you generate images
+
+**Service links:**
+* [xAI Terms of Service](https://x.ai/legal/terms-of-service/)
+* [xAI Privacy Policy](https://x.ai/legal/privacy-policy/)
+
+= DeepSeek =
+
+When configured with DeepSeek as your AI provider, this plugin sends requests to:
+**https://api.deepseek.com/v1**
+
+**What data is sent:**
+* Your chat messages and prompts
+* Product/order context needed for AI responses
+
+**When data is sent:**
+* When you send a message in admin or customer chat
+* When you generate product content
+
+**Service links:**
+* [DeepSeek Terms of Service](https://www.deepseek.com/terms)
+* [DeepSeek Privacy Policy](https://www.deepseek.com/privacy)
+
+= Remove.bg (Background Removal) =
+
+When you use the background removal feature, this plugin sends requests to:
+**https://api.remove.bg/v1.0**
+
+**What data is sent:**
+* Image data (the image you want to remove the background from)
+
+**When data is sent:**
+* Only when you explicitly click "Remove Background" on an image
+
+**Service links:**
+* [Remove.bg Terms of Service](https://www.remove.bg/terms)
+* [Remove.bg Privacy Policy](https://www.remove.bg/privacy)
+
+= Data Privacy Notes =
+
+* **Sensitive data filtering**: Credit card numbers, passwords, and other sensitive information are automatically filtered before sending to AI providers.
+* **Your API keys**: All API keys are stored locally in your WordPress database and are never shared with third parties.
+* **No automatic transmission**: Data is only sent when you actively use AI features (chat, content generation, image generation).
+* **GDPR compliance**: Customer consent is required before using the customer chat widget.

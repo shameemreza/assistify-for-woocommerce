@@ -159,7 +159,7 @@ class Action_Confirmation {
 			'expires_at' => time() + 300, // 5 minutes expiry.
 		);
 
-		set_transient( 'afw_confirm_' . $token, $confirmation_data, 300 );
+		set_transient( 'assistify_confirm_' . $token, $confirmation_data, 300 );
 
 		return array(
 			'requires_confirmation' => true,
@@ -181,7 +181,7 @@ class Action_Confirmation {
 	 */
 	public function execute_confirmed( $token, $confirmation_code = '' ) {
 		// Get pending confirmation.
-		$confirmation = get_transient( 'afw_confirm_' . $token );
+		$confirmation = get_transient( 'assistify_confirm_' . $token );
 
 		if ( ! $confirmation ) {
 			return new \WP_Error(
@@ -214,7 +214,7 @@ class Action_Confirmation {
 		}
 
 		// Delete the confirmation (one-time use).
-		delete_transient( 'afw_confirm_' . $token );
+		delete_transient( 'assistify_confirm_' . $token );
 
 		// Execute the ability.
 		$registry = \Assistify_For_WooCommerce\Abilities\Abilities_Registry::instance();
@@ -252,10 +252,10 @@ class Action_Confirmation {
 	 * @return bool True if cancelled, false if not found.
 	 */
 	public function cancel_confirmation( $token ) {
-		$confirmation = get_transient( 'afw_confirm_' . $token );
+		$confirmation = get_transient( 'assistify_confirm_' . $token );
 
 		if ( $confirmation ) {
-			delete_transient( 'afw_confirm_' . $token );
+			delete_transient( 'assistify_confirm_' . $token );
 
 			// Log cancellation.
 			if ( class_exists( '\Assistify_For_WooCommerce\Audit_Logger' ) ) {

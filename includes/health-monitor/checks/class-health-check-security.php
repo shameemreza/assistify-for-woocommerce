@@ -295,7 +295,9 @@ class Health_Check_Security {
 		}
 
 		// Check for .git directory exposure.
-		$git_dir = ABSPATH . '.git';
+		// Use get_home_path() for proper path detection in various WordPress setups.
+		$home_path = function_exists( 'get_home_path' ) ? get_home_path() : ABSPATH;
+		$git_dir   = trailingslashit( $home_path ) . '.git';
 		if ( is_dir( $git_dir ) ) {
 			// Check if it's accessible.
 			$response = wp_remote_head(

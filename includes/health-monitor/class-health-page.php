@@ -476,29 +476,27 @@ class Health_Page {
 	/**
 	 * Ensure WordPress update transients exist.
 	 *
+	 * Uses WordPress core update functions which are available after wp_loaded.
+	 * These functions are part of WordPress core and handle their own file loading.
+	 *
 	 * @return void
 	 */
 	private function refresh_update_transients() {
 		// Only refresh if transients don't exist - don't delete existing data!
+		// Use wp_clean_plugins_cache / wp_clean_themes_cache instead of direct require.
 		if ( false === get_site_transient( 'update_plugins' ) ) {
-			if ( ! function_exists( 'wp_update_plugins' ) ) {
-				require_once ABSPATH . 'wp-includes/update.php';
-			}
-			wp_update_plugins();
+			// Force a plugin update check using WordPress API.
+			wp_clean_plugins_cache( true );
 		}
 
 		if ( false === get_site_transient( 'update_themes' ) ) {
-			if ( ! function_exists( 'wp_update_themes' ) ) {
-				require_once ABSPATH . 'wp-includes/update.php';
-			}
-			wp_update_themes();
+			// Force a theme update check using WordPress API.
+			wp_clean_themes_cache( true );
 		}
 
 		if ( false === get_site_transient( 'update_core' ) ) {
-			if ( ! function_exists( 'wp_version_check' ) ) {
-				require_once ABSPATH . 'wp-includes/update.php';
-			}
-			wp_version_check();
+			// Force a core update check using WordPress API.
+			wp_version_check( array(), true );
 		}
 	}
 

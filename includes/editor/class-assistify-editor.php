@@ -830,10 +830,6 @@ Return ONLY the requested content. No explanations, no additional commentary.';
 	public function ajax_generate_image() {
 		check_ajax_referer( 'assistify_editor_nonce', 'nonce' );
 
-		// Increase PHP execution time for image generation (gpt-image-1 can take 1-2 minutes).
-		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, Squiz.PHP.DiscouragedFunctions.Discouraged
-		@set_time_limit( 300 );
-
 		if ( ! current_user_can( 'upload_files' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'assistify-for-woocommerce' ) ) );
 		}
