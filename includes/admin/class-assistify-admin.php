@@ -287,20 +287,24 @@ class Assistify_Admin {
 	 * Validate API key when saving settings.
 	 *
 	 * This method is called from save_settings() which is hooked to
-	 * woocommerce_update_options_assistify. WooCommerce Settings API
-	 * verifies the nonce via check_admin_referer() in WC_Admin_Settings::save()
-	 * before the action is triggered. The nonce field name is 'woocommerce-settings'
-	 * and action is 'woocommerce-settings' + current tab.
+	 * woocommerce_update_options_assistify.
 	 *
 	 * @since 1.0.0
 	 * @return void
 	 */
 	private function validate_api_key_on_save() {
-		// WooCommerce verifies nonce in WC_Admin_Settings::save() before triggering
-		// woocommerce_update_options_{tab} action. We're in that callback.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce in WC_Admin_Settings::save().
-		$api_key = isset( $_POST['assistify_api_key'] ) ? sanitize_text_field( wp_unslash( $_POST['assistify_api_key'] ) ) : '';
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified by WooCommerce in WC_Admin_Settings::save().
+		// Verify nonce for security.
+		if ( ! isset( $_POST['_wpnonce'] ) ||
+			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'woocommerce-settings' ) ) {
+			return;
+		}
+
+		// Check user capabilities.
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+
+		$api_key  = isset( $_POST['assistify_api_key'] ) ? sanitize_text_field( wp_unslash( $_POST['assistify_api_key'] ) ) : '';
 		$provider = isset( $_POST['assistify_ai_provider'] ) ? sanitize_text_field( wp_unslash( $_POST['assistify_ai_provider'] ) ) : 'openai';
 
 		// Skip validation if API key is empty (user clearing it).
