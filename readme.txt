@@ -1,5 +1,6 @@
 === Assistify for WooCommerce ===
 Contributors: shameemreza
+Donate link: https://ko-fi.com/shameemreza
 Tags: woocommerce, ai, chatbot, assistant, customer support
 Requires at least: 6.4
 Tested up to: 6.9
@@ -18,35 +19,39 @@ Running a WooCommerce store means drowning in support tickets, endless admin cli
 
 **Here's what Assistify does:** It lets you manage your store through conversation. Ask "what sold today?" and get real numbers. Tell it to "create a 20% off coupon for Black Friday" and it's done. Your customers can check their orders, pause subscriptions, or reschedule bookings, without waiting for you.
 
-= What Store Owners Actually Get =
+= What Store Owners Actually Get? =
 
 Forget fluffy promises. Here's what you can do:
 
 **Ask questions in plain English:**
+
 * Show me orders from last week that are still processing.
 * Which products are running low on stock?
 * What's my revenue this month compared to last month?
 * Find all customers who ordered more than $500.
 
 **Take action through chat:**
+
 * Create coupons with specific rules and expiry dates.
 * Process refunds without clicking through five screens.
 * Update product prices and stock levels.
 * Add notes to orders.
 
 **Generate content when you're stuck:**
+
 * Product titles that don't sound like "Product #4523".
 * Descriptions that actually describe the product.
 * Review responses that don't take 20 minutes to write.
 * Email templates for common situations.
 
 **Monitor your store's health:**
+
 * Get alerts when something breaks (not three days later).
 * See error logs without SSH access.
 * Track failed payments before customers complain.
 * Know when plugins need updating.
 
-= What Your Customers Get =
+= What Your Customers Get? =
 
 A chat widget that actually helps instead of saying "please contact support":
 
@@ -62,18 +67,21 @@ No more "our team will get back to you within 24-48 hours."
 Assistify isn't limited to core WooCommerce. It understands:
 
 **WooCommerce Subscriptions:**
+
 * Customers can pause, resume, or cancel their subscriptions.
 * You get MRR, churn rate, and retention analytics.
 * See at-risk subscriptions before they cancel.
 * Track failed renewals and retry payments.
 
 **WooCommerce Bookings:**
+
 * View today's schedule, upcoming appointments, available slots.
 * Customers can check availability and cancel bookings.
 * Booking revenue and cancellation rate tracking.
 * Resource utilization reporting.
 
 **WooCommerce Memberships:**
+
 * Manage member access and plan assignments.
 * Track expiring memberships for retention outreach.
 * Customers can view their benefits and membership status.
@@ -94,6 +102,7 @@ Switch providers anytime. Your data stays in WordPress, only the conversation go
 = Image Generation =
 
 Need product images? Generate them from text descriptions using:
+
 * OpenAI gpt-image-1
 * Google Imagen 4.0
 * xAI Grok 2 Image
@@ -103,11 +112,13 @@ Plus background removal via Remove.bg integration.
 = Safety First =
 
 **For store actions:**
+
 * Destructive actions (refunds, cancellations) require confirmation.
 * High-risk actions need you to type a confirmation code.
 * Everything gets logged, see exactly what the AI did and when.
 
 **For privacy:**
+
 * Credit card numbers are automatically filtered (never sent to AI).
 * Customer data stays in WordPress.
 * GDPR consent built in.
@@ -175,16 +186,19 @@ No. Customers can only see their own orders, subscriptions, and bookings. Permis
 
 = How do I get help? =
 
-[GitHub Issues](https://github.com/shameemreza/assistify-for-woocommerce/issues) for bugs and feature requests.
+[GitHub Issues](https://github.com/shameemreza/assistify-for-woocommerce/issues) for bugs and feature requests. And [forum](https://wordpress.org/support/plugin/assistify-for-woocommerce/) for support.
 
 == Screenshots ==
 
-1. Admin chat: Ask questions about your store in plain English.
-2. Customer widget: Self-service support that actually works.
-3. Settings: Configure AI providers and chat options.
-4. Store Health: Monitor errors, updates, and performance.
-5. Content generation: Write product descriptions without staring at a blank screen.
-6. Image generation: Create product images from text descriptions.
+1. Chat overview.
+2. Admin chat: Ask questions about your store in plain English.
+3. Customer widget: Self-service support that actually works.
+4. Settings: Configure AI providers and chat options.
+5. Store Health: Monitor errors, updates, and performance.
+6. Store health Email notifications.
+7. Store health widget.
+8. Content generation: Write product descriptions without staring at a blank screen.
+9. Image generation: Create product images from text descriptions.
 
 == Changelog ==
 
@@ -192,6 +206,7 @@ No. Customers can only see their own orders, subscriptions, and bookings. Permis
 **Initial release**
 
 Admin Chat:
+
 * 103+ AI tools for store management.
 * Order lookup, refunds, status updates.
 * Product management and inventory.
@@ -200,11 +215,13 @@ Admin Chat:
 * Coupon creation and management.
 
 Customer Chat:
+
 * Order tracking and status.
 * Self-service account management.
 * Product information and recommendations.
 
 AI Providers:
+
 * OpenAI (GPT-4o, GPT-4o-mini, GPT-4.1, o1, o3-mini).
 * Anthropic (Claude Sonnet 4, Claude Opus 4, Claude 3.5).
 * Google (Gemini 2.5 Pro, Gemini Flash).
@@ -212,29 +229,34 @@ AI Providers:
 * DeepSeek (V3, R1).
 
 Image Generation:
+
 * OpenAI gpt-image-1.
 * Google Imagen 4.0
 * xAI Grok 2 Image.
 * Remove.bg background removal.
 
 Extension Integrations:
+
 * WooCommerce Subscriptions: 16 abilities (admin + customer).
 * WooCommerce Bookings: 14 abilities (admin + customer).
 * WooCommerce Memberships: 13 abilities (admin + customer).
 
 Content Generation:
+
 * Product titles, descriptions, tags.
 * Review responses.
 * Email templates.
 * Category descriptions.
 
 Store Health:
+
 * Health score dashboard.
 * Email alerts for critical issues.
 * Error and update monitoring.
 * One-click fixes for common problems.
 
 Safety & Compliance:
+
 * Audit logging for all AI actions.
 * Confirmation modals for destructive actions.
 * GDPR compliant with consent management.
@@ -247,21 +269,25 @@ This plugin connects to external AI services to provide its functionality. All c
 = OpenAI =
 
 When configured with OpenAI as your AI provider, this plugin sends requests to:
+
 **https://api.openai.com/v1**
 
 **What data is sent:**
-* Your chat messages and prompts
-* Product/order context needed for AI responses (titles, descriptions, prices)
-* Image generation prompts
+
+* Your chat messages and prompts.
+* Product/order context needed for AI responses (titles, descriptions, prices).
+* Image generation prompts.
 
 **When data is sent:**
-* When you send a message in admin or customer chat
-* When you generate product content (titles, descriptions)
-* When you generate images
+
+* When you send a message in admin or customer chat.
+* When you generate product content (titles, descriptions).
+* When you generate images.
 
 **Service links:**
-* [OpenAI Terms of Use](https://openai.com/policies/terms-of-use/)
-* [OpenAI Privacy Policy](https://openai.com/policies/privacy-policy/)
+
+* [OpenAI Terms of Use](https://openai.com/policies/terms-of-use/).
+* [OpenAI Privacy Policy](https://openai.com/policies/privacy-policy/).
 
 = Anthropic (Claude) =
 
@@ -269,16 +295,19 @@ When configured with Anthropic as your AI provider, this plugin sends requests t
 **https://api.anthropic.com/v1**
 
 **What data is sent:**
-* Your chat messages and prompts
-* Product/order context needed for AI responses
+
+* Your chat messages and prompts.
+* Product/order context needed for AI responses.
 
 **When data is sent:**
-* When you send a message in admin or customer chat
-* When you generate product content
+
+* When you send a message in admin or customer chat.
+* When you generate product content.
 
 **Service links:**
-* [Anthropic Terms of Service](https://www.anthropic.com/legal/consumer-terms)
-* [Anthropic Privacy Policy](https://www.anthropic.com/legal/privacy)
+
+* [Anthropic Terms of Service](https://www.anthropic.com/legal/consumer-terms).
+* [Anthropic Privacy Policy](https://www.anthropic.com/legal/privacy).
 
 = Google (Gemini) =
 
@@ -286,18 +315,21 @@ When configured with Google as your AI provider, this plugin sends requests to:
 **https://generativelanguage.googleapis.com/v1beta**
 
 **What data is sent:**
-* Your chat messages and prompts
-* Product/order context needed for AI responses
-* Image generation prompts (when using Imagen models)
+
+* Your chat messages and prompts.
+* Product/order context needed for AI responses.
+* Image generation prompts (when using Imagen models).
 
 **When data is sent:**
-* When you send a message in admin or customer chat
-* When you generate product content
-* When you generate images (Imagen models)
+
+* When you send a message in admin or customer chat.
+* When you generate product content.
+* When you generate images (Imagen models).
 
 **Service links:**
-* [Google Cloud Terms of Service](https://cloud.google.com/terms)
-* [Google Privacy Policy](https://policies.google.com/privacy)
+
+* [Google Cloud Terms of Service](https://cloud.google.com/terms).
+* [Google Privacy Policy](https://policies.google.com/privacy).
 
 = xAI (Grok) =
 
@@ -305,18 +337,21 @@ When configured with xAI as your AI provider, this plugin sends requests to:
 **https://api.x.ai/v1**
 
 **What data is sent:**
-* Your chat messages and prompts
-* Product/order context needed for AI responses
-* Image generation prompts (when using Grok image models)
+
+* Your chat messages and prompts.
+* Product/order context needed for AI responses.
+* Image generation prompts (when using Grok image models).
 
 **When data is sent:**
-* When you send a message in admin or customer chat
-* When you generate product content
-* When you generate images
+
+* When you send a message in admin or customer chat.
+* When you generate product content.
+* When you generate images.
 
 **Service links:**
-* [xAI Terms of Service](https://x.ai/legal/terms-of-service/)
-* [xAI Privacy Policy](https://x.ai/legal/privacy-policy/)
+
+* [xAI Terms of Service](https://x.ai/legal/terms-of-service/).
+* [xAI Privacy Policy](https://x.ai/legal/privacy-policy/).
 
 = DeepSeek =
 
@@ -324,16 +359,19 @@ When configured with DeepSeek as your AI provider, this plugin sends requests to
 **https://api.deepseek.com/v1**
 
 **What data is sent:**
-* Your chat messages and prompts
-* Product/order context needed for AI responses
+
+* Your chat messages and prompts.
+* Product/order context needed for AI responses.
 
 **When data is sent:**
-* When you send a message in admin or customer chat
-* When you generate product content
+
+* When you send a message in admin or customer chat.
+* When you generate product content.
 
 **Service links:**
-* [DeepSeek Terms of Service](https://www.deepseek.com/terms)
-* [DeepSeek Privacy Policy](https://www.deepseek.com/privacy)
+
+* [DeepSeek Terms of Service](https://www.deepseek.com/terms).
+* [DeepSeek Privacy Policy](https://www.deepseek.com/privacy).
 
 = Remove.bg (Background Removal) =
 
@@ -341,14 +379,17 @@ When you use the background removal feature, this plugin sends requests to:
 **https://api.remove.bg/v1.0**
 
 **What data is sent:**
-* Image data (the image you want to remove the background from)
+
+* Image data (the image you want to remove the background from).
 
 **When data is sent:**
-* Only when you explicitly click "Remove Background" on an image
+
+* Only when you explicitly click "Remove Background" on an image.
 
 **Service links:**
-* [Remove.bg Terms of Service](https://www.remove.bg/terms)
-* [Remove.bg Privacy Policy](https://www.remove.bg/privacy)
+
+* [Remove.bg Terms of Service](https://www.remove.bg/terms).
+* [Remove.bg Privacy Policy](https://www.remove.bg/privacy).
 
 = Data Privacy Notes =
 
