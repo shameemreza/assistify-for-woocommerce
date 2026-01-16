@@ -3,7 +3,7 @@
  * Plugin Name:       Assistify for WooCommerce
  * Plugin URI:        https://github.com/shameemreza/assistify-for-woocommerce
  * Description:       A unified, native WooCommerce AI Assistant that provides dual-interface chat for both store owners and customers with deep WooCommerce integration.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Author:            Shameem Reza
  * Author URI:        https://shameem.blog
  * License:           GPL v2 or later
@@ -15,7 +15,7 @@
  * Requires PHP:      8.0
  * Requires Plugins:  woocommerce
  * WC requires at least: 8.0.0
- * WC tested up to:   10.3.6
+ * WC tested up to:   10.4.3
  *
  * @package Assistify_For_WooCommerce
  */
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Currently plugin version.
  * Start at version 1.0.0 and use SemVer - https://semver.org
  */
-define( 'ASSISTIFY_VERSION', '1.0.0' );
+define( 'ASSISTIFY_VERSION', '1.1.0' );
 
 /**
  * Plugin base file.

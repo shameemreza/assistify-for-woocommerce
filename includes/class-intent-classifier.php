@@ -1085,6 +1085,9 @@ class Intent_Classifier {
 		// Register membership intents (WooCommerce Memberships integration).
 		$this->register_membership_intents();
 
+		// Register hotel booking intents (Hotel Booking for WooCommerce integration).
+		$this->register_hotel_booking_intents();
+
 		/**
 		 * Filter intent patterns to allow customization.
 		 *
@@ -1702,6 +1705,245 @@ class Intent_Classifier {
 			'priority'  => 10,
 			'scope'     => 'customer',
 			'is_action' => true,
+		);
+	}
+
+	/**
+	 * Register hotel booking intent patterns.
+	 *
+	 * Patterns for Hotel Booking for WooCommerce integration.
+	 * These only work when Hotel Booking for WooCommerce is installed and active.
+	 *
+	 * @since 1.1.0
+	 * @return void
+	 */
+	private function register_hotel_booking_intents() {
+		// Check if Hotel Booking for WooCommerce is active.
+		if ( ! defined( 'HBFWC_VERSION' ) && ! class_exists( 'HBFWC_WC_Product_Accommodation' ) ) {
+			return;
+		}
+
+		// Admin: List rooms.
+		$this->intent_patterns['hotel_rooms_list'] = array(
+			'keywords'  => array( 'rooms', 'accommodation', 'list rooms', 'show rooms', 'all rooms', 'hotel rooms' ),
+			'patterns'  => array(
+				'/(?:list|show|all)\s*(?:hotel\s+)?rooms?/i',
+				'/(?:list|show|all)\s*accommodations?/i',
+				'/(?:what|which)\s+rooms?\s+(?:do\s+)?(?:we|i)\s+have/i',
+				'/(?:available|our)\s+rooms?/i',
+				'/room\s+(?:inventory|types?)/i',
+			),
+			'ability'   => 'afw/hotel/rooms/list',
+			'extractor' => 'extract_basic_limit_params',
+			'priority'  => 6,
+		);
+
+		// Admin: Get room details.
+		$this->intent_patterns['hotel_room_get'] = array(
+			'keywords'  => array( 'room #', 'room id', 'show room', 'get room', 'room details' ),
+			'patterns'  => array(
+				'/room\s*#?\s*(\d+)/i',
+				'/show\s+room\s*#?\s*(\d+)/i',
+				'/get\s+room\s*#?\s*(\d+)/i',
+				'/room\s+(?:id\s+)?(\d+)\s+details?/i',
+			),
+			'ability'   => 'afw/hotel/rooms/get',
+			'extractor' => 'extract_hotel_room_id',
+			'priority'  => 10,
+		);
+
+		// Admin: Check availability.
+		$this->intent_patterns['hotel_availability_check'] = array(
+			'keywords'  => array( 'room availability', 'check availability', 'available rooms', 'vacancy' ),
+			'patterns'  => array(
+				'/(?:check|what|any)\s*(?:room\s+)?availability/i',
+				'/(?:is|are)\s+(?:the\s+)?room(?:s)?\s+available/i',
+				'/(?:room|hotel)\s+vacancy/i',
+				'/available\s+rooms?\s+(?:for|on|from)/i',
+			),
+			'ability'   => 'afw/hotel/availability/check',
+			'extractor' => 'extract_hotel_availability_params',
+			'priority'  => 8,
+		);
+
+		// Admin: List reservations.
+		$this->intent_patterns['hotel_reservations_list'] = array(
+			'keywords'  => array( 'hotel reservations', 'hotel bookings', 'room reservations', 'guest reservations' ),
+			'patterns'  => array(
+				'/(?:list|show|all)\s*(?:hotel\s+)?reservations?/i',
+				'/(?:list|show|all)\s*(?:room|guest)\s+(?:bookings?|reservations?)/i',
+				'/(?:hotel|room)\s+bookings?/i',
+				'/(?:what|which)\s+reservations?\s+(?:do\s+)?(?:we|i)\s+have/i',
+			),
+			'ability'   => 'afw/hotel/reservations/list',
+			'extractor' => 'extract_hotel_reservations_params',
+			'priority'  => 7,
+		);
+
+		// Admin: Today's check-ins/check-outs.
+		$this->intent_patterns['hotel_today'] = array(
+			'keywords'  => array( 'check-in today', 'check-out today', 'today arrivals', 'today departures', 'today guests' ),
+			'patterns'  => array(
+				'/(?:today\'?s?|todays)\s*(?:check[\s-]*ins?|check[\s-]*outs?|arrivals?|departures?)/i',
+				'/(?:check[\s-]*ins?|check[\s-]*outs?|arrivals?|departures?)\s+(?:for\s+)?today/i',
+				'/(?:who|which\s+guests?)\s+(?:is|are)\s+(?:checking\s+in|checking\s+out|arriving|leaving)\s+today/i',
+				'/(?:today\'?s?\s+)?(?:hotel\s+)?(?:guests?|arrivals?)/i',
+			),
+			'ability'   => 'afw/hotel/reservations/today',
+			'extractor' => null,
+			'priority'  => 9,
+		);
+
+		// Admin: Upcoming reservations.
+		$this->intent_patterns['hotel_upcoming'] = array(
+			'keywords'  => array( 'upcoming reservations', 'upcoming check-ins', 'future reservations', 'this week reservations' ),
+			'patterns'  => array(
+				'/(?:upcoming|next|future|scheduled)\s*(?:hotel\s+)?reservations?/i',
+				'/(?:upcoming|next)\s*(?:check[\s-]*ins?|arrivals?)/i',
+				'/(?:reservations?|bookings?)\s+(?:this|next)\s+(?:week|month)/i',
+				'/(?:what|which)\s+reservations?\s+(?:are\s+)?(?:coming|next)/i',
+			),
+			'ability'   => 'afw/hotel/reservations/upcoming',
+			'extractor' => 'extract_hotel_upcoming_params',
+			'priority'  => 8,
+		);
+
+		// Admin: Get reservation details.
+		$this->intent_patterns['hotel_reservation_get'] = array(
+			'keywords'  => array( 'reservation #', 'reservation id', 'show reservation', 'get reservation', 'guest booking' ),
+			'patterns'  => array(
+				'/(?:hotel\s+)?reservation\s*#?\s*(\d+)/i',
+				'/show\s+(?:hotel\s+)?reservation\s*#?\s*(\d+)/i',
+				'/(?:guest|room)\s+booking\s*#?\s*(\d+)/i',
+				'/order\s*#?\s*(\d+)\s+(?:hotel\s+)?reservation/i',
+			),
+			'ability'   => 'afw/hotel/reservations/get',
+			'extractor' => 'extract_hotel_reservation_id',
+			'priority'  => 10,
+		);
+
+		// Admin: Hotel analytics.
+		$this->intent_patterns['hotel_analytics'] = array(
+			'keywords'  => array( 'hotel analytics', 'occupancy rate', 'hotel revenue', 'hotel report', 'popular rooms' ),
+			'patterns'  => array(
+				'/(?:hotel|room|accommodation)\s+(?:analytics?|stats?|statistics?|metrics?|report)/i',
+				'/occupancy\s+rate/i',
+				'/(?:hotel|room)\s+revenue/i',
+				'/(?:popular|top|best)\s+rooms?/i',
+				'/(?:how\s+many|total)\s+(?:reservations?|bookings?)\s+(?:this|last)/i',
+			),
+			'ability'   => 'afw/hotel/analytics',
+			'extractor' => 'extract_hotel_analytics_params',
+			'priority'  => 8,
+		);
+
+		// Admin: List rate plans.
+		$this->intent_patterns['hotel_rates_list'] = array(
+			'keywords'  => array( 'rate plans', 'pricing plans', 'room rates', 'hotel rates' ),
+			'patterns'  => array(
+				'/(?:list|show|all)\s*rate\s+plans?/i',
+				'/(?:list|show|all)\s*(?:hotel|room)\s+rates?/i',
+				'/(?:what|which)\s+rate\s+plans?/i',
+				'/pricing\s+plans?/i',
+			),
+			'ability'   => 'afw/hotel/rates/list',
+			'extractor' => null,
+			'priority'  => 6,
+		);
+
+		// Customer: Search available rooms.
+		$this->intent_patterns['hotel_search'] = array(
+			'keywords'  => array( 'book room', 'find room', 'search room', 'available room', 'room for', 'stay for' ),
+			'patterns'  => array(
+				'/(?:find|search|book|get)\s+(?:a\s+)?(?:hotel\s+)?room/i',
+				'/(?:available|any)\s+rooms?\s+(?:for|from|on)/i',
+				'/(?:do\s+you\s+have|is\s+there)\s+(?:a\s+)?room/i',
+				'/(?:i\s+)?(?:want|need|would\s+like)\s+(?:a\s+)?room/i',
+				'/room\s+for\s+(\d+)\s+(?:adults?|guests?|people|persons?)/i',
+				'/(?:looking\s+for|need)\s+(?:a\s+)?(?:hotel\s+)?(?:room|accommodation)/i',
+				'/stay\s+(?:for\s+)?(\d+)\s+nights?/i',
+			),
+			'ability'   => 'afw/hotel/search',
+			'extractor' => 'extract_hotel_search_params',
+			'priority'  => 9,
+			'scope'     => 'customer',
+		);
+
+		// Customer: Room details.
+		$this->intent_patterns['hotel_room_details'] = array(
+			'keywords'  => array( 'room information', 'room amenities', 'tell me about room', 'what does room have' ),
+			'patterns'  => array(
+				'/(?:tell\s+me\s+about|show\s+me|what\s+is)\s+(?:the\s+)?(.+)\s+room/i',
+				'/(.+)\s+room\s+(?:amenities|features|details?|information)/i',
+				'/(?:what|which)\s+amenities\s+(?:does|in)\s+(?:the\s+)?(.+)\s+room/i',
+				'/(?:what\'?s?\s+)?(?:in|included\s+in)\s+(?:the\s+)?(.+)\s+room/i',
+			),
+			'ability'   => 'afw/hotel/room-details',
+			'extractor' => 'extract_hotel_room_name_or_id',
+			'priority'  => 7,
+			'scope'     => 'customer',
+		);
+
+		// Customer: Check availability.
+		$this->intent_patterns['hotel_customer_availability'] = array(
+			'keywords'  => array( 'is room available', 'room available', 'can i book', 'availability for' ),
+			'patterns'  => array(
+				'/(?:is|are)\s+(?:the\s+)?(.+)\s+(?:room\s+)?available/i',
+				'/(?:can\s+)?(?:i\s+)?book\s+(?:the\s+)?(.+)\s+room/i',
+				'/(?:check|what\'?s?\s+the)\s+availability\s+(?:for|of)\s+(?:the\s+)?(.+)/i',
+				'/(?:do\s+you\s+have)\s+(?:the\s+)?(.+)\s+(?:room\s+)?available/i',
+			),
+			'ability'   => 'afw/hotel/check-availability',
+			'extractor' => 'extract_hotel_customer_availability_params',
+			'priority'  => 8,
+			'scope'     => 'customer',
+		);
+
+		// Customer: Get pricing.
+		$this->intent_patterns['hotel_pricing'] = array(
+			'keywords'  => array( 'room price', 'how much', 'cost', 'rate for room', 'pricing' ),
+			'patterns'  => array(
+				'/(?:how\s+much|what\'?s?\s+the\s+(?:price|cost|rate))\s+(?:for|of)\s+(?:the\s+)?(.+)\s+room/i',
+				'/(.+)\s+room\s+(?:price|cost|rate)/i',
+				'/(?:price|cost|rate)\s+(?:for|of)\s+(?:a\s+)?room/i',
+				'/(?:what|how\s+much)\s+(?:does|would)\s+(?:a\s+)?room\s+cost/i',
+			),
+			'ability'   => 'afw/hotel/get-pricing',
+			'extractor' => 'extract_hotel_pricing_params',
+			'priority'  => 8,
+			'scope'     => 'customer',
+		);
+
+		// Customer: My reservations.
+		$this->intent_patterns['hotel_my_reservations'] = array(
+			'keywords'  => array( 'my reservation', 'my hotel booking', 'my room booking', 'view reservation' ),
+			'patterns'  => array(
+				'/(?:my|view\s+my)\s+(?:hotel\s+)?reservations?/i',
+				'/(?:my|view\s+my)\s+(?:room\s+)?bookings?/i',
+				'/(?:what|which)\s+(?:hotel\s+)?reservations?\s+do\s+i\s+have/i',
+				'/(?:do\s+i\s+have\s+(?:a|any))\s+(?:hotel\s+)?reservations?/i',
+				'/(?:show|list)\s+(?:my\s+)?(?:hotel\s+)?reservations?/i',
+			),
+			'ability'   => 'afw/hotel/my-reservations',
+			'extractor' => 'extract_hotel_customer_reservations_params',
+			'priority'  => 7,
+			'scope'     => 'customer',
+		);
+
+		// Customer: Suggest alternatives.
+		$this->intent_patterns['hotel_alternatives'] = array(
+			'keywords'  => array( 'alternative room', 'other room', 'different dates', 'suggest room', 'another option' ),
+			'patterns'  => array(
+				'/(?:any|other|alternative)\s+(?:available\s+)?rooms?/i',
+				'/(?:suggest|recommend)\s+(?:a\s+)?(?:different|another)\s+room/i',
+				'/(?:what|which)\s+(?:other|else)\s+(?:rooms?\s+)?(?:is|are)\s+available/i',
+				'/(?:different|other|alternative)\s+dates?/i',
+				'/(?:if\s+)?(?:that\'?s?\s+)?not\s+available/i',
+			),
+			'ability'   => 'afw/hotel/suggest-alternatives',
+			'extractor' => 'extract_hotel_alternatives_params',
+			'priority'  => 7,
+			'scope'     => 'customer',
 		);
 	}
 
@@ -4021,6 +4263,404 @@ class Intent_Classifier {
 			$params['membership_id'] = (int) $matches[1];
 		} elseif ( preg_match( '/\b(\d{3,})\b/', $message, $matches ) ) {
 			$params['membership_id'] = (int) $matches[1];
+		}
+
+		return $params;
+	}
+
+	// =========================================================================
+	// HOTEL BOOKING PARAMETER EXTRACTORS
+	// =========================================================================
+
+	/**
+	 * Extract hotel room ID from message.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_hotel_room_id( $message ) {
+		$params = array();
+
+		if ( preg_match( '/room\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['room_id'] = (int) $matches[1];
+		} elseif ( preg_match( '/\b(\d{2,})\b/', $message, $matches ) ) {
+			$params['room_id'] = (int) $matches[1];
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract hotel availability parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_hotel_availability_params( $message ) {
+		$params = array();
+
+		// Extract room ID if specified.
+		if ( preg_match( '/room\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['room_id'] = (int) $matches[1];
+		}
+
+		// Try to extract dates.
+		$dates = $this->extract_date_range( $message );
+		if ( ! empty( $dates['from'] ) ) {
+			$params['check_in'] = $dates['from'];
+		}
+		if ( ! empty( $dates['to'] ) ) {
+			$params['check_out'] = $dates['to'];
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract hotel reservations list parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_hotel_reservations_params( $message ) {
+		$params = array( 'limit' => 10 );
+
+		// Check for status.
+		$statuses = array( 'processing', 'completed', 'on-hold', 'pending' );
+		foreach ( $statuses as $status ) {
+			if ( stripos( $message, str_replace( '-', ' ', $status ) ) !== false ) {
+				$params['status'] = $status;
+				break;
+			}
+		}
+
+		// Try to extract dates.
+		$dates = $this->extract_date_range( $message );
+		if ( ! empty( $dates['from'] ) ) {
+			$params['date_from'] = $dates['from'];
+		}
+		if ( ! empty( $dates['to'] ) ) {
+			$params['date_to'] = $dates['to'];
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract hotel upcoming reservations parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_hotel_upcoming_params( $message ) {
+		$params = array( 'days' => 7, 'limit' => 20 );
+
+		// Check for time period.
+		if ( preg_match( '/(\d+)\s*days?/i', $message, $matches ) ) {
+			$params['days'] = min( (int) $matches[1], 90 );
+		} elseif ( stripos( $message, 'this week' ) !== false ) {
+			$params['days'] = 7;
+		} elseif ( stripos( $message, 'next week' ) !== false ) {
+			$params['days'] = 14;
+		} elseif ( stripos( $message, 'this month' ) !== false || stripos( $message, 'next month' ) !== false ) {
+			$params['days'] = 30;
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract hotel reservation ID from message.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_hotel_reservation_id( $message ) {
+		$params = array();
+
+		if ( preg_match( '/(?:reservation|order|booking)\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['order_id'] = (int) $matches[1];
+		} elseif ( preg_match( '/\b(\d{3,})\b/', $message, $matches ) ) {
+			$params['order_id'] = (int) $matches[1];
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract hotel analytics parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_hotel_analytics_params( $message ) {
+		$params = array( 'period' => '30days' );
+
+		// Check for time period.
+		if ( preg_match( '/(?:last|past)\s*(\d+)\s*days?/i', $message, $matches ) ) {
+			$days = (int) $matches[1];
+			if ( $days <= 7 ) {
+				$params['period'] = '7days';
+			} elseif ( $days <= 30 ) {
+				$params['period'] = '30days';
+			} elseif ( $days <= 90 ) {
+				$params['period'] = '90days';
+			} else {
+				$params['period'] = 'year';
+			}
+		} elseif ( stripos( $message, 'this week' ) !== false || stripos( $message, 'last week' ) !== false ) {
+			$params['period'] = '7days';
+		} elseif ( stripos( $message, 'this month' ) !== false || stripos( $message, 'last month' ) !== false ) {
+			$params['period'] = '30days';
+		} elseif ( stripos( $message, 'quarter' ) !== false ) {
+			$params['period'] = '90days';
+		} elseif ( stripos( $message, 'year' ) !== false ) {
+			$params['period'] = 'year';
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract hotel search parameters for customer.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_hotel_search_params( $message ) {
+		$params = array( 'adults' => 1, 'children' => 0 );
+
+		// Extract dates.
+		$dates = $this->extract_date_range( $message );
+		if ( ! empty( $dates['from'] ) ) {
+			$params['check_in'] = $dates['from'];
+		}
+		if ( ! empty( $dates['to'] ) ) {
+			$params['check_out'] = $dates['to'];
+		}
+
+		// Extract number of nights.
+		if ( preg_match( '/(\d+)\s*nights?/i', $message, $matches ) && ! empty( $params['check_in'] ) ) {
+			$nights              = (int) $matches[1];
+			$check_in            = strtotime( $params['check_in'] );
+			$params['check_out'] = gmdate( 'Y-m-d', strtotime( "+{$nights} days", $check_in ) );
+		}
+
+		// Extract number of adults.
+		if ( preg_match( '/(\d+)\s*adults?/i', $message, $matches ) ) {
+			$params['adults'] = (int) $matches[1];
+		} elseif ( preg_match( '/for\s*(\d+)\s*(?:people|persons?|guests?)/i', $message, $matches ) ) {
+			$params['adults'] = (int) $matches[1];
+		}
+
+		// Extract number of children.
+		if ( preg_match( '/(\d+)\s*child(?:ren)?/i', $message, $matches ) ) {
+			$params['children'] = (int) $matches[1];
+		} elseif ( preg_match( '/(\d+)\s*kids?/i', $message, $matches ) ) {
+			$params['children'] = (int) $matches[1];
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract hotel room name or ID from message.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_hotel_room_name_or_id( $message ) {
+		$params = array();
+
+		// Check for room ID first.
+		if ( preg_match( '/room\s*#?\s*(\d+)/i', $message, $matches ) ) {
+			$params['room_id'] = (int) $matches[1];
+			return $params;
+		}
+
+		// Check for room name in quotes.
+		if ( preg_match( '/["\']([^"\']+)["\']/', $message, $matches ) ) {
+			// Try to find room by name.
+			$room_name = trim( $matches[1] );
+			$rooms     = wc_get_products(
+				array(
+					'type'   => 'accommodation',
+					'status' => 'publish',
+					'limit'  => 1,
+					's'      => $room_name,
+				)
+			);
+
+			if ( ! empty( $rooms ) ) {
+				$params['room_id'] = $rooms[0]->get_id();
+			}
+		}
+
+		// Try to extract room name from common patterns.
+		$patterns = array(
+			'/(?:about|show)\s+(?:the\s+)?(.+?)\s+room/i',
+			'/(.+?)\s+room\s+(?:details?|amenities|features)/i',
+		);
+
+		foreach ( $patterns as $pattern ) {
+			if ( preg_match( $pattern, $message, $matches ) ) {
+				$room_name = trim( $matches[1] );
+				$rooms     = wc_get_products(
+					array(
+						'type'   => 'accommodation',
+						'status' => 'publish',
+						'limit'  => 1,
+						's'      => $room_name,
+					)
+				);
+
+				if ( ! empty( $rooms ) ) {
+					$params['room_id'] = $rooms[0]->get_id();
+					break;
+				}
+			}
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract hotel customer availability parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_hotel_customer_availability_params( $message ) {
+		$params = array();
+
+		// Extract room ID or name.
+		$room_params = $this->extract_hotel_room_name_or_id( $message );
+		if ( ! empty( $room_params['room_id'] ) ) {
+			$params['room_id'] = $room_params['room_id'];
+		}
+
+		// Extract dates.
+		$dates = $this->extract_date_range( $message );
+		if ( ! empty( $dates['from'] ) ) {
+			$params['check_in'] = $dates['from'];
+		}
+		if ( ! empty( $dates['to'] ) ) {
+			$params['check_out'] = $dates['to'];
+		}
+
+		// Extract number of nights if check-in is set but not check-out.
+		if ( ! empty( $params['check_in'] ) && empty( $params['check_out'] ) ) {
+			if ( preg_match( '/(\d+)\s*nights?/i', $message, $matches ) ) {
+				$nights              = (int) $matches[1];
+				$check_in            = strtotime( $params['check_in'] );
+				$params['check_out'] = gmdate( 'Y-m-d', strtotime( "+{$nights} days", $check_in ) );
+			}
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract hotel pricing parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_hotel_pricing_params( $message ) {
+		$params = array( 'rooms' => 1 );
+
+		// Extract room ID or name.
+		$room_params = $this->extract_hotel_room_name_or_id( $message );
+		if ( ! empty( $room_params['room_id'] ) ) {
+			$params['room_id'] = $room_params['room_id'];
+		}
+
+		// Extract dates.
+		$dates = $this->extract_date_range( $message );
+		if ( ! empty( $dates['from'] ) ) {
+			$params['check_in'] = $dates['from'];
+		}
+		if ( ! empty( $dates['to'] ) ) {
+			$params['check_out'] = $dates['to'];
+		}
+
+		// Extract number of rooms.
+		if ( preg_match( '/(\d+)\s*rooms?/i', $message, $matches ) ) {
+			$params['rooms'] = (int) $matches[1];
+		}
+
+		// Extract number of nights if check-in is set but not check-out.
+		if ( ! empty( $params['check_in'] ) && empty( $params['check_out'] ) ) {
+			if ( preg_match( '/(\d+)\s*nights?/i', $message, $matches ) ) {
+				$nights              = (int) $matches[1];
+				$check_in            = strtotime( $params['check_in'] );
+				$params['check_out'] = gmdate( 'Y-m-d', strtotime( "+{$nights} days", $check_in ) );
+			}
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract hotel customer reservations parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_hotel_customer_reservations_params( $message ) {
+		$params = array( 'status' => 'all' );
+
+		// Check for status filter.
+		if ( preg_match( '/upcoming|future|next/i', $message ) ) {
+			$params['status'] = 'upcoming';
+		} elseif ( preg_match( '/past|previous|completed/i', $message ) ) {
+			$params['status'] = 'past';
+		}
+
+		return $params;
+	}
+
+	/**
+	 * Extract hotel alternatives parameters.
+	 *
+	 * @since 1.1.0
+	 * @param string $message The message.
+	 * @return array Parameters.
+	 */
+	private function extract_hotel_alternatives_params( $message ) {
+		$params = array( 'adults' => 1 );
+
+		// Extract room ID if mentioned.
+		$room_params = $this->extract_hotel_room_name_or_id( $message );
+		if ( ! empty( $room_params['room_id'] ) ) {
+			$params['room_id'] = $room_params['room_id'];
+		}
+
+		// Extract dates.
+		$dates = $this->extract_date_range( $message );
+		if ( ! empty( $dates['from'] ) ) {
+			$params['check_in'] = $dates['from'];
+		}
+		if ( ! empty( $dates['to'] ) ) {
+			$params['check_out'] = $dates['to'];
+		}
+
+		// Extract number of adults.
+		if ( preg_match( '/(\d+)\s*adults?/i', $message, $matches ) ) {
+			$params['adults'] = (int) $matches[1];
+		} elseif ( preg_match( '/for\s*(\d+)\s*(?:people|persons?|guests?)/i', $message, $matches ) ) {
+			$params['adults'] = (int) $matches[1];
 		}
 
 		return $params;

@@ -409,6 +409,12 @@ final class Assistify {
 			require_once $integrations_dir . 'class-wc-memberships-integration.php';
 			Integrations\WC_Memberships_Integration::instance();
 		}
+
+		// Hotel Booking for WooCommerce integration.
+		if ( file_exists( $integrations_dir . 'class-hotel-booking-integration.php' ) ) {
+			require_once $integrations_dir . 'class-hotel-booking-integration.php';
+			Integrations\Hotel_Booking_Integration::instance();
+		}
 	}
 
 	/**

@@ -4,7 +4,7 @@ Donate link: https://ko-fi.com/shameemreza
 Tags: woocommerce, ai, chatbot, assistant, customer support
 Requires at least: 6.4
 Tested up to: 6.9
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -66,26 +66,35 @@ No more "our team will get back to you within 24-48 hours."
 
 Assistify isn't limited to core WooCommerce. It understands:
 
-**WooCommerce Subscriptions:**
+**[WooCommerce Subscriptions](https://woocommerce.com/products/woocommerce-subscriptions/):**
 
 * Customers can pause, resume, or cancel their subscriptions.
 * You get MRR, churn rate, and retention analytics.
 * See at-risk subscriptions before they cancel.
 * Track failed renewals and retry payments.
 
-**WooCommerce Bookings:**
+**[WooCommerce Bookings](https://woocommerce.com/products/woocommerce-bookings/):**
 
 * View today's schedule, upcoming appointments, available slots.
 * Customers can check availability and cancel bookings.
 * Booking revenue and cancellation rate tracking.
 * Resource utilization reporting.
 
-**WooCommerce Memberships:**
+**[WooCommerce Memberships](https://woocommerce.com/products/woocommerce-memberships/):**
 
 * Manage member access and plan assignments.
 * Track expiring memberships for retention outreach.
 * Customers can view their benefits and membership status.
 * Member analytics by plan.
+
+**[Hotel Booking for WooCommerce](https://wordpress.org/plugins/hotel-booking-for-woocommerce/):**
+
+* Search available rooms by dates, guests, and capacity.
+* Check room availability and get instant pricing.
+* View today's check-ins and check-outs at a glance.
+* Hotel analytics: occupancy rates, revenue, popular rooms.
+* Customers can browse rooms, check availability, and view their reservations.
+* AI-powered alternative suggestions when dates are unavailable.
 
 = Pick Your AI Provider =
 
@@ -166,7 +175,7 @@ Only conversation context. The AI doesn't get your entire database. Sensitive da
 
 = Will it work with my WooCommerce extensions? =
 
-Core WooCommerce works out of the box. We've built specific integrations for Subscriptions, Bookings, and Memberships. More coming.
+Core WooCommerce works out of the box. We've built specific integrations for Subscriptions, Bookings, Memberships, and Hotel Booking for WooCommerce. More coming.
 
 = Can the AI actually change things in my store? =
 
@@ -201,6 +210,20 @@ No. Customers can only see their own orders, subscriptions, and bookings. Permis
 9. Image generation: Create product images from text descriptions.
 
 == Changelog ==
+
+= 1.1.0 - 2026-01-16 =
+**New: Hotel Booking for WooCommerce Integration**
+
+* Added 15 new AI abilities for hotel/accommodation management.
+* Admin: List rooms, check availability, view reservations.
+* Admin: Today's check-ins/check-outs dashboard.
+* Admin: Upcoming reservations and hotel analytics.
+* Admin: Occupancy rate, revenue tracking, popular rooms.
+* Customer: Search available rooms by dates and guests.
+* Customer: Check room availability and get pricing.
+* Customer: View personal reservations.
+* Customer: AI-powered alternative suggestions when dates unavailable.
+* Natural language queries: "Do you have a room for 2 adults next weekend?"
 
 = 1.0.0 - 2025-12-13 =
 **Initial release**
